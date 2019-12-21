@@ -13,14 +13,14 @@ class Command(BaseCommand):
         
         # logic for renaming the files
 
-        files_to_rename = ['DjangoBoilerplate/settings/base.py', 'DjangoBoilerplate/wsgi.py', 'manage.py']
-        folder_to_rename = 'DjangoBoilerplate'
+        files_to_rename = ['ProfilesApp/settings/base.py', 'ProfilesApp/wsgi.py', 'manage.py']
+        folder_to_rename = 'ProfilesApp'
 
         for f in files_to_rename:
             with open(f, 'r') as file:
                 filedata = file.read()
 
-            filedata = filedata.replace('DjangoBoilerplate', new_project_name)
+            filedata = filedata.replace('ProfilesApp', new_project_name)
 
             with open(f, 'w') as file:
                 file.write(filedata)
