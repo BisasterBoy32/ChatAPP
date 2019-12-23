@@ -21,6 +21,15 @@ INSTALLED_APPS = [
     'core'
 ]
 
+REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES': [  # remove
+    #     'rest_framework.permissions.AllowAny'
+    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'knox.auth.TokenAuthentication',
+    )
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

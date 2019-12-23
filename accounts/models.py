@@ -9,3 +9,5 @@ class Profile(models.Model):
     join_date = models.DateTimeField(default=timezone.now)
     born_date = models.DateTimeField(blank=True)
 
+    def __str__(self):
+        return self.user.username
