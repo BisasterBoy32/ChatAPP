@@ -4,7 +4,8 @@
   "description": "A boilerplate Django project for quickly getting started",
   "main": "index.js",
   "scripts": {
-    "start": "webpack --mode development --watch ./frontend/src/index.js --output ./frontend/static/frontend/main.js ",
+    "start-accounts": "webpack --mode development --watch ./frontend/src/index.js --output ./frontend/static/frontend/main.js ",
+    "start-main": "webpack --mode development --watch ./mainFrontend/src/index.js --output ./mainFrontend/static/mainFrontend/main.js ",
     "build": "webpack --mode production ./frontend/src/index.js --output ./frontend/static/frontend/main.js"
   },
   "author": "",
