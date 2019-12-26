@@ -1,11 +1,10 @@
-import App from "./components/app"
-import React from "react"
-import ReactDOM from "react-dom"
-import { Provider } from "react-redux"
-
-import store from "./store"
+import App from "./components/app";
+import React from "react";
+import ReactDOM from "react-dom";
+import GlobalStore from "./store";
 
 ReactDOM.render(
-    <Provider store = {store}>
+    <GlobalStore>
         <App />
-    </Provider>  , document.querySelector(".main"))
+    </GlobalStore> ,document.querySelector(".main")
+)
