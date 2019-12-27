@@ -84,8 +84,8 @@ export default () => {
                         axios.post("accounts/login/", values)
                             .then(
                                 res => {
-                                    user.dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
                                     setSubmitting(false);
+                                    user.dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
                                 },
                                 err => {
                                     user.dispatch({ type: "LOGIN_FAILED", payload: err.response });

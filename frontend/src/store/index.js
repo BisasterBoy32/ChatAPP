@@ -33,7 +33,6 @@ const userReducer = (state , action) => {
             }
 
         case "LOGIN_FAILED":
-            console.log(action.payload)
             return {
                 user : { username : "anonymouse"},
                 loading : false,

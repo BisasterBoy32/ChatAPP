@@ -101,8 +101,8 @@ export default ({data ,setData , setPage}) => {
                             ...data,
                             ...values
                         });
-                        setPage(2);
                         setSubmitting(false);
+                        setPage(2);
                     }}
                 >
                     {({

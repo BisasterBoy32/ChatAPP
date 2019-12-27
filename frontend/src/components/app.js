@@ -13,13 +13,14 @@ const App = () => {
 
     // see if there is a current user 
     useEffect( () => {
+    
         const config = setConfig(user.state.token);
-        user.dispatch({ type : "LOGIN_STARTED"});
+        user.dispatch({ type: "LOGIN_STARTED" });
         axios.get("/accounts/get_user/", config)
-        .then( 
-            res => user.dispatch({ type : "GET_USER" , payload : res.data}),
-            err => user.dispatch({ type : "LOGIN_FAILED", payload : err.response})
-        )
+            .then(
+                res => user.dispatch({ type: "GET_USER", payload: res.data }),
+                err => user.dispatch({ type: "LOGIN_FAILED", payload: err.response })
+            )
     },[]);
 
     return (

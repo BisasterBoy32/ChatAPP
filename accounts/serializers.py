@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Profile
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,10 +43,11 @@ class LoginSer(serializers.Serializer):
 
     def validate(self , data):
 
-        user = User.objects.filter(username = data["username_or_email"], password = data["password"]).exists()
-        if not user : 
-            user = User.objects.filter(email = data["username_or_email"], password = data["password"]).exists()
+        user = authenticate(username=data["username_or_email"],password=data["password"])
         if not user :
-            raise serializers.ValidationError("Wrong Credentials")
+            # see if there is a user with this email 
+            user = User.objects.get(email=data["username_or_email"])
+            if not user.check_password(data["password"]) :
+                raise serializers.ValidationError("Wrong Credentials")
         
         return data

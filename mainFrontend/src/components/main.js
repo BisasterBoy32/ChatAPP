@@ -16,10 +16,11 @@ export default () => {
             )
         );
     };
-
+    console.log(user.state.user.profile.icon)
     return (
         <div>
             <h1> Hello To the main page the user is {user.state.user.username} </h1>
+            <img src={user.state.user.profile.icon} />
             <br />
             <button onClick={logout}> click here to logout </button>
         </div>
