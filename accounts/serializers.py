@@ -51,3 +51,21 @@ class LoginSer(serializers.Serializer):
                 raise serializers.ValidationError("Wrong Credentials")
         
         return data
+
+class ValidateUsernameEmailSer(serializers.Serializer):
+    username = serializers.CharField(required=False ,allow_blank=True)
+    email = serializers.CharField(required=False ,allow_blank=True)
+
+    def validate(self , data):
+        username = data["username"]
+        email = data["email"]
+
+        if username :
+            if User.objects.filter(username=username).exists() :
+                raise serializers.ValidationError("user with this username already exists")
+            return data
+        
+        else :
+            if User.objects.filter(email=email).exists() :
+                raise serializers.ValidationError("user with this email already exists")
+            return data

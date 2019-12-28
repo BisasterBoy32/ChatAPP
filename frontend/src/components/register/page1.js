@@ -1,7 +1,8 @@
-import React from "react";
+import React ,{ useState } from "react";
 import { Link } from "react-router-dom";
 import { Formik } from 'formik';
 import styled from "styled-components";
+import axios from "axios";
 
 const Wrapper = styled.div`
     display : flex;
@@ -54,6 +55,37 @@ const Error = styled.div`
 
 export default ({data ,setData , setPage}) => {
 
+    const [emailError, setEmailError] = useState(false);
+    const [usernameError , setUsernameError] = useState(false);
+
+    // this will be run to check if there is a user 
+    // with the typed username 
+    const handleUsernameErrors = (e) => {
+        axios.post("/accounts/validate/",{
+            username : e.target.value,
+            email : ""
+        })
+        .then(
+            res => setUsernameError(false),
+            err => setUsernameError(true)
+        )
+
+    }
+
+    // this will be run to check if there is a user 
+    // with the typed username 
+    const handleEmailErrors = (e) => {
+        axios.post("/accounts/validate/",{
+            username : "",
+            email : e.target.value
+        })
+        .then(
+            res => setEmailError(false),
+            err => setEmailError(true)
+        )
+
+    }
+
     return (
         <Wrapper>
             <Title>
@@ -75,6 +107,9 @@ export default ({data ,setData , setPage}) => {
                         if (!values.username) {
                             errors.username = 'this field is required';
                         } 
+                        if (usernameError){
+                            errors.username = 'this username has been token choose another one'
+                        }
                         if (!values.password1) {
                             errors.password1 = 'this field is required';
                         } else if (!PasswordValidator.test(values.password1)) {
@@ -87,7 +122,9 @@ export default ({data ,setData , setPage}) => {
                         if ( values.password1 !== values.password2){
                             errors.password2 = 'two password must match';
                         }
-
+                        if (emailError){
+                            errors.email = 'a user with this email already exists'
+                        }
                         if (!values.email) {
                             errors.email = 'this field is required';
                         } else if (!EmailValidator.test(values.email)) {
@@ -118,7 +155,10 @@ export default ({data ,setData , setPage}) => {
                                 <Input
                                     type="text"
                                     name="username"
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        handleUsernameErrors(e);
+                                    }}
                                     onBlur={handleBlur}
                                     value={values.username}
                                     placeholder="Username"
@@ -131,7 +171,10 @@ export default ({data ,setData , setPage}) => {
                                 <Input
                                     type="email"
                                     name="email"
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        handleEmailErrors(e);
+                                    }}
                                     onBlur={handleBlur}
                                     value={values.email}
                                     placeholder="Email"

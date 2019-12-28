@@ -20,8 +20,6 @@ export default () => {
                     icon : data.icon
                 }
             }
-            
-            debugger
 
             axios.post("/accounts/", values)
                 .then(
@@ -38,7 +36,9 @@ export default () => {
         email : "",
         first_name : "",
         born_date: new Date("December 17, 2000"),
-        submit : false
+        // when click on the second page submit this will be true 
+        // to send the data to the backend 
+        submit : false,
 
     }, onFormSubmit);
 

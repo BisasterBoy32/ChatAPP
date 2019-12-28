@@ -1,28 +1,36 @@
-import React,{useContext} from "react";
-import {UserContext} from "../store/context";
-import { setConfig } from "../helpers";
-import axios from "axios";
+import React from "react";
+import styled from "styled-components";
+import Chat from "./chat";
+import Profile from "./profile_info"
+import Friends from "./friends";
+
+const Container = styled.div`
+    max-width : 1300px;
+    width : 98%;
+    margin : auto;
+    margin-top : 2rem;
+    display : flex;
+`
+
+const Header = styled.div`
+    width : 100%;
+    background-color : #4F98CA;
+    text-align : center;
+    font-size : 1.5rem;
+    font-weigth : 700;
+    padding : .5rem;
+`
 
 export default () => {
 
-    const user = useContext(UserContext);
-    const config = setConfig(user.state.token);
-    const logout = () => {
-        axios.post("/accounts/logout/", null , config)
-        .then(
-            res => user.dispatch({type:"LOGOUT"}),
-            err => user.dispatch(
-                {type:"LOGOUT_FAILED" ,payload : err.response.data}
-            )
-        );
-    };
-    console.log(user.state.user.profile.icon)
     return (
         <div>
-            <h1> Hello To the main page the user is {user.state.user.username} </h1>
-            <img src={user.state.user.profile.icon} />
-            <br />
-            <button onClick={logout}> click here to logout </button>
+        <Profile />
+        <Header> ChatAPP </Header>
+        <Container>
+            <Chat></Chat>
+            <Friends></Friends>
+        </Container>
         </div>
     )
 }

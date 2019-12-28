@@ -15,6 +15,7 @@ from knox.views import LogoutView
 from .serializers import (
     RegisterSerializer,
     LoginSer,
+    ValidateUsernameEmailSer
 )
 
 class RegisterView(ListCreateAPIView):
@@ -81,3 +82,17 @@ class Logout(GenericAPIView):
         user.profile.save()
         view = LogoutView.as_view()
         return view(request._request, *args, **kwargs)
+
+
+class ValidateView(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = ValidateUsernameEmailSer
+
+    def post(self, request, *args, **kwargs):
+        validate_ser = self.get_serializer(data = request.data)
+        validate_ser.is_valid(raise_exception=True)
+        
+        # if there is no error return a response
+        return Response({
+            "response" : "there is no error"
+        })
