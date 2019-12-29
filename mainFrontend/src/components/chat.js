@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Container = styled.div`
     flex : 1.5;
     border : 2px solid #4F98CA;
+    border-radius : 4px;
 `
 
 const Main = styled.div`
@@ -23,7 +24,7 @@ const Button = styled.button`
     font-size : 1.4rem;
     text-align : center;
     cursor : pointer;
-    border : 1px solid  #4F98CA;
+    border : 2px solid  rgb(31, 119, 179);
     padding : .2rem;
 `
 
