@@ -25,6 +25,21 @@ const userReducer = (state , action) => {
                 loading : true,
             }
 
+        case "UPDATE_USER":
+            return {
+                ...state,
+                user: { 
+                    // update user info
+                    ...state.user,
+                    ...res,
+                    profile : {
+                        // update profile info
+                        ...state.user.profile,
+                        ...res.profile
+                    }
+                 },
+            }
+
         case "LOGOUT":
             localStorage.setItem("token", "");
             return {

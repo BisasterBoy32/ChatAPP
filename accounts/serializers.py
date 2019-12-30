@@ -9,6 +9,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ("user","icon","born_date","join_date","active")
         read_only_fields = ["join_date","active","user"]
 
+class UpdateProfileSer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile 
+        fields = ("icon",)
+
 class RegisterSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
 
@@ -34,6 +39,34 @@ class RegisterSerializer(serializers.ModelSerializer):
         user_email = data["email"]
         users = User.objects.all()
         if users.filter(email = user_email).exists():
+            raise serializers.ValidationError("this email already exists")
+        return data
+
+class UpdateUserSer(serializers.ModelSerializer):
+    profile = UpdateProfileSer()
+
+    class Meta:
+        model = User
+        fields = ("username","email","first_name","profile")
+
+    def update(self , instance , validated_data):
+        prfile_data = validated_data.pop("profile")
+        instance.username = validated_data.get("username" , instance.username)
+        instance.email = validated_data.get("email" , instance.email)
+        instance.first_name = validated_data.get("first_name" , instance.first_name)
+        instance.save()
+        
+        profile = instance.profile
+        profile.icon = prfile_data.get("icon" ,profile.icon)
+        profile.save()
+        
+        return instance
+
+    def validate(self , data):
+        user_instance = self.context["request"].user
+        user_email = data["email"]
+        users = User.objects.all()
+        if users.filter(email = user_email).exclude(id=user_instance.id).exists():
             raise serializers.ValidationError("this email already exists")
         return data
     

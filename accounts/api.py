@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from  django.core.exceptions import ObjectDoesNotExist
+from .custom_permissions import IsTheSameUser
 
 from rest_framework.response import Response
 from rest_framework import permissions
@@ -15,7 +16,8 @@ from knox.views import LogoutView
 from .serializers import (
     RegisterSerializer,
     LoginSer,
-    ValidateUsernameEmailSer
+    ValidateUsernameEmailSer,
+    UpdateUserSer
 )
 
 class RegisterView(ListCreateAPIView):
@@ -36,6 +38,23 @@ class RegisterView(ListCreateAPIView):
             "user" : user_ser.data,
             "token" : AuthToken.objects.create(user)[1]
         })
+
+class UpdateUserView(GenericAPIView):
+    serializer_class = UpdateUserSer
+    queryset = User.objects.all()
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsTheSameUser
+    ]
+
+    def post(self , request):
+        user_instance = User.objects.get(id = request.data["profile"]["user"])
+        self.check_object_permissions(request , user_instance)
+        user_ser = self.get_serializer(user_instance ,data = request.data)
+        user_ser.is_valid(raise_exception = True)
+        user = user_ser.save()
+
+        return Response(self.get_serializer(user).data)
 
 class LogInView(GenericAPIView):
     serializer_class = LoginSer

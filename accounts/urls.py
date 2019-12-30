@@ -7,4 +7,5 @@ urlpatterns = [
     path("get_user/",api.GetUserInfoView.as_view()),
     path("logout/",api.Logout.as_view()),
     path("validate/",api.ValidateView.as_view()),
+    path("update/",api.UpdateUserView.as_view()),
 ]
