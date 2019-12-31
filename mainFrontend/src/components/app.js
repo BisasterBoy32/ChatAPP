@@ -1,11 +1,14 @@
 import React , { useEffect ,useContext} from "react";
 import { HashRouter , Route , Switch } from "react-router-dom";
-import PrivateRoute from "./private_route";
-import Main from "./main";
-import Error from "./404";
-import { UserContext } from "../store/context";
 import axios from "axios";
+
+import { UserContext } from "../store/context";
 import { setConfig } from "../helpers";
+
+import PrivateRoute from "./private_route";
+import Main from "./main/index";
+import Error from "./404";
+import Alert from "./alert";
 
 const App = () => {
     const user = useContext(UserContext);
@@ -24,6 +27,7 @@ const App = () => {
     return (
         <HashRouter>
         <div className="container">
+            <Alert />
             <Switch>
                 <PrivateRoute exact path="/"  Component={Main} />
                 <Route path="" component={Error} />

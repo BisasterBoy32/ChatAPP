@@ -8,7 +8,6 @@ import { UserContext } from "../../store/context"
 import styled from "styled-components";
 import axios from "axios";
 import { setConfig } from "../../helpers";
-import { FaSignOutAlt } from "react-icons/fa";
 import ProfileInfo from "./information"
 
 const Container = styled.div`
@@ -34,14 +33,19 @@ const HumbergerBTN = styled.button`
     padding : 8px 6px;
 `
 
-const Logout = styled.div`
-    position : absolute;
-    bottom : 5px;
-    left : 5px;
-    cursor : pointer;
-    color : #000;
+const Logout = styled.button`
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    cursor: pointer;
+    padding: .4rem .8rem;
+    border: 1px solid rgb(235,64,64);
+    background-color : rgb(235, 64, 64);
+    border-radius: 3px;
+    color : #fff;
+    transition : transform 300ms ease-in-out;
     &:hover {
-        color : #fff;
+        transform : scale(1.2);
     }
 `
 
@@ -93,9 +97,7 @@ export default () => {
                     </HumbergerBTN>
                 </Humberger>
                 <ProfileInfo />
-                <Logout onClick={logout}>
-                    Logout <FaSignOutAlt />
-                </Logout>
+                <Logout onClick={logout}> Logout </Logout>
         </Container>
     )
 }

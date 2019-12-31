@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Chat from "./chat";
-import Profile from "./profile"
+import Profile from "../profile"
 import Friends from "./friends";
 
 const Container = styled.div`

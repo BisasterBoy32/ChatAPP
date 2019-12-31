@@ -1,5 +1,6 @@
 import React ,{useReducer} from "react";
 import { UserContext } from "./context";
+import { AlerContext } from "./context";
 
 const userInitState = {
     user : { username : "anonymouse"},
@@ -66,15 +67,53 @@ const userReducer = (state , action) => {
     }
 }
 
+// Error Context
+const alertInitValue = {
+    type: "",
+    msg : ""
+};
+
+const alertReducer = (state ,action) => {
+    switch(action.type){
+        case "INFO_ERRO":
+            return {
+                ...state,
+                type : "error",
+                msg: action.payload
+            }
+        case "INFO_SUCCESS":
+            return {
+                ...state,
+                type: "success",
+                msg: action.payload
+            }
+        case "CLOSE_ALERT":
+            return {
+                ...state,
+                msg: ""
+            }
+        default:
+            return state;
+    }
+}
+
+
+
+
 export default ({children}) => {
 
     const [userState , userDispatch] = useReducer(userReducer , userInitState);
+    const [alertState, alertDispach] = useReducer(alertReducer, alertInitValue);
 
     return (
         <UserContext.Provider 
             value={{ state : userState , dispatch : userDispatch}}
         > 
-            {children}
+            <AlerContext.Provider value={{
+                state: alertState , dispatch : alertDispach
+            }}>
+                {children}
+            </AlerContext.Provider>
         </UserContext.Provider>
     )
 }

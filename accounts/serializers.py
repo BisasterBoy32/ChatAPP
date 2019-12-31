@@ -67,7 +67,7 @@ class UpdateUserSer(serializers.ModelSerializer):
         user_email = data["email"]
         users = User.objects.all()
         if users.filter(email = user_email).exclude(id=user_instance.id).exists():
-            raise serializers.ValidationError("this email already exists")
+            raise serializers.ValidationError("this email has been token choose another one please")
         return data
     
 class LoginSer(serializers.Serializer):
