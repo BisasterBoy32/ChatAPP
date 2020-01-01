@@ -2,7 +2,7 @@ import React , { useEffect ,useContext} from "react";
 import { HashRouter , Route , Switch } from "react-router-dom";
 import axios from "axios";
 
-import { UserContext } from "../store/context";
+import { UserContext ,AccountsContext} from "../store/context";
 import { setConfig } from "../helpers";
 
 import PrivateRoute from "./private_route";
@@ -12,9 +12,10 @@ import Alert from "./alert";
 
 const App = () => {
     const user = useContext(UserContext);
-    
+    const accountsContext = useContext(AccountsContext)
     // see if there is a current user 
     useEffect( () => {
+        // get the login_user
         const config = setConfig(user.state.token);
         user.dispatch({ type : "LOGIN_STARTED"});
         axios.get("/accounts/get_user/", config)
@@ -22,6 +23,13 @@ const App = () => {
             res => user.dispatch({ type : "GET_USER" , payload : res.data}),
             err => user.dispatch({ type : "LOGIN_FAILED", payload : err.response})
         )
+
+        // get all the users and friends
+        axios.get("/accounts/get_all/", config)
+            .then(
+                res => accountsContext.dispatch({ type: "LOAD_ACCOUNTS", payload: res.data }),
+                err => console.log(err.response.data)
+            )
     },[]);
 
     return (

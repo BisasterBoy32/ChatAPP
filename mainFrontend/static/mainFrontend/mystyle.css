@@ -6,6 +6,7 @@ body {
 
 body {
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 * {
@@ -56,5 +57,5 @@ body {
 }
 
 .k {
-    color: rgb(56, 165, 13);
+    color: rgb(174, 216, 219);
 }

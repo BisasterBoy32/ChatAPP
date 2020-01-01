@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Chat from "./chat";
 import Profile from "../profile"
-import Friends from "./friends";
+import Friends from "./friends/index";
 
 const Container = styled.div`
     max-width : 1300px;

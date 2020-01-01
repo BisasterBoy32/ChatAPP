@@ -102,3 +102,19 @@ class ValidateUsernameEmailSer(serializers.Serializer):
             if User.objects.filter(email=email).exists() :
                 raise serializers.ValidationError("user with this email already exists")
             return data
+
+# to get all the user
+class GetUsersSer(serializers.ModelSerializer):
+    icon = serializers.SerializerMethodField()
+    active = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ("username" ,"icon","active")
+
+    def get_icon(self ,object):
+        return object.profile.icon
+
+    def get_active(self ,object):
+        return object.profile.active
+
+      

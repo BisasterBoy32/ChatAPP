@@ -17,7 +17,8 @@ from .serializers import (
     RegisterSerializer,
     LoginSer,
     ValidateUsernameEmailSer,
-    UpdateUserSer
+    UpdateUserSer,
+    GetUsersSer
 )
 
 class RegisterView(ListCreateAPIView):
@@ -115,3 +116,23 @@ class ValidateView(GenericAPIView):
         return Response({
             "response" : "there is no error"
         })
+
+class GetUsersView(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = GetUsersSer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request):
+        # users = User.objects.filter(profile__isnull=False)
+        # using MYSQL Syntax
+        users = User.objects.raw(f'''
+        SELECT DISTINCT * FROM auth_user
+            WHERE auth_user.id IN ( SELECT user_id FROM accounts_profile ) 
+                AND auth_user.id != {request.user.id}
+        ''')
+        print(users)
+        users_ser = self.get_serializer(users ,many=True)
+        
+        return Response(users_ser.data)
