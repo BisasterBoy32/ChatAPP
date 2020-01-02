@@ -109,7 +109,7 @@ class GetUsersSer(serializers.ModelSerializer):
     active = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ("username" ,"icon","active")
+        fields = ("id" ,"username" ,"icon","active")
 
     def get_icon(self ,object):
         return object.profile.icon

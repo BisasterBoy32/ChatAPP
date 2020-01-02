@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Chat from "./chat";
+import Chat from "./chat/index";
 import Profile from "../profile"
 import Friends from "./friends/index";
 

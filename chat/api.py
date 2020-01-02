@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework import permissions
-from .serializes import MessageSerializer
+from .serializes import MessageSerializer ,GetMessagesSer
 from .models import Message
 
 class MessageView(GenericAPIView):
@@ -17,3 +17,14 @@ class MessageView(GenericAPIView):
         message_ser.save()
 
         return Response(message_ser.data)
+    
+    def get(self, request):
+        receiver_id = request.query_params.get("r_id")
+        messages = Message.objects.raw(f'''
+        SELECT chat_message.content, chat_message.id, chat_message.date ,chat_message.receiver_id
+            from chat_message
+                where ( chat_message.receiver_id = {request.user.id} OR chat_message.receiver_id = {receiver_id} )
+                    AND ( chat_message.sender_id = {request.user.id} OR chat_message.sender_id = {receiver_id} )
+        ''')
+        message_ser = GetMessagesSer(messages ,many=True)
+        return  Response(message_ser.data)

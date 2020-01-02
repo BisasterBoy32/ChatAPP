@@ -1,6 +1,11 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
+import axios from "axios";
+
+import { setConfig } from "../../../helpers";
 import { AccountsContext } from "../../../store/context";
+import { UserContext } from "../../../store/context";
+
 
 const Container = styled.div`
     padding : .5rem ;
@@ -41,15 +46,30 @@ const IsActive = styled.div`
 
 export default ({ account, selected }) => {
     const accountsContext = useContext(AccountsContext);
+    const userContext = useContext(UserContext);
+
+    const getSelectedFriend = () => {
+        // change the selected friend
+        accountsContext.dispatch({
+            type: "SELECT_FRIEND",
+            payload: account
+        });
+        // get the selected friend messages
+        const config = setConfig(userContext.state.token);
+        axios.get(`/message/get_messages?r_id=${account.id}`, config)
+            .then(
+                res => accountsContext.dispatch({
+                    type: "GET_MESSAGES",
+                    payload: res.data
+                }),
+                err => console.log(err.response.data)
+            );
+    };
 
     return (
         <Container
             selected={selected}
-            onClick={() => accountsContext.dispatch({
-                type: "SELECT_FRIEND",
-                payload: account
-            })
-            }>
+            onClick={getSelectedFriend}>
             <ProfileImage image={account.icon}>
                 {account.active && <IsActive />}
             </ProfileImage>

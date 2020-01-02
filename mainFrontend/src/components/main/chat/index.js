@@ -1,5 +1,7 @@
-import React from "react";
+import React,{ useContext } from "react";
 import styled from "styled-components";
+import { AccountsContext } from "../../../store/context";
+import ChatBox from "./chat_box";
 
 const Container = styled.div`
     flex : 1.5;
@@ -7,9 +9,6 @@ const Container = styled.div`
     border-radius : 4px;
 `
 
-const Main = styled.div`
-    height : 80vh; 
-`
 const Input = styled.input`
     width : 100%;
     border-top : 2px solid  #4F98CA;
@@ -29,10 +28,13 @@ const Button = styled.button`
 `
 
 export default () => {
+    const accountsContext = useContext(AccountsContext);
+    const messages = accountsContext.state.messages;
+    const selectedFriend = accountsContext.state.selectedFriend;
 
     return (
         <Container>
-            <Main></Main>
+            <ChatBox></ChatBox>
             <form>
                 <Input name="text" type="text" placeholder="Type ypur message..."/>
                 <Button type="submit" >Send</Button>

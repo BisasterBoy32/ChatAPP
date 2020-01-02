@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
+
 from .models import Message
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -16,3 +18,9 @@ class MessageSerializer(serializers.ModelSerializer):
         message.save()
 
         return message
+
+class GetMessagesSer(serializers.Serializer):
+    id = serializers.IntegerField()
+    date = serializers.DateTimeField()
+    content = serializers.CharField()
+    receiver_id = serializers.IntegerField()

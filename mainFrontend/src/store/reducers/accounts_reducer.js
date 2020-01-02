@@ -1,7 +1,8 @@
 export const initAccountsValue = {
     accounts : [],
     friends : [],
-    selectedFriend : null
+    selectedFriend : null,
+    messages : []
 };
 
 export const accountsReducer = (state, action) => {
@@ -15,7 +16,12 @@ export const accountsReducer = (state, action) => {
             return {
                 ...state,
                 selectedFriend: action.payload
-            }     
+            }  
+        case "GET_MESSAGES":
+            return {
+                ...state,
+                messages: action.payload
+            }   
         case "LOAD_ACCOUNTS_FAILED":
             return state
         default:
