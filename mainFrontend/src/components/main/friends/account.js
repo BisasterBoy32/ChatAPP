@@ -49,22 +49,25 @@ export default ({ account, selected }) => {
     const userContext = useContext(UserContext);
 
     const getSelectedFriend = () => {
-        // change the selected friend
-        accountsContext.dispatch({
-            type: "SELECT_FRIEND",
-            payload: account
-        });
-        // get the selected friend messages
         const config = setConfig(userContext.state.token);
+
         axios.get(`/message/get_messages?r_id=${account.id}`, config)
             .then(
-                res => accountsContext.dispatch({
-                    type: "GET_MESSAGES",
-                    payload: res.data
-                }),
+                res => {
+                    // change the selected friend
+                    accountsContext.dispatch({
+                        type: "SELECT_FRIEND",
+                        payload: account
+                    });
+                    // get the selected friend messages
+                    accountsContext.dispatch({
+                        type: "GET_MESSAGES",
+                        payload: res.data
+                    })
+                },
                 err => console.log(err.response.data)
-            );
-    };
+            )   
+        };
 
     return (
         <Container
@@ -75,5 +78,5 @@ export default ({ account, selected }) => {
             </ProfileImage>
             <Username > {account.username} </Username>
         </Container>
-    )
-}
+    )  
+};

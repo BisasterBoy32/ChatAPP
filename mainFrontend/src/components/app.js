@@ -13,6 +13,16 @@ import Alert from "./alert";
 const App = () => {
     const user = useContext(UserContext);
     const accountsContext = useContext(AccountsContext)
+
+    // websocket config
+    let starterURL = "ws://";
+    const URL = window.location.host;
+    if (window.location.href.includes("https") ){
+        starterURL = "wss://";
+    };
+    const endpoint = starterURL + URL + '/chat/'
+    const ws = new WebSocket(endpoint);
+
     // see if there is a current user 
     useEffect( () => {
         // get the login_user
@@ -30,6 +40,20 @@ const App = () => {
                 res => accountsContext.dispatch({ type: "LOAD_ACCOUNTS", payload: res.data }),
                 err => console.log(err.response.data)
             )
+        
+        // websocket config
+        ws.onopen = () => {
+            // on connecting, do nothing but log it to the console
+            console.log('connected')
+        };
+        ws.onmessage = (event) => {
+            // on connecting, do nothing but log it to the console
+            console.log('event : ' ,event)
+        };
+        ws.onerror = (err) => {
+            // on connecting, do nothing but log it to the console
+            console.log('error : ' ,err)
+        };
     },[]);
 
     return (

@@ -6,6 +6,7 @@ export const initAccountsValue = {
 };
 
 export const accountsReducer = (state, action) => {
+
     switch (action.type) {
         case "LOAD_ACCOUNTS":
             return {

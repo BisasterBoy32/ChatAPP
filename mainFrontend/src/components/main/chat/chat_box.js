@@ -8,15 +8,31 @@ const Container = styled.div`
     padding : .5rem;
 `
 
-const Message = styled.div`
+const Content = styled.div`
+    display : flex;
+    align-items :center;
     margin-left : ${props => props.receiver ? "auto" : ""};
     width : max-content;
     max-width : 300px;
+    margin-top : .5rem;
+`
+
+const Message = styled.div`
     background-color : #4F98CA;
     border-radius : 10px;
-    margin-top : .5rem;
     padding : .3rem .6rem;
     color : rgb(38, 39, 39);
+`
+
+const ProfileImage = styled.div`
+    width : 21px;
+    height : 21px;
+    background-image : url(${props => props.image});
+    background-position : center;
+    border-radius: 50%;
+    background-size: contain;
+    border : 1px solid #fff;
+    margin-left : 5px;
 `
 
 export default () => {
@@ -28,13 +44,16 @@ export default () => {
         <Container>
             {messages.length
                 ?
-                messages.map(message => (
-                    <Message
-                        key={message.id}
-                        receiver={selectedFriend.id !== message.receiver_id}>
-                        {message.content}
-                    </Message>
-                ))
+                messages.map(message => {
+                    const isSender = selectedFriend.id !== message.receiver_id;
+
+                    return(
+                        <Content receiver={isSender} key={message.id} >
+                            <Message >  {message.content}  </Message>
+                            {isSender && <ProfileImage image={selectedFriend.icon} />}
+                        </Content>
+                    )
+                })
                 :
                 null
             }
