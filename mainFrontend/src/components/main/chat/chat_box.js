@@ -4,8 +4,10 @@ import styled from "styled-components";
 import { AccountsContext } from "../../../store/context";
 
 const Container = styled.div`
-    height : 80vh; 
-    padding : .5rem;
+    height: calc(100% - 5.4rem);
+    padding : 0 .5rem;
+    overflow-y : scroll;
+    margin : .3rem 0;
 `
 
 const Content = styled.div`

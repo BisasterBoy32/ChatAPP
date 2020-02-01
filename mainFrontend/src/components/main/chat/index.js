@@ -1,14 +1,14 @@
 import React,{ useContext,useState } from "react";
 import styled from "styled-components";
-import { AccountsContext ,UserContext} from "../../../store/context";
+import { AccountsContext ,UserContext ,WebSocketContext} from "../../../store/context";
 import ChatBox from "./chat_box";
-import { setConfig } from "../../../helpers";
-import axios from "axios";
 
 const Container = styled.div`
     flex : 1.5;
     border : 2px solid #4F98CA;
     border-radius : 4px;
+    margin-left : ${props => props.shrink ? "280px" : "1px"};
+    transition : margin 300ms ease-in-out;
 `
 
 const Input = styled.input`
@@ -29,31 +29,28 @@ const Button = styled.button`
     padding : .2rem;
 `
 
-export default () => {
+export default ({showProfile}) => {
     const accountsContext = useContext(AccountsContext);
     const selectedFriend = accountsContext.state.selectedFriend;
     const userContext = useContext(UserContext);
+    const websocketContext = useContext(WebSocketContext);
     const [message, setMessage] = useState("");
-
+    
     const sendMessage = (e) => {
         e.preventDefault();
         const values = {
+            command : "create_message",
             date : new Date(),
             receiver : selectedFriend.id,
             content: message
-        }
-
+        };  
         // create new message
-        const config = setConfig(userContext.state.token);
-        axios.post("/message/", values, config)
-        .then(
-            res => setMessage(""),
-            err => console.log(err.response.data)
-        )
+        websocketContext.websockets[selectedFriend.id].send(JSON.stringify(values));
+        setMessage("");
     };
 
     return (
-        <Container>
+        <Container shrink={showProfile}>
             <ChatBox></ChatBox>
             <form>
                 <Input 

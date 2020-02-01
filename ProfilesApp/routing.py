@@ -10,7 +10,7 @@ application = ProtocolTypeRouter({
         AuthMiddlewareStack(
             URLRouter(
                 [   
-                    path("chat/",ChatConsumer)
+                    path("chat/<str:token>/<int:receiver>/",ChatConsumer)
                 ]
             )
         )

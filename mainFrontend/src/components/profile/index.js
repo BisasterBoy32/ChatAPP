@@ -1,8 +1,7 @@
 import React , { 
     useContext,
     useEffect ,
-    useRef,
-    useState
+    useRef
 } from "react";
 import { UserContext } from "../../store/context"
 import styled from "styled-components";
@@ -13,7 +12,7 @@ import ProfileInfo from "./information"
 const Container = styled.div`
     position : absolute;
     top : 50px;
-    left : ${props => props.show ? "0px" : "-250px"};
+    left : ${props => props.show ? "0px" : "-280px"};
     bottom : 0px;
     width : 300px;
     background-color : #4F98CA;
@@ -30,7 +29,7 @@ const Humberger = styled.div`
 `
 
 const HumbergerBTN = styled.button`
-    padding : 8px 6px;
+    padding : 0px 1px;
 `
 
 const Logout = styled.button`
@@ -67,10 +66,9 @@ function closeProfile(ref ,setShow) {
   });
 }
 
-export default () => {
+export default ({show ,setShow}) => {
     const userContext = useContext(UserContext);
     const wrapperRef = useRef(null);
-    const [show, setShow] = useState(false);
     closeProfile(wrapperRef ,setShow)
 
     const logout = () => {
@@ -96,7 +94,7 @@ export default () => {
                         </span>
                     </HumbergerBTN>
                 </Humberger>
-                <ProfileInfo />
+                {show && <ProfileInfo />}
                 <Logout onClick={logout}> Logout </Logout>
         </Container>
     )

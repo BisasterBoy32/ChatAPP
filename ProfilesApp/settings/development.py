@@ -4,7 +4,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 INSTALLED_APPS += [
-    'debug_toolbar'
+    'debug_toolbar',
 ]
 
 MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware',]
@@ -40,7 +40,7 @@ DATABASES = {
         'NAME': "profiles",
         'USER': "root",
         'PASSWORD': "",
-        'HOST': "localhost",
+        'HOST': "127.0.0.1",
         'PORT': '3306'
     }
 }

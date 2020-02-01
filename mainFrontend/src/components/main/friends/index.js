@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext,useState } from "react";
 import styled from "styled-components";
 import { AccountsContext } from "../../../store/context";
 import Account from "./account";
@@ -38,17 +38,17 @@ const Input = styled.input`
 
 export default () => {
     const accountsContext = useContext(AccountsContext);
-    const { selectedFriend } = accountsContext.state
-    
+    const { selectedFriend } = accountsContext.state;
+
     return (
         <Container>
             <Title > Friends </Title>
-            {accountsContext.state.accounts.map(
-                account => (
+            {accountsContext.state.friends.map(
+                friend => (
                     <Account
-                        key={account.username}
-                        account={account}
-                        selected={selectedFriend && account.username === selectedFriend.username}
+                        key={friend.username}
+                        friend={friend}
+                        selected={selectedFriend && friend.username === selectedFriend.username}
                     />
                 )
             )

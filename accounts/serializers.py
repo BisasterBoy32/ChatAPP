@@ -1,7 +1,8 @@
-from rest_framework import serializers
-from .models import Profile
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from rest_framework import serializers
+from .models import Profile 
+from chat.models import Message
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -107,14 +108,28 @@ class ValidateUsernameEmailSer(serializers.Serializer):
 class GetUsersSer(serializers.ModelSerializer):
     icon = serializers.SerializerMethodField()
     active = serializers.SerializerMethodField()
+    unReadMessages = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ("id" ,"username" ,"icon","active")
+        fields = ("id" ,"username" ,"icon","active","unReadMessages")
 
     def get_icon(self ,object):
         return object.profile.icon
 
     def get_active(self ,object):
         return object.profile.active
+
+    def get_unReadMessages(self ,object):
+        loged_in_user = self.context["request"].user 
+        friend = object
+        # get all the messages sent by this friend
+        # to this logged in user 
+        unread_messages = Message.objects.filter(
+            sender=friend,
+            receiver=loged_in_user,
+            hasBeenRead = False
+        )  
+        return unread_messages.count()
 
       

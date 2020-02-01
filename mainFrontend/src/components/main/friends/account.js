@@ -3,18 +3,22 @@ import styled from "styled-components";
 import axios from "axios";
 
 import { setConfig } from "../../../helpers";
-import { AccountsContext } from "../../../store/context";
-import { UserContext } from "../../../store/context";
+import { 
+    AccountsContext,
+    UserContext,
+} from "../../../store/context";
+
 
 
 const Container = styled.div`
-    padding : .5rem ;
+    padding : .5rem;
     display : flex;
     cursor : pointer;
     background-color : ${props => props.selected ? "rgb(174, 216, 219)" : "transparent"};
     &:hover {
         background-color : rgb(174, 216, 219);
     }
+    position : relative;
 `
 
 const Username = styled.div`
@@ -44,20 +48,34 @@ const IsActive = styled.div`
     border: 1px solid #fff;
 `
 
-export default ({ account, selected }) => {
+const UnreadMessages = styled.div`
+position: absolute;
+background-color: rgb(243,83,83);
+color: #fff;
+border-radius: 50%;
+width: 25px;
+height: 25px;
+padding: 4px;
+text-align: center;
+right: 30px;
+top: 50%;
+transform: translateY(-50%);
+`
+
+export default ({ friend, selected }) => {
     const accountsContext = useContext(AccountsContext);
     const userContext = useContext(UserContext);
-
+    
     const getSelectedFriend = () => {
         const config = setConfig(userContext.state.token);
 
-        axios.get(`/message/get_messages?r_id=${account.id}`, config)
+        axios.get(`/message/get_messages?r_id=${friend.id}`, config)
             .then(
                 res => {
                     // change the selected friend
                     accountsContext.dispatch({
                         type: "SELECT_FRIEND",
-                        payload: account
+                        payload: friend
                     });
                     // get the selected friend messages
                     accountsContext.dispatch({
@@ -73,10 +91,17 @@ export default ({ account, selected }) => {
         <Container
             selected={selected}
             onClick={getSelectedFriend}>
-            <ProfileImage image={account.icon}>
-                {account.active && <IsActive />}
+            <ProfileImage image={friend.icon}>
+                {friend.active && <IsActive />}
             </ProfileImage>
-            <Username > {account.username} </Username>
+            <Username > {friend.username} </Username>
+            { 
+                friend.unReadMessages 
+                ?  
+                <UnreadMessages>{friend.unReadMessages}</UnreadMessages>
+                : 
+                undefined 
+            }
         </Container>
     )  
 };

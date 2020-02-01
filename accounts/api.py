@@ -132,7 +132,21 @@ class GetUsersView(GenericAPIView):
             WHERE auth_user.id IN ( SELECT user_id FROM accounts_profile ) 
                 AND auth_user.id != {request.user.id}
         ''')
-        print(users)
         users_ser = self.get_serializer(users ,many=True)
         
         return Response(users_ser.data)
+
+# friend Invitation
+class InviteUserView(GenericAPIView):
+    queryset = User.objects.all()
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def post(self, request):
+        user = request.user
+        friend_id = request.data["friend"]
+        friend = User.objects.get(pk=friend_id)
+        user.profile.add_friend(friend.profile)
+
+        return Response({"success" : "success"})
