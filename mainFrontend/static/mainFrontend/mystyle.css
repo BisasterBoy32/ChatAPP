@@ -56,6 +56,20 @@ body {
     }
 }
 
+/**********************
+    SPEACIAL
+***********************/
+.add-user {
+    color: rgb(43, 226, 68);
+    font-size: 1rem;
+    transition: transform 300ms ease-in-out;
+}
+
+.add-user:hover {
+    transform: scale(1.6);
+}
+
 .k {
-    color: rgb(243, 83, 83);
+    color: rgb(43, 226, 68);
+
 }

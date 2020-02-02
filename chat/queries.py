@@ -15,3 +15,18 @@ def get_messages(user_id ,receiver_id):
 
 def get_current_user(token):
     return User.objects.raw(f'SELECT user_id as id FROM knox_authtoken WHERE token_key = "{token}"')
+
+def get_friends(u_p_id):
+    return User.objects.raw(
+        f'''
+        SELECT id FROM auth_user 
+            WHERE id IN (
+                SELECT user_id from accounts_profile 
+                    WHERE id != {u_p_id} 
+                    AND ( 
+                        id IN ( SELECT inviter_id from accounts_friendship WHERE friend_id = {u_p_id} OR inviter_id = {u_p_id} )
+                        OR id IN ( SELECT friend_id from accounts_friendship WHERE friend_id = {u_p_id} OR inviter_id = {u_p_id} ) 
+                    )
+            )
+        '''
+    )

@@ -2,6 +2,7 @@ import React, { useContext,useState } from "react";
 import styled from "styled-components";
 import { AccountsContext } from "../../../store/context";
 import Account from "./account";
+import Friend from "./friend";
 
 const Container = styled.div`
     flex : .5;
@@ -15,14 +16,21 @@ const Container = styled.div`
 
 const Title = styled.div`
     text-align : center;
-    background-color : #4F98CA;
     font-size : 1.4rem;
-    padding : .2rem;
+    padding : .4rem 0;
     position : sticky;
     top : 0px;
     right : 0px;
     left : 0px;
     z-index : 1;
+    cursor : pointer;
+    &:hover{
+        color : white;
+    }
+    flex : .5;
+    width : 100%;
+    border  : ${props => props.selected ? "1px solid black" : ""};
+    color  : ${props => props.selected ? "white" : "black"};
 `
 
 const Input = styled.input`
@@ -36,19 +44,39 @@ const Input = styled.input`
     margin-top: 550px;
 `
 
+const Header = styled.div`
+    display : flex;
+    background-color : #4F98CA;
+`
+
 export default () => {
     const accountsContext = useContext(AccountsContext);
     const { selectedFriend } = accountsContext.state;
+    const [showFriends, setShowFriends] = useState(true)
 
     return (
         <Container>
-            <Title > Friends </Title>
-            {accountsContext.state.friends.map(
-                friend => (
+            <Header>
+                <Title selected={showFriends} onClick={() => setShowFriends(true)}> Friends </Title>
+                <Title selected={!showFriends} onClick={() => setShowFriends(false)}> All Users </Title>
+            </Header>
+            { showFriends && 
+                accountsContext.state.friends.map(
+                    friend => (
+                        <Friend 
+                            key={friend.username}
+                            friend={friend}
+                            selected={selectedFriend && friend.username === selectedFriend.username}
+                        />
+                    )
+                )
+            }
+            {!showFriends &&
+                accountsContext.state.accounts.map(
+                account => (
                     <Account
-                        key={friend.username}
-                        friend={friend}
-                        selected={selectedFriend && friend.username === selectedFriend.username}
+                        key={account.username}
+                        account={account}
                     />
                 )
             )

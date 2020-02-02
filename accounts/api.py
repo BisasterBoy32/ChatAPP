@@ -18,8 +18,10 @@ from .serializers import (
     LoginSer,
     ValidateUsernameEmailSer,
     UpdateUserSer,
-    GetUsersSer
+    GetUsersSer,
+    GetFriendsSer
 )
+from chat.queries import get_friends
 
 class RegisterView(ListCreateAPIView):
     serializer_class = RegisterSerializer
@@ -150,3 +152,18 @@ class InviteUserView(GenericAPIView):
         user.profile.add_friend(friend.profile)
 
         return Response({"success" : "success"})
+
+# friend Invitation
+class GetFriendsView(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = GetFriendsSer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request):
+        user_profile_id = request.user.profile.id   
+        friends = get_friends(user_profile_id)
+        users_ser = self.get_serializer(friends ,many=True)
+
+        return Response(users_ser.data)

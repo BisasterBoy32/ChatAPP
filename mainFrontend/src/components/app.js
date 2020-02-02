@@ -33,7 +33,7 @@ const App = () => {
             )
 
         // get all friends
-        axios.get("/accounts/get_all/", config)
+        axios.get("/accounts/get_friends/", config)
             .then(
                 res => accountsContext.dispatch({ type: "LOAD_FRIENDS", payload: res.data }),
                 err => console.log(err.response.data)

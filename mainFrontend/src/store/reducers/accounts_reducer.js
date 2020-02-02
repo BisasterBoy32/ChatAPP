@@ -13,7 +13,7 @@ export const accountsReducer = (state, action) => {
         case "LOAD_ACCOUNTS":
             return {
                 ...state,
-                friends : action.payload
+                accounts : action.payload
             }
         case "LOAD_FRIENDS":
             return {

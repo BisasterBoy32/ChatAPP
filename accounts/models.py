@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User 
 from django.utils import timezone
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 
 class Profile(models.Model):
     user = models.OneToOneField(User ,on_delete=models.CASCADE)
@@ -10,16 +11,19 @@ class Profile(models.Model):
     join_date = models.DateTimeField(default=timezone.now)
     born_date = models.DateTimeField(blank=True)
 
-    def get_friends(self):
-        friendships = FriendShip.objects.filter(Q(inviter=self) | Q(friend=self)).all()
-        friends = friendships.inviter
-        # for friendship in friendships:
-        #     if friendship.inviter == self :
-        #         friend = friendship.friend
-        #     else :
-        #         friend = friendship.inviter
-        #     print(friend)
-        # return friends
+    #check if there is a friendship
+    #between this profile and a target profile
+    def get_friendship(self, target_id):
+        try :
+            friendship = FriendShip.objects.get(
+                Q(inviter = self.id ,friend=target_id)
+                | 
+                Q(inviter = target_id ,friend=self.id)
+            )
+            print("freindship : ",self.user.username)
+        except ObjectDoesNotExist:
+            return False 
+        return friendship
 
     def add_friend(self, friend):
         frirnd_ship = FriendShip(inviter=self, friend=friend)

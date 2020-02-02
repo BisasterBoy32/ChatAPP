@@ -104,8 +104,37 @@ class ValidateUsernameEmailSer(serializers.Serializer):
                 raise serializers.ValidationError("user with this email already exists")
             return data
 
-# to get all the user
+# to get the friends
 class GetUsersSer(serializers.ModelSerializer):
+    icon = serializers.SerializerMethodField()
+    active = serializers.SerializerMethodField()
+    friendship = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ("id" ,"username" ,"icon","active","friendship")
+
+    def get_icon(self ,object):
+        return object.profile.icon
+
+    def get_active(self ,object):
+        return object.profile.active
+
+    def get_friendship(self ,object):
+        user = self.context["request"].user 
+        friendship = object.profile.get_friendship(user.profile.id)
+        if friendship and friendship.accepted:
+            return 'true'
+        elif friendship :
+            return 'holded'
+        else :
+            return 'false'
+
+    def get_friendship_state(self ,object):
+        return object.profile.active
+
+# to get all the user
+class GetFriendsSer(serializers.ModelSerializer):
     icon = serializers.SerializerMethodField()
     active = serializers.SerializerMethodField()
     unReadMessages = serializers.SerializerMethodField()
@@ -131,5 +160,4 @@ class GetUsersSer(serializers.ModelSerializer):
             hasBeenRead = False
         )  
         return unread_messages.count()
-
       
