@@ -6,8 +6,10 @@ export const initAccountsValue = {
 };
 
 export const accountsReducer = (state, action) => {
-    let {friends} = state 
-    let newFriends
+    let {friends} = state; 
+    let newFriends;
+    let {accounts} = state;
+    let newAccounts;
 
     switch (action.type) {
         case "LOAD_ACCOUNTS":
@@ -59,9 +61,23 @@ export const accountsReducer = (state, action) => {
             return {
                 ...state,
                 friends : newFriends
-            } 
+            };
         case "LOAD_ACCOUNTS_FAILED":
-            return state
+            return state;
+
+        case "CHANGE_FRIENDSHIP":
+            // after the request sended succefully
+            // change the friendship state of this user
+            newAccounts = accounts.map( account => {
+                if (account.id === action.payload){
+                    account.friendship = "holded"
+                }
+                return account;
+            });
+            return {
+                ...state,
+                accounts: [...newAccounts]
+            }
         default:
             return state;
     }

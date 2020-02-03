@@ -23,7 +23,7 @@ export default () => {
     useEffect(() => {
         setTimeout(() => {
             dispatch({ type: "CLOSE_ALERT" })
-        }, 4000)
+        }, 15000)
     }, [state.msg]);
         if ( state.msg ){
             return (

@@ -1,10 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import { FaUserPlus,FaPaperPlane } from "react-icons/fa"
+import { FaUserPlus,FaPaperPlane,FaUserFriends } from "react-icons/fa"
+import axios from "axios";
+import  { setConfig } from "../../../helpers"
 
 import {
     AccountsContext,
-    UserContext,
+    AlerContext,
+    UserContext
 } from "../../../store/context";
 
 
@@ -39,19 +42,68 @@ const Invite = styled.div`
     transform : translate-Y(-50%);
     right : 10px;
     cursor : pointer;
-
 `
 
 
 export default ({ account }) => {
+
+    const [loader , setLoader] = useState(false)
+    const alertContext = useContext(AlerContext);
+    const accountsContext = useContext(AccountsContext);
+    const userContext = useContext(UserContext);
+
+    const sendRequest = () => {
+        // show the loader
+        setLoader(true);
+
+        const config = setConfig(userContext.state.token);
+
+        // send a friend request to this user
+        axios.post('/accounts/send_invite/', { friend: account.id }, config)
+            .then(
+                (res) => {
+                    // change the state of the friendship for this user
+                    accountsContext.dispatch({
+                        type : "CHANGE_FRIENDSHIP",
+                        payload : account.id
+                    });
+                    alertContext.dispatch({
+                        type: "INFO_SUCCESS",
+                        payload: "your request has been sent succefully"
+                    });
+                    setLoader(false);
+                },
+                (err) =>{
+                    // show an error
+                    alertContext.dispatch({
+                        type: "INFO_ERRO",
+                        payload: "something went wrong! try again later...."
+                    });
+                    // hide the loader
+                    setLoader(false);
+                } 
+            )
+    };
 
     return (
         <Container>
             <ProfileImage image={account.icon}></ProfileImage>
             <Username > {account.username} </Username>
             <Invite>
-                {account.friendship === "false" ? <FaUserPlus className="add-user"></FaUserPlus> : ""}
-                {account.friendship === "holded" ? <FaPaperPlane className="add-user"></FaPaperPlane> : ""}
+                {
+                    account.friendship === "false" && loader ? 
+                    <div className="request-loader"></div> :
+                    account.friendship === "false" ? 
+                    <FaUserPlus className="add-user" onClick={sendRequest}></FaUserPlus> : ""
+                }
+                {
+                    account.friendship === "holded" ?
+                    <FaPaperPlane className="request"></FaPaperPlane> : ""
+                }
+                {
+                    account.friendship === "true" ?
+                    <FaUserFriends className="friend"></FaUserFriends> : ""
+                }
             </Invite>
         </Container>
     )

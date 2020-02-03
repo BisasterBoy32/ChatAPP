@@ -4,6 +4,7 @@ import Chat from "./chat/index";
 import Profile from "../profile"
 import Friends from "./friends/index";
 import {AccountsContext, WebSocketContext} from "../../store/context";
+import Notifications from "./notifications/index.js";
 
 const Container = styled.div`
     max-width : 1300px;
@@ -39,7 +40,7 @@ export default () => {
     return (
         <div>
         <Profile show={show} setShow={setShow}/>
-        <Header> ChatAPP </Header>
+            <Header> <Notifications></Notifications> </Header>
         <Container>
             <Chat showProfile={show}></Chat>
             <Friends></Friends>

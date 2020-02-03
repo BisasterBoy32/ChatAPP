@@ -40,6 +40,28 @@ body {
     animation: lds-hourglass 1.2s infinite;
 }
 
+/* Loader for send request */
+.request-loader {
+    display: inline-block;
+    position: relative;
+    width: 15px;
+    height: 15px;
+    font-size: .8rem;
+    color: rgb(33, 115, 221);
+}
+
+.request-loader:after {
+    content: " ";
+    display: block;
+    border-radius: 50%;
+    width: 0;
+    height: 0;
+    box-sizing: border-box;
+    border: 10px solid rgb(33, 115, 221);
+    border-color: rgb(33, 115, 221) transparent rgb(33, 115, 221) transparent;
+    animation: lds-hourglass 1.2s infinite;
+}
+
 @keyframes lds-hourglass {
     0% {
         transform: rotate(0);
@@ -60,13 +82,31 @@ body {
     SPEACIAL
 ***********************/
 .add-user {
-    color: rgb(43, 226, 68);
+    color: rgb(33, 115, 221);
     font-size: 1rem;
     transition: transform 300ms ease-in-out;
 }
 
+.friend {
+    color: rgb(59, 252, 69);
+    font-size: 1rem;
+    transition: transform 300ms ease-in-out;
+}
+
+.request {
+    color: rgb(235, 70, 59);
+    font-size: 1rem;
+    transition: transform 300ms ease-in-out;
+}
+
+
 .add-user:hover {
     transform: scale(1.6);
+}
+
+.bell {
+    margin-left: 6px;
+    color: rgb(240, 52, 46);
 }
 
 .k {

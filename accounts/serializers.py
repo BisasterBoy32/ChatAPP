@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import Profile 
+from .models import Profile ,Notification
 from chat.models import Message
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -160,4 +160,35 @@ class GetFriendsSer(serializers.ModelSerializer):
             hasBeenRead = False
         )  
         return unread_messages.count()
+
+
+class NotificationSer(serializers.ModelSerializer):
+    # user that sent a request or accepted it
+    user = serializers.SerializerMethodField()
+    # username the of user that sent a request or accepted it
+    username = serializers.SerializerMethodField()
+    # icon of the user that sent a request or accepted it
+    icon = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Notification
+        fields = ("id" ,"type" ,"icon","username","user")
+
+    def get_user(self ,object):
+        if object.type == "request":
+            return object.friendship.inviter.user.id
+        else :
+            return  object.friendship.friend.user.id
+
+    def get_username(self ,object):
+        if object.type == "request":
+            return object.friendship.inviter.user.username
+        else :
+            return  object.friendship.friend.user.username
+
+    def get_icon(self ,object):
+        if object.type == "request":
+            return object.friendship.inviter.icon
+        else :
+            return  object.friendship.friend.icon
       

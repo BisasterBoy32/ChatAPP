@@ -26,9 +26,17 @@ class Profile(models.Model):
         return friendship
 
     def add_friend(self, friend):
-        frirnd_ship = FriendShip(inviter=self, friend=friend)
-        frirnd_ship.save()
-        return frirnd_ship
+        friend_ship = FriendShip(inviter=self, friend=friend)
+        friend_ship.save()
+        # create a notification to this friend
+        # so he can accept or reject this invite
+        notification = Notification(
+            profile = friend,
+            type = "request",
+            friendship = friend_ship
+        )
+        notification.save()
+        return friend_ship
 
     def __str__(self):
         return self.user.username
@@ -43,3 +51,11 @@ class FriendShip(models.Model):
 
     def __self__():
         return f"friendship between {self.inviter} || {self.friend}"
+
+class Notification(models.Model):
+    profile = models.ForeignKey(Profile ,on_delete=models.CASCADE ,related_name="notifications") 
+    type = models.CharField(max_length=256)
+    friendship = models.ForeignKey(FriendShip ,on_delete=models.CASCADE ,related_name="notifications")
+
+    def __self__():
+        return f"Notification to {self.profile.user.username}"

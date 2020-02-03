@@ -13,13 +13,15 @@ from rest_framework.generics import (
 from knox.models import AuthToken
 from knox.views import LogoutView
 
+from .models import Notification
 from .serializers import (
     RegisterSerializer,
     LoginSer,
     ValidateUsernameEmailSer,
     UpdateUserSer,
     GetUsersSer,
-    GetFriendsSer
+    GetFriendsSer,
+    NotificationSer
 )
 from chat.queries import get_friends
 
@@ -167,3 +169,35 @@ class GetFriendsView(GenericAPIView):
         users_ser = self.get_serializer(friends ,many=True)
 
         return Response(users_ser.data)
+
+# get all the notification of this user
+
+class GetNotifications(GenericAPIView):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request):
+        user = request.user
+        notifications = user.profile.notifications
+        notifications_ser = self.get_serializer(notifications ,many=True)
+
+        return Response(notifications_ser.data)
+
+    def post(self, request):
+        notification = Notification.objects.get(pk = request.data["id"])
+        response = request.data["response"]
+        if response == "accept":
+            # apdate the friendship to accepted 
+            # between current user and the user
+            # who sent the friendship request 
+            friendship = notification.friendship
+            friendship.accepted = True
+            friendship.save()
+            notification.delete() 
+        else :
+            notification.friendship.delete()
+        
+        return Response({"success" : "success"})

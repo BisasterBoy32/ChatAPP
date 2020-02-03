@@ -11,7 +11,7 @@ import ProfileInfo from "./information"
 
 const Container = styled.div`
     position : absolute;
-    top : 50px;
+    top : 60px;
     left : ${props => props.show ? "0px" : "-280px"};
     bottom : 0px;
     width : 300px;
