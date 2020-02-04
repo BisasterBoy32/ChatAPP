@@ -7,6 +7,11 @@ import {
     UserContext 
 } from "./context";
 
+// we open a channel between all the friends and this user
+// in the main.index check it for more information
+// what we are doing here is just building a component that  
+// contains the logic to open this channels and store it 
+// in a context so we can access all this channels and send from it
 export default ({children}) => {
     const [websockets, setWebsockets] = useState({});
     const userContext = useContext(UserContext);
@@ -51,6 +56,7 @@ export default ({children}) => {
         if (window.location.href.includes("https") ){
             starterURL = "wss://";
         };
+        // to open a websocket for each friend
         const url_prams = `${userContext.state.token.substring(0,8)}/${receiver_id}/`;
         const endpoint = `${starterURL}${URL}/chat/${url_prams}`;
         const ws = new WebSocket(endpoint);

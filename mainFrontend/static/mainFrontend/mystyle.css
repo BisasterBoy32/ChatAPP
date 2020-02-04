@@ -109,6 +109,14 @@ body {
     color: rgb(240, 52, 46);
 }
 
+.accept-notify:hover {
+    background-color: rgb(238, 90, 85);
+}
+
+.accept-notify {
+    cursor : pointer;
+}
+
 .k {
     color: rgb(43, 226, 68);
 

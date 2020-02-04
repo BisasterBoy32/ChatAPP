@@ -7,12 +7,13 @@ import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
 import axios from "axios";
 import { setConfig } from "../../../helpers";
-import { UserContext, AlerContext, NotificationContext } from "../../../store/context";
+import { UserContext, AlerContext, NotificationContext, AccountsContext } from "../../../store/context";
 
 export default ({ notification }) => {
     const userContext = useContext(UserContext);
     const alertContext = useContext(AlerContext);
     const notContext = useContext(NotificationContext);
+    const accountsContext = useContext(AccountsContext);
     const [disabled, setDisabled] = useState(false)
 
     const responseToRequest = (response) => {
@@ -37,6 +38,30 @@ export default ({ notification }) => {
                             :
                             `you rejected ${notification.username} friendship request`
                     });
+                    // if he rejecte then this friendship is gonna get deleted
+                    if (response === "reject") {
+                        accountsContext.dispatch({
+                            type: "REQUEST_REJECTED",
+                            payload: notification.user
+                        });
+                    }else {
+                        // find this user and added to the friends list
+                        let friend = accountsContext.state.accounts.find(
+                            account => account.id === notification.user
+                        );
+                        friend = {
+                            active : false,
+                            icon: friend.icon,
+                            id: friend.id,
+                            unReadMessages : 0,
+                            username: friend.username,
+                        }
+                        accountsContext.dispatch({
+                            type: "REQUEST_ACCEPTED",
+                            payload: friend
+                        });
+                    }
+                    // delete this notification
                     notContext.dispatch({
                         type: "DELETE_NOTIFICATION",
                         payload: notification.id

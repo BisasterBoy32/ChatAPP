@@ -23,7 +23,7 @@ from .serializers import (
     GetFriendsSer,
     NotificationSer
 )
-from chat.queries import get_friends
+from chat.queries import get_friends, search_friends
 
 class RegisterView(ListCreateAPIView):
     serializer_class = RegisterSerializer
@@ -181,7 +181,7 @@ class GetNotifications(GenericAPIView):
 
     def get(self, request):
         user = request.user
-        notifications = user.profile.notifications
+        notifications = user.profile.notifications.all()
         notifications_ser = self.get_serializer(notifications ,many=True)
 
         return Response(notifications_ser.data)
@@ -197,7 +197,60 @@ class GetNotifications(GenericAPIView):
             friendship.accepted = True
             friendship.save()
             notification.delete() 
+            # create a notification to notify this 
+            # user that his request has been accepted
+            inviter = friendship.inviter
+            notification = Notification(
+                profile = inviter,
+                type = "accept",
+                friendship = friendship
+            )
+            notification.save()
+        elif response == "reject":
+            friendship = notification.friendship
+            # notify this inviter that his request
+            # has been rejected
+            notification = Notification(
+                profile = friendship.inviter,
+                type = "reject",
+                associated = friendship.friend,
+            )
+            notification.save()
+            # delete the friendship between this two users
+            friendship.delete()
         else :
-            notification.friendship.delete()
-        
+            # in case of simple notification delete it
+            # after the user click on it
+            notification.delete()
+      
         return Response({"success" : "success"})
+
+class SearchView(GenericAPIView):
+    queryset = User.objects.all()
+    permission_classes =[
+        permissions.IsAuthenticated
+    ] 
+
+    def get_serializer_class(self):
+        s_type = self.request.data["s_type"]
+        if s_type == "friends" :
+            return GetFriendsSer
+
+        elif s_type == "accounts" :
+            return GetUsersSer
+
+    def post(self ,request):
+        s_type = request.data["s_type"]
+        word = request.data["word"]
+        user = request.user
+        if s_type == "friends" :
+            friends = search_friends(user.profile.id ,word)
+            friends_ser = self.get_serializer(friends ,many=True)
+
+            return Response(friends_ser.data)
+
+        elif s_type == "accounts" :
+            accounts = User.objects.filter(username__icontains=word ,profile__isnull=False)
+            accounts_ser = self.get_serializer(accounts ,many=True)
+
+            return  Response(accounts_ser.data)

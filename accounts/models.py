@@ -55,7 +55,8 @@ class FriendShip(models.Model):
 class Notification(models.Model):
     profile = models.ForeignKey(Profile ,on_delete=models.CASCADE ,related_name="notifications") 
     type = models.CharField(max_length=256)
-    friendship = models.ForeignKey(FriendShip ,on_delete=models.CASCADE ,related_name="notifications")
+    friendship = models.ForeignKey(FriendShip ,on_delete=models.CASCADE ,related_name="notifications",null=True)
+    associated = models.ForeignKey(Profile ,on_delete=models.CASCADE ,related_name="nots",null=True) 
 
     def __self__():
         return f"Notification to {self.profile.user.username}"

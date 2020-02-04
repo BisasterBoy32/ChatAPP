@@ -5,10 +5,30 @@ import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import { FaBell } from "react-icons/fa";
+import styled from "styled-components";
 
 import { NotificationContext } from "../../../store/context";
 import AcceptNot from "./accept_notification";
 import RequestNot from "./request_not";
+
+const Container = styled.div`
+    position : relative;
+    width : max-content;
+    margin : auto;
+`;
+
+const NotificationCount = styled.div`
+ position: absolute;
+    right: 6px;
+    border-radius: 50%;
+    padding: 1px 5px;
+    background-color: rgb(240,52,46);
+    z-index: 1;
+    top: 16px;
+    font-size: .6rem;
+    color: #fff;
+`;
+
 
 const useStyles = makeStyles(theme => ({
     typography: {
@@ -38,7 +58,8 @@ export default function SimplePopover() {
     const id = open ? 'simple-popover' : undefined;
 
     return (
-        <div>
+        <Container>
+            {notifications.length ? <NotificationCount>{notifications.length}</NotificationCount> : ""}
             <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick}>
                 Notifications
                 <FaBell className="bell"></FaBell>
@@ -69,6 +90,6 @@ export default function SimplePopover() {
                     }
                 </List>
             </Popover>
-        </div>
+        </Container>
     );
 }

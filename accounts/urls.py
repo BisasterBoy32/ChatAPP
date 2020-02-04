@@ -12,4 +12,5 @@ urlpatterns = [
     path("send_invite/",api.InviteUserView.as_view()),
     path("get_friends/",api.GetFriendsView.as_view()),
     path("get_notifications/",api.GetNotifications.as_view()),
+    path("search/",api.SearchView.as_view()),
 ]

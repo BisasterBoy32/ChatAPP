@@ -1,6 +1,11 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import { FaUserPlus,FaPaperPlane,FaUserFriends } from "react-icons/fa"
+import {
+    FaUserPlus,
+    FaPaperPlane,
+    FaUserFriends,
+    FaHourglassStart 
+} from "react-icons/fa";
 import axios from "axios";
 import  { setConfig } from "../../../helpers"
 
@@ -35,7 +40,6 @@ const ProfileImage = styled.div`
     position : relative;
 `
 const Invite = styled.div`
-    padding : .2rem .3rem;
     font-size : .8rem;
     position : absolute;
     top : 50%;
@@ -99,6 +103,10 @@ export default ({ account }) => {
                 {
                     account.friendship === "holded" ?
                     <FaPaperPlane className="request"></FaPaperPlane> : ""
+                }
+                {
+                    account.friendship === "sent" ?
+                    <FaHourglassStart className="request"></FaHourglassStart> : ""
                 }
                 {
                     account.friendship === "true" ?

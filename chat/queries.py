@@ -24,9 +24,34 @@ def get_friends(u_p_id):
                 SELECT user_id from accounts_profile 
                     WHERE id != {u_p_id} 
                     AND ( 
-                        id IN ( SELECT inviter_id from accounts_friendship WHERE friend_id = {u_p_id} OR inviter_id = {u_p_id} )
-                        OR id IN ( SELECT friend_id from accounts_friendship WHERE friend_id = {u_p_id} OR inviter_id = {u_p_id} ) 
+                        id IN ( 
+                            SELECT inviter_id from accounts_friendship
+                            WHERE accepted=true AND friend_id = {u_p_id} OR inviter_id = {u_p_id} 
+                        ) OR id IN ( 
+                                SELECT friend_id from accounts_friendship 
+                                WHERE accepted=true AND friend_id = {u_p_id} OR inviter_id = {u_p_id}
+                        )
                     )
             )
         '''
+    )
+
+def search_friends(u_p_id ,word):
+    return User.objects.raw(
+        '''
+        SELECT id FROM auth_user 
+            WHERE username LIKE "%%{}%%" AND id IN (
+                SELECT user_id from accounts_profile 
+                    WHERE id != {} 
+                    AND ( 
+                        id IN ( 
+                            SELECT inviter_id from accounts_friendship
+                            WHERE accepted=true AND friend_id = {} OR inviter_id = {} 
+                        ) OR id IN ( 
+                                SELECT friend_id from accounts_friendship 
+                                WHERE accepted=true AND friend_id = {} OR inviter_id = {}
+                        )
+                    )
+            )
+        '''.format(word , u_p_id, u_p_id, u_p_id, u_p_id, u_p_id)
     )

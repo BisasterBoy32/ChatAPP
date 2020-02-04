@@ -1,8 +1,13 @@
-import React, { useContext,useState } from "react";
+import React, { useContext,useState,useEffect } from "react";
 import styled from "styled-components";
-import { AccountsContext } from "../../../store/context";
 import Account from "./account";
 import Friend from "./friend";
+import axios from "axios";
+import { setConfig } from "../../../helpers"
+import {
+    AccountsContext,
+    UserContext
+} from "../../../store/context";
 
 const Container = styled.div`
     flex : .5;
@@ -52,7 +57,55 @@ const Header = styled.div`
 export default () => {
     const accountsContext = useContext(AccountsContext);
     const { selectedFriend } = accountsContext.state;
-    const [showFriends, setShowFriends] = useState(true)
+    const [showFriends, setShowFriends] = useState(true);
+    const [value, setValue] = useState("");
+    const userContext = useContext(UserContext);
+
+    const onInputChange = (e) => {
+        // update input value
+        setValue(e.target.value);
+    }
+
+    const search = () => {
+        // search for this friend or account
+        let values;
+        if (showFriends) {
+            values = {
+                s_type: "friends",
+                word: value
+            }
+        } else {
+            values = {
+                s_type: "accounts",
+                word: value
+            }
+        };
+        const config = setConfig(userContext.state.token);
+        axios.post('/accounts/search/', values, config)
+            .then(
+                res => {
+                    if (showFriends) {
+                        accountsContext.dispatch({
+                            type : "SEARCH_FRIENDS",
+                            payload : res.data
+                        });
+                    } else {
+                        accountsContext.dispatch({
+                            type: "SEARCH_ACCOUNTS",
+                            payload: res.data
+                        });
+                    }; 
+                },
+                err => console.log(err.response.message)
+            )
+    }
+    
+    // set the input value to empty every time
+    // we switch between friends and accounts
+    useEffect(() => setValue(""), [showFriends]);
+    // every time the input change send a request to search
+    // for matching users or friends
+    useEffect(() => search(), [value]);
 
     return (
         <Container>
@@ -81,7 +134,7 @@ export default () => {
                 )
             )
             }
-            <Input name="text" type="search" placeholder="Search..." />
+            <Input name="text" type="search" value={value} onChange={onInputChange} placeholder="Search..." />
         </Container>
     )
 }

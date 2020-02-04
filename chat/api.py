@@ -49,9 +49,7 @@ class SetMessageAsReadView(GenericAPIView):
     ] 
 
     def post(self ,request):
-        print("**************************")
         message = Message.objects.get(pk=request.data["message_id"])
-        print(message.content)
         message.hasBeenRead = True 
         message.save()
         

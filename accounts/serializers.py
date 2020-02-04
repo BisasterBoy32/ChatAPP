@@ -125,8 +125,10 @@ class GetUsersSer(serializers.ModelSerializer):
         friendship = object.profile.get_friendship(user.profile.id)
         if friendship and friendship.accepted:
             return 'true'
-        elif friendship :
+        elif friendship and friendship.inviter == user.profile:
             return 'holded'
+        elif friendship :
+            return 'sent'
         else :
             return 'false'
 
@@ -177,18 +179,27 @@ class NotificationSer(serializers.ModelSerializer):
     def get_user(self ,object):
         if object.type == "request":
             return object.friendship.inviter.user.id
-        else :
+        elif object.type == "accept" :
             return  object.friendship.friend.user.id
+        # in case the type is rejected the friendship 
+        # is gonna be deleted and in this case we
+        # associate a profile to this notification that points
+        # to whom rejected this request
+        else :
+            return object.associated.user.id
 
     def get_username(self ,object):
         if object.type == "request":
             return object.friendship.inviter.user.username
-        else :
+        elif object.type == "accept" :
             return  object.friendship.friend.user.username
+        else :
+            return object.associated.user.username
 
     def get_icon(self ,object):
         if object.type == "request":
             return object.friendship.inviter.icon
+        elif object.type == "accept" :
+            return  object.friendship.friend.icon 
         else :
-            return  object.friendship.friend.icon
-      
+            return object.associated.icon

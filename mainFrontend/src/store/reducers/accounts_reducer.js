@@ -78,6 +78,46 @@ export const accountsReducer = (state, action) => {
                 ...state,
                 accounts: [...newAccounts]
             }
+        case "REQUEST_REJECTED":
+            // after the request rejected
+            // change the friendship state of this user
+            newAccounts = accounts.map(account => {
+                if (account.id === action.payload) {
+                    account.friendship = "false"
+                }
+                return account;
+            });
+            return {
+                ...state,
+                accounts: [...newAccounts]
+            }
+        case "REQUEST_ACCEPTED":
+            // after the request accepted
+            // change the friendship state of this user
+            newAccounts = accounts.map(account => {
+                if (account.id === action.payload.id) {
+                    account.friendship = "true"
+                }
+                return account;
+            });
+            return {
+                ...state,
+                accounts: [...newAccounts],
+                // add the new friend
+                friends : [...state.friends, action.payload]
+            }
+        // search for a friend
+        case "SEARCH_FRIENDS":
+            return {
+                ...state,
+                friends : [...action.payload]
+            }
+        // search for a users
+        case "SEARCH_ACCOUNTS":
+            return {
+                ...state,
+                accounts: [...action.payload]
+            }
         default:
             return state;
     }
