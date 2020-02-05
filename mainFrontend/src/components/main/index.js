@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Chat from "./chat/index";
 import Profile from "../profile"
 import Friends from "./friends/index";
-import {AccountsContext, WebSocketContext} from "../../store/context";
 import Notifications from "./notifications/index.js";
 
 const Container = styled.div`
@@ -26,16 +25,6 @@ const Header = styled.div`
 
 export default () => {
     const [show, setShow] = useState(false);
-    const accountsContext = useContext(AccountsContext);
-    const friends = accountsContext.state.friends;
-    const webSocketContext = useContext(WebSocketContext);
-
-    // open channels between all friends    
-    useEffect(() => {
-        friends.map(friend => {
-            webSocketContext.connect(friend.id);
-        })
-    },[friends.length])
         
     return (
         <div>

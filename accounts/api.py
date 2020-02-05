@@ -250,7 +250,9 @@ class SearchView(GenericAPIView):
             return Response(friends_ser.data)
 
         elif s_type == "accounts" :
-            accounts = User.objects.filter(username__icontains=word ,profile__isnull=False)
+            accounts = User.objects.filter(
+                username__icontains=word ,profile__isnull=False
+                ).exclude(pk=user.id)
             accounts_ser = self.get_serializer(accounts ,many=True)
 
             return  Response(accounts_ser.data)

@@ -1,4 +1,4 @@
-import React, { useContext,useState,useEffect } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import Account from "./account";
 import Friend from "./friend";
@@ -54,22 +54,39 @@ const Header = styled.div`
     background-color : #4F98CA;
 `
 
-export default () => {
-    const accountsContext = useContext(AccountsContext);
-    const { selectedFriend } = accountsContext.state;
-    const [showFriends, setShowFriends] = useState(true);
-    const [value, setValue] = useState("");
-    const userContext = useContext(UserContext);
-
-    const onInputChange = (e) => {
+class Index extends React.Component {
+    state = {
+        value : "",
+        showFriends : true
+    }
+    componentDidUpdate(prevProps, prevState, snapshot){
+        // each time the value of the search change 
+        // send a request to serach
+        if(prevState.value !== this.state.value){
+            this.search();
+        }
+    }
+    onInputChange = (e) => {
         // update input value
-        setValue(e.target.value);
+        this.setState({ ...this.state, value: e.target.value})
     }
 
-    const search = () => {
+    // each we switch between friends and allusers(accouns)
+    // we set the value to "" change the state of showFriends  
+    // after the value changes  because we nedd to get
+    // all the friends if we switchibng for example from friends to accounts
+    changeShowFriends = (choice) => {
+        this.setState(
+            { ...this.state, value: "" }, () => {
+                this.setState({ ...this.state, showFriends: choice});
+            }) 
+    }
+
+    search = () => {
         // search for this friend or account
         let values;
-        if (showFriends) {
+        const { value } = this.state;
+        if (this.state.showFriends) {
             values = {
                 s_type: "friends",
                 word: value
@@ -80,17 +97,17 @@ export default () => {
                 word: value
             }
         };
-        const config = setConfig(userContext.state.token);
+        const config = setConfig(this.props.userContext.state.token);
         axios.post('/accounts/search/', values, config)
             .then(
                 res => {
-                    if (showFriends) {
-                        accountsContext.dispatch({
+                    if (values.s_type === "friends") {
+                        this.props.accountsContext.dispatch({
                             type : "SEARCH_FRIENDS",
                             payload : res.data
                         });
                     } else {
-                        accountsContext.dispatch({
+                        this.props.accountsContext.dispatch({
                             type: "SEARCH_ACCOUNTS",
                             payload: res.data
                         });
@@ -99,42 +116,58 @@ export default () => {
                 err => console.log(err.response.message)
             )
     }
-    
-    // set the input value to empty every time
-    // we switch between friends and accounts
-    useEffect(() => setValue(""), [showFriends]);
-    // every time the input change send a request to search
-    // for matching users or friends
-    useEffect(() => search(), [value]);
+
+    render() {
+        const { accountsContext } = this.props;
+        const { showFriends} = this.state;
+        const { value } = this.state;
+        const { selectedFriend } = this.state;
+
+        return (
+            <Container>
+                <Header>
+                    <Title selected={showFriends} onClick={() => this.changeShowFriends(true)}> Friends </Title>
+                    <Title selected={!showFriends} onClick={() => this.changeShowFriends(false)}> All Users </Title>
+                </Header>
+                {showFriends &&
+                    accountsContext.state.friends.map(
+                        friend => (
+                            <Friend
+                                key={friend.username}
+                                friend={friend}
+                                selected={selectedFriend && friend.username === selectedFriend.username}
+                            />
+                        )
+                    )
+                }
+                {!showFriends &&
+                    accountsContext.state.accounts.map(
+                        account => (
+                            <Account
+                                key={account.username}
+                                account={account}
+                            />
+                        )
+                    )
+                }
+                <Input name="text" type="search" value={value} onChange={this.onInputChange} placeholder="Search..." />
+            </Container>
+        )
+    }
+
+}
+
+export default () => {
+    const accountsContext = useContext(AccountsContext);
+    const { selectedFriend } = accountsContext.state;
+    const userContext = useContext(UserContext);
 
     return (
-        <Container>
-            <Header>
-                <Title selected={showFriends} onClick={() => setShowFriends(true)}> Friends </Title>
-                <Title selected={!showFriends} onClick={() => setShowFriends(false)}> All Users </Title>
-            </Header>
-            { showFriends && 
-                accountsContext.state.friends.map(
-                    friend => (
-                        <Friend 
-                            key={friend.username}
-                            friend={friend}
-                            selected={selectedFriend && friend.username === selectedFriend.username}
-                        />
-                    )
-                )
-            }
-            {!showFriends &&
-                accountsContext.state.accounts.map(
-                account => (
-                    <Account
-                        key={account.username}
-                        account={account}
-                    />
-                )
-            )
-            }
-            <Input name="text" type="search" value={value} onChange={onInputChange} placeholder="Search..." />
-        </Container>
+        <Index 
+            accountsContext={accountsContext}
+            selectedFriend={selectedFriend}
+            userContext={userContext}
+        > 
+        </Index>
     )
 }

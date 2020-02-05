@@ -8,7 +8,8 @@ import {
 } from "./context";
 
 // we open a channel between all the friends and this user
-// in the main.index check it for more information
+// in the components.app after we get all the friends from
+// the server check it for more information
 // what we are doing here is just building a component that  
 // contains the logic to open this channels and store it 
 // in a context so we can access all this channels and send from it

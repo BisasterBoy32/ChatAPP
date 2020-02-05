@@ -7,13 +7,20 @@ import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
 import axios from "axios";
 import { setConfig } from "../../../helpers";
-import { UserContext, AlerContext, NotificationContext, AccountsContext } from "../../../store/context";
+import { 
+    UserContext,
+    AlerContext, 
+    NotificationContext, 
+    AccountsContext,
+    WebSocketContext
+} from "../../../store/context";
 
 export default ({ notification }) => {
     const userContext = useContext(UserContext);
     const alertContext = useContext(AlerContext);
     const notContext = useContext(NotificationContext);
     const accountsContext = useContext(AccountsContext);
+    const webSocketContext = useContext(WebSocketContext);
     const [disabled, setDisabled] = useState(false)
 
     const responseToRequest = (response) => {
@@ -44,7 +51,7 @@ export default ({ notification }) => {
                             type: "REQUEST_REJECTED",
                             payload: notification.user
                         });
-                    }else {
+                    } else {
                         // find this user and added to the friends list
                         let friend = accountsContext.state.accounts.find(
                             account => account.id === notification.user
@@ -60,6 +67,9 @@ export default ({ notification }) => {
                             type: "REQUEST_ACCEPTED",
                             payload: friend
                         });
+                        // open a channel between this friend and 
+                        // this user
+                        webSocketContext.connect(friend.id);
                     }
                     // delete this notification
                     notContext.dispatch({

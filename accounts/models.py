@@ -20,7 +20,6 @@ class Profile(models.Model):
                 | 
                 Q(inviter = target_id ,friend=self.id)
             )
-            print("freindship : ",self.user.username)
         except ObjectDoesNotExist:
             return False 
         return friendship

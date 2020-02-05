@@ -2,7 +2,12 @@ import React, { useEffect, useContext } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import axios from "axios";
 
-import { UserContext, AccountsContext, NotificationContext } from "../store/context";
+import { 
+    UserContext,
+    AccountsContext, 
+    NotificationContext,
+    WebSocketContext 
+} from "../store/context";
 import { setConfig } from "../helpers";
 
 import PrivateRoute from "./private_route";
@@ -14,6 +19,7 @@ const App = () => {
     const user = useContext(UserContext);
     const accountsContext = useContext(AccountsContext);
     const notificationContext = useContext(NotificationContext);
+    const webSocketContext = useContext(WebSocketContext);
 
     // see if there is a current user 
     useEffect(() => {
@@ -36,7 +42,14 @@ const App = () => {
         // get all friends
         axios.get("/accounts/get_friends/", config)
             .then(
-                res => accountsContext.dispatch({ type: "LOAD_FRIENDS", payload: res.data }),
+                res => {
+                    // add all this friends
+                    accountsContext.dispatch({ type: "LOAD_FRIENDS", payload: res.data });
+                    // open a channel between those friends and this user
+                    res.data.map(friend => {
+                        webSocketContext.connect(friend.id);
+                    });
+                },
                 err => console.log(err.response.data)
             )
 
