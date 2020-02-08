@@ -53,7 +53,8 @@ export default ({children}) => {
 
         // websocket config
         let starterURL = "ws://";
-        const URL = window.location.host;
+        let URL = window.location.host;
+        // this i will uncomment it on the production
         if (window.location.href.includes("https") ){
             starterURL = "wss://";
         };

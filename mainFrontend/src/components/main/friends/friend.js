@@ -65,10 +65,9 @@ transform: translateY(-50%);
 export default ({ friend, selected }) => {
     const accountsContext = useContext(AccountsContext);
     const userContext = useContext(UserContext);
-    
+
     const getSelectedFriend = () => {
         const config = setConfig(userContext.state.token);
-
         axios.get(`/message/get_messages?r_id=${friend.id}`, config)
             .then(
                 res => {

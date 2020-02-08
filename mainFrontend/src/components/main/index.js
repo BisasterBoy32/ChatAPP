@@ -1,9 +1,10 @@
-import React,{ useState, useEffect,useContext } from "react";
+import React,{ useState } from "react";
 import styled from "styled-components";
 import Chat from "./chat/index";
 import Profile from "../profile"
 import Friends from "./friends/index";
 import Notifications from "./notifications/index.js";
+import CreateGroup from './groups';
 
 const Container = styled.div`
     max-width : 1300px;
@@ -21,6 +22,8 @@ const Header = styled.div`
     font-size : 1.5rem;
     font-weigth : 700;
     padding : .5rem;
+    display : flex;
+    justify-content : space-around;
 `
 
 export default () => {
@@ -29,7 +32,10 @@ export default () => {
     return (
         <div>
         <Profile show={show} setShow={setShow}/>
-            <Header> <Notifications></Notifications> </Header>
+            <Header> 
+                <Notifications></Notifications> 
+                <CreateGroup></CreateGroup>
+            </Header>
         <Container>
             <Chat showProfile={show}></Chat>
             <Friends></Friends>

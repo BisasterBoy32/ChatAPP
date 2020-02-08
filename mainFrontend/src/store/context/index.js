@@ -6,3 +6,4 @@ export const AlerContext = createContext();
 export const AccountsContext = createContext();
 export const WebSocketContext = createContext();
 export const NotificationContext = createContext();
+export const GroupsContext = createContext();

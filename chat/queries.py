@@ -13,9 +13,6 @@ def get_messages(user_id ,receiver_id):
     ORDER BY messages.date ASC
     ''')
 
-def get_current_user(token):
-    return User.objects.raw(f'SELECT user_id as id FROM knox_authtoken WHERE token_key = "{token}"')
-
 def get_friends(u_p_id):
     return User.objects.raw(
         f'''

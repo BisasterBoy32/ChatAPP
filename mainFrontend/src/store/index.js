@@ -3,12 +3,14 @@ import {
     UserContext ,
     AlerContext ,
     AccountsContext,
-    NotificationContext
+    NotificationContext,
+    GroupsContext
 } from "./context";
 import { alertInitValue ,alertReducer } from "./reducers/alert_reducer";
 import { userInitState , userReducer} from "./reducers/user_reducer";
 import { initAccountsValue , accountsReducer} from "./reducers/accounts_reducer";
 import { notificationReducer, initNotificationValue } from "./reducers/notification_reducer.js";
+import { initGroupsValue, groupsReducer } from "./reducers/groups_reducer.js";
 import WebSokcetComp from "./websocket";
 
 export default ({children}) => {
@@ -17,6 +19,7 @@ export default ({children}) => {
     const [alertState, alertDispach] = useReducer(alertReducer, alertInitValue);
     const [accountsState, accountsDispatch] = useReducer(accountsReducer, initAccountsValue);
     const [notificationState, notificationDispatch] = useReducer(notificationReducer, initNotificationValue);   
+    const [groupsState, groupsDispatch] = useReducer(groupsReducer ,initGroupsValue)
 
     return (
         <UserContext.Provider 
@@ -28,13 +31,17 @@ export default ({children}) => {
                 <AccountsContext.Provider value={{
                     state : accountsState , dispatch : accountsDispatch
                 }}>
-                    <NotificationContext.Provider value={{
-                        state: notificationState, dispatch: notificationDispatch
+                    <GroupsContext.Provider value={{
+                        state: groupsState, dispatch: groupsDispatch
                     }}>
-                        <WebSokcetComp>
-                            {children}
-                        </WebSokcetComp>
-                    </NotificationContext.Provider>
+                        <NotificationContext.Provider value={{
+                            state: notificationState, dispatch: notificationDispatch
+                        }}>
+                            <WebSokcetComp>
+                                {children}
+                            </WebSokcetComp>
+                        </NotificationContext.Provider>
+                    </GroupsContext.Provider>
                 </AccountsContext.Provider>
             </AlerContext.Provider>
         </UserContext.Provider>

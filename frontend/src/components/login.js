@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { Formik } from 'formik';
 import styled from "styled-components";
+import FacebookLogin from 'react-facebook-login';
+import GoogleLogin from 'react-google-login';
 
 const Wrapper = styled.div`
     display : flex;
@@ -59,12 +61,57 @@ export default () => {
     const user = useContext(UserContext);
     const [loginError ,setLoginError] = useState(false);
 
+    const sendAccessToken = (backend, response) => {
+        // send the access token to the server
+        // the server will connect to the facebook with this access token and 
+        // get this user data create a user or update
+        // the current one and generate a season token
+        // and send it to this user so he can be authenticated 
+        const values = {
+            access_token: response.accessToken
+        }
+        axios.post(`accounts/oauth/login/${backend}/`, values)
+            .then(
+                res => {
+                    user.dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+                },
+                err => {
+                    user.dispatch({ type: "LOGIN_FAILED", payload: err.response.message });
+                }
+            )
+    }
+    // whene user log in with google
+    const responseGoogle = (response) => {
+        sendAccessToken("google-oauth2", response)
+    }
+    // whene user login with facebook
+    const responseFacebook = (response) => {
+        sendAccessToken("facebook", response)
+    }
+
     return (
         <Wrapper>
             <Title>
                 Chat APP
         </Title>
             <Container>
+                <GoogleLogin
+                    clientId="740700554850-7g28qlulefo44hfc49s7aqra3b0ljice.apps.googleusercontent.com"
+                    buttonText="Login with google"
+                    onSuccess={responseGoogle}
+                    onFailure={responseGoogle}
+                    cookiePolicy={'single_host_origin'}
+                    autoLoad={false}
+                    className="google-css"
+                />
+                <FacebookLogin
+                    appId="612218419594833"
+                    autoLoad={false}
+                    fields="name,email,picture"
+                    callback={responseFacebook}
+                    icon="fa-facebook"
+                    cssClass="facebook-css"
+                />
                 <Formik
                     initialValues={{ username_or_email: '', password: '' }}
                     validate={values => {

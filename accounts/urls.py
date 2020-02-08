@@ -1,5 +1,6 @@
 from django.urls import path
 from . import api
+from .exchange_token import (exchange_token)
 
 urlpatterns = [
     path("",api.RegisterView.as_view()),
@@ -13,4 +14,5 @@ urlpatterns = [
     path("get_friends/",api.GetFriendsView.as_view()),
     path("get_notifications/",api.GetNotifications.as_view()),
     path("search/",api.SearchView.as_view()),
+    path('oauth/login/<str:backend>/', exchange_token),
 ]

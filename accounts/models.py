@@ -59,3 +59,9 @@ class Notification(models.Model):
 
     def __self__():
         return f"Notification to {self.profile.user.username}"
+
+class Group(models.Model):
+    name = models.CharField(max_length=256)
+    icon = models.CharField(max_length=256 ,null=True)
+    members = models.ManyToManyField(User ,related_name="chat_groups")
+    type = models.CharField(max_length=256)

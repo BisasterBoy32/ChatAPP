@@ -1,0 +1,19 @@
+.facebook-css {
+    display: block;
+    width: 100%;
+    margin: 15px 0px;
+    padding: 0.5rem;
+    text-align: left;
+    font-size: 15px;
+    background-color: #4267b2;
+    color: #fff;
+    border: none;
+}
+
+.fa-facebook {
+    margin: 0px 6px;
+}
+
+.google-css {
+    width: 100%;
+}

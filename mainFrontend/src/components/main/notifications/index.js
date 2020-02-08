@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import { FaBell } from "react-icons/fa";
 import styled from "styled-components";
 
@@ -14,7 +13,6 @@ import RequestNot from "./request_not";
 const Container = styled.div`
     position : relative;
     width : max-content;
-    margin : auto;
 `;
 
 const NotificationCount = styled.div`

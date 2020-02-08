@@ -7,7 +7,8 @@ urlpatterns = [
     path("",include("frontend.urls")),
     path("accounts/",include("accounts.urls")),
     path("main/",include("mainFrontend.urls")),
-    path("message/",include("chat.urls"))
+    path("message/",include("chat.urls")),
+    path('api/auth/oauth/', include('rest_framework_social_oauth2.urls'))
 ]
 
 if settings.DEBUG:

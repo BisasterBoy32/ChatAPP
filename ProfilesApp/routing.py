@@ -1,13 +1,13 @@
 from django.urls import path
 from channels.routing import ProtocolTypeRouter ,URLRouter
-from channels.auth import AuthMiddlewareStack
+from chat.AuthTokenMiddleware import TokenAuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator, OriginValidator
 
 from chat.consumers import ChatConsumer
 
 application = ProtocolTypeRouter({
     'websocket': AllowedHostsOriginValidator(
-        AuthMiddlewareStack(
+        TokenAuthMiddlewareStack(
             URLRouter(
                 [   
                     path("chat/<str:token>/<int:receiver>/",ChatConsumer)

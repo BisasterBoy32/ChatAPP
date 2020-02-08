@@ -5,14 +5,13 @@ from asgiref.sync import async_to_sync
 from .models import Message
 from .views import create_message
 from .helpers import create_group_name
-from .queries import get_current_user
 
 class ChatConsumer(WebsocketConsumer):
 
     def connect(self):
         # accept connection
         # authenticate the logged in user
-        user = self.get_loged_in_user()
+        user = self.scope['user']
         # other user is the one who the user
         # want to chat with him
         other_user = self.scope['url_route']['kwargs']['receiver']
@@ -35,23 +34,11 @@ class ChatConsumer(WebsocketConsumer):
         )
 
     def receive(self, text_data):
-        user = self.get_loged_in_user()
+        user = self.scope['user']
         # extract the message data
         data = json.loads(text_data)
         #  apply a task (create message ..etc)
-        self.commands[data["command"]](self, data ,user)
-
-    def get_loged_in_user(self):
-        # get the token to auth the user
-        token = self.scope['url_route']['kwargs']['token']
-        # select loged in user
-        user = get_current_user(token)
-        try:
-            user = user[0]
-        except IndexError:
-            user = None
-
-        return user 
+        self.commands[data["command"]](self, data ,user) 
 
     def new_message(self ,data ,sender):
         msg = create_message(data ,sender)
