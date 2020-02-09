@@ -92,7 +92,7 @@ export default ({ account }) => {
     return (
         <Container>
             <ProfileImage image={account.icon}></ProfileImage>
-            <Username > {account.username} </Username>
+            <Username > {account.username || account.name} </Username>
             <Invite>
                 {
                     account.friendship === "false" && loader ? 

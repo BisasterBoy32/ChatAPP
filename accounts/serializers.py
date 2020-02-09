@@ -209,7 +209,7 @@ class GroupSer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ("id" ,"type" ,"icon","members")
+        fields = ("id" ,"name" ,"type" ,"icon","members")
         read_only_fields = ("id" ,"icon")
 
     def create(self ,validated_data):
@@ -220,7 +220,7 @@ class GroupSer(serializers.ModelSerializer):
             icon = "static/icons/icon-2.jpg"
         )
         group.save()
-        group.add(user)
+        group.members.add(user)
         for member in validated_data['members']:
-            group.add(User.objects.get(pk=member))
+            group.members.add(member)
         return group

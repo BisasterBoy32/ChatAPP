@@ -273,5 +273,17 @@ class GroupView(GenericAPIView):
         group_ser.save()
 
         response = group_ser.data
-        return Response(status=status.HTTP_200_OK,response=response)
+        return Response(status=status.HTTP_200_OK,data=response)
 
+    def get(self ,request ,*args ,**kwargs):
+        user = request.user 
+        user_groups = user.chat_groups
+        user_groups_ser = self.get_serializer(user_groups ,many=True)
+        public_groups = Group.objects.filter(type="public")
+        public_groups_ser = self.get_serializer(public_groups ,many=True)
+
+        response = {
+            "public_groups" : public_groups_ser.data,
+            "user_groups" : user_groups_ser.data,
+        }
+        return Response(status=status.HTTP_200_OK, data=response)

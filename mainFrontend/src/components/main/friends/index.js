@@ -6,7 +6,8 @@ import axios from "axios";
 import { setConfig } from "../../../helpers"
 import {
     AccountsContext,
-    UserContext
+    UserContext,
+    GroupsContext
 } from "../../../store/context";
 
 const Container = styled.div`
@@ -56,19 +57,19 @@ const Header = styled.div`
 
 class Index extends React.Component {
     state = {
-        value : "",
-        showFriends : true
+        value: "",
+        showFriends: true
     }
-    componentDidUpdate(prevProps, prevState, snapshot){
+    componentDidUpdate(prevProps, prevState, snapshot) {
         // each time the value of the search change 
         // send a request to serach
-        if(prevState.value !== this.state.value){
+        if (prevState.value !== this.state.value) {
             this.search();
         }
     }
     onInputChange = (e) => {
         // update input value
-        this.setState({ ...this.state, value: e.target.value})
+        this.setState({ ...this.state, value: e.target.value })
     }
 
     // each we switch between friends and allusers(accouns)
@@ -78,8 +79,8 @@ class Index extends React.Component {
     changeShowFriends = (choice) => {
         this.setState(
             { ...this.state, value: "" }, () => {
-                this.setState({ ...this.state, showFriends: choice});
-            }) 
+                this.setState({ ...this.state, showFriends: choice });
+            })
     }
 
     search = () => {
@@ -103,15 +104,15 @@ class Index extends React.Component {
                 res => {
                     if (values.s_type === "friends") {
                         this.props.accountsContext.dispatch({
-                            type : "SEARCH_FRIENDS",
-                            payload : res.data
+                            type: "SEARCH_FRIENDS",
+                            payload: res.data
                         });
                     } else {
                         this.props.accountsContext.dispatch({
                             type: "SEARCH_ACCOUNTS",
                             payload: res.data
                         });
-                    }; 
+                    };
                 },
                 err => console.log(err.response.message)
             )
@@ -119,9 +120,12 @@ class Index extends React.Component {
 
     render() {
         const { accountsContext } = this.props;
-        const { showFriends} = this.state;
+        const { groupContext } = this.props;
+        const { showFriends } = this.state;
         const { value } = this.state;
         const { selectedFriend } = this.props;
+
+
         return (
             <Container>
                 <Header>
@@ -139,11 +143,33 @@ class Index extends React.Component {
                         )
                     )
                 }
+                {showFriends &&
+                    groupContext.state.userGroups.map(
+                        friend => (
+                            <Friend
+                                key={friend.id}
+                                friend={friend}
+                                selected={selectedFriend && friend.id === selectedFriend.id}
+                            />
+                        )
+                    )
+                }
                 {!showFriends &&
                     accountsContext.state.accounts.map(
                         account => (
                             <Account
                                 key={account.username}
+                                account={account}
+                            />
+                        )
+                    )
+
+                }
+                {!showFriends &&
+                    groupContext.state.groups.map(
+                        account => (
+                            <Account
+                                key={account.id}
                                 account={account}
                             />
                         )
@@ -160,13 +186,15 @@ export default () => {
     const accountsContext = useContext(AccountsContext);
     const { selectedFriend } = accountsContext.state;
     const userContext = useContext(UserContext);
+    const groupContext = useContext(GroupsContext);
 
     return (
-        <Index 
+        <Index
             accountsContext={accountsContext}
             selectedFriend={selectedFriend}
             userContext={userContext}
-        > 
+            groupContext={groupContext}
+        >
         </Index>
     )
 }

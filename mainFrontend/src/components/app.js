@@ -6,7 +6,8 @@ import {
     UserContext,
     AccountsContext, 
     NotificationContext,
-    WebSocketContext 
+    WebSocketContext,
+    GroupsContext
 } from "../store/context";
 import { setConfig } from "../helpers";
 
@@ -19,6 +20,7 @@ const App = () => {
     const user = useContext(UserContext);
     const accountsContext = useContext(AccountsContext);
     const notificationContext = useContext(NotificationContext);
+    const groupContext = useContext(GroupsContext);
     const webSocketContext = useContext(WebSocketContext);
 
     // see if there is a current user 
@@ -51,6 +53,22 @@ const App = () => {
                     });
                 },
                 err => console.log(err.response.data)
+            )
+
+        // get the groups
+        axios.get("/accounts/groups/", config)
+            .then(
+                res => {
+                    // add all the public groups 
+                    groupContext.dispatch({ type: "LOAD_PUBLIC", payload: res.data.public_groups });
+                    // add all the user groups that he is a member inside them
+                    groupContext.dispatch({ type: "LOAD_USER_GROUPS", payload: res.data.user_groups });
+                    // open a channel between those friends and this user
+                    // res.data.map(friend => {
+                    //     webSocketContext.connect(friend.id);
+                    // });
+                },
+                err => console.log(err.response.message)
             )
 
         // get all Notification for this user

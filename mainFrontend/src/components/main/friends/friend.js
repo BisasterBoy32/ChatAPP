@@ -93,7 +93,7 @@ export default ({ friend, selected }) => {
             <ProfileImage image={friend.icon}>
                 {friend.active && <IsActive />}
             </ProfileImage>
-            <Username > {friend.username} </Username>
+            <Username > {friend.username || friend.name} </Username>
             { 
                 friend.unReadMessages 
                 ?  
