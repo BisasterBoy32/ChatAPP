@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import Profile ,Notification
+from .models import Profile ,Notification ,Group
 from chat.models import Message
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -203,3 +203,24 @@ class NotificationSer(serializers.ModelSerializer):
             return  object.friendship.friend.icon 
         else :
             return object.associated.icon
+
+
+class GroupSer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = ("id" ,"type" ,"icon","members")
+        read_only_fields = ("id" ,"icon")
+
+    def create(self ,validated_data):
+        user = self.context['request'].user
+        group = Group.objects.create(
+            name = validated_data['name'],
+            type = validated_data['type'],
+            icon = "static/icons/icon-2.jpg"
+        )
+        group.save()
+        group.add(user)
+        for member in validated_data['members']:
+            group.add(User.objects.get(pk=member))
+        return group

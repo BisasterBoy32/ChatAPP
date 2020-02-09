@@ -5,6 +5,8 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Button from '@material-ui/core/Button';
 import GroupForm from "./group_form";
+import { DndProvider } from 'react-dnd'
+import Backend from 'react-dnd-html5-backend'
 
 const useStyles = makeStyles(theme => ({
     modal: {
@@ -33,7 +35,7 @@ export default function TransitionsModal() {
     };
 
     return (
-        <div>
+        <DndProvider backend={Backend}>
             <Button variant="contained" color="primary" onClick={handleOpen}>
                 Create Group
             </Button>
@@ -55,6 +57,6 @@ export default function TransitionsModal() {
                     </div>
                 </Fade>
             </Modal>
-        </div>
+        </DndProvider>
     );
 }

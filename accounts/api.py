@@ -3,6 +3,7 @@ from  django.core.exceptions import ObjectDoesNotExist
 from .custom_permissions import IsTheSameUser
 
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import permissions
 from rest_framework.views import View
 from rest_framework.generics import (
@@ -13,7 +14,7 @@ from rest_framework.generics import (
 from knox.models import AuthToken
 from knox.views import LogoutView
 
-from .models import Notification
+from .models import Notification, Group
 from .serializers import (
     RegisterSerializer,
     LoginSer,
@@ -21,7 +22,8 @@ from .serializers import (
     UpdateUserSer,
     GetUsersSer,
     GetFriendsSer,
-    NotificationSer
+    NotificationSer,
+    GroupSer
 )
 from chat.queries import get_friends, search_friends
 
@@ -256,3 +258,20 @@ class SearchView(GenericAPIView):
             accounts_ser = self.get_serializer(accounts ,many=True)
 
             return  Response(accounts_ser.data)
+
+
+class GroupView(GenericAPIView):
+    queryset = Group.objects.all()
+    serializer_class = GroupSer
+    permission_classes =[
+        permissions.IsAuthenticated
+    ] 
+
+    def post(self ,request ,*args ,**kwargs):
+        group_ser = self.get_serializer(data=request.data)
+        group_ser.is_valid(raise_exception=True)
+        group_ser.save()
+
+        response = group_ser.data
+        return Response(status=status.HTTP_200_OK,response=response)
+

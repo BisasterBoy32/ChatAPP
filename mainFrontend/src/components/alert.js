@@ -12,6 +12,7 @@ const Container = styled.div`
     border-radius : 3px;
     color : #000;
     opacity : .8;
+    z-index :20000;
 `
 const Content = styled.div`
     font-size : .8rem;

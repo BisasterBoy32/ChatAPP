@@ -14,5 +14,6 @@ urlpatterns = [
     path("get_friends/",api.GetFriendsView.as_view()),
     path("get_notifications/",api.GetNotifications.as_view()),
     path("search/",api.SearchView.as_view()),
+    path('groups/', api.GroupView.as_view()),
     path('oauth/login/<str:backend>/', exchange_token),
 ]
