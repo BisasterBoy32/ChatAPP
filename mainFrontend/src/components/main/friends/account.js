@@ -43,7 +43,7 @@ const Invite = styled.div`
     font-size : .8rem;
     position : absolute;
     top : 50%;
-    transform : translate-Y(-50%);
+    transform : translateY(-70%);
     right : 10px;
     cursor : pointer;
 `

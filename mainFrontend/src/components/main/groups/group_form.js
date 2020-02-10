@@ -6,7 +6,12 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import Radio from '@material-ui/core/Radio';
-import  { AccountsContext ,AlerContext,UserContext } from "../../../store/context";
+import  { 
+    AccountsContext ,
+    AlerContext,
+    UserContext,
+    GroupsContext
+} from "../../../store/context";
 import Friend from "./friend";
 import MembersBox from "./members_box";
 import Button from '@material-ui/core/Button';
@@ -53,14 +58,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default ({name ,type ,members, update}) => {
+export default ({ name, type, members, update, setOpen, groupId}) => {
     const classes = useStyles();
     const [value, setValue] = useState(type || 'public');
     const [groupName, setGroupName] = useState(name || '');
     const [groupMembers, setGroupMembers] = useState(members || []);
+    // to disable the button whene with send a request
+    // to the server to create this new group
+    const [request, setRequest] = useState(false);
     const accountsContext = useContext(AccountsContext);
     const alertContext = useContext(AlerContext);
     const userContext = useContext(UserContext);
+    const groupsContext = useContext(GroupsContext);
     const { friends } = accountsContext.state
     const notMembers = friends.filter(friend => {
         if (!groupMembers.find(member => member.id === friend.id)){
@@ -72,7 +81,68 @@ export default ({name ,type ,members, update}) => {
     };
 
     // add a group 
-    const addGroup = () => {
+    const addGroup = (config, values) => {
+        axios.post("/accounts/groups/", values, config)
+            .then(
+                res => {
+                    // enable the button
+                    setRequest(false);
+                    // add this group to the current groups
+                    groupsContext.dispatch({
+                        type: "ADD_GROUP",
+                        payload: res.data
+                    });
+                    alertContext.dispatch({
+                        type: "INFO_SUCCESS",
+                        payload: `your group ${res.data.name} has been created succefully`
+                    });
+                    // close the modal
+                    setOpen(false);
+                },
+                err => {
+                    // enable the button
+                    setRequest(false);
+                    console.log(err.response.message);
+                    alertContext.dispatch({
+                        type: "INFO_ERRO",
+                        payload: "Something went wrong try again"
+                    });
+                }
+            )
+    };
+
+    // update an existing group
+    const updateGroup = (config, values) => {
+        axios.put(`/accounts/groups/${groupId}/`, values, config)
+            .then(
+                res => {
+                    // enable the button
+                    setRequest(false);
+                    // add this group to the current groups
+                    groupsContext.dispatch({
+                        type: "UPDATE_GROUP",
+                        payload: res.data
+                    });
+                    alertContext.dispatch({
+                        type: "INFO_SUCCESS",
+                        payload: `your group ${res.data.name} has been updated succefully`
+                    });
+                    // close the modal
+                    setOpen(false);
+                },
+                err => {
+                    // enable the button
+                    setRequest(false);
+                    console.log(err.response.message);
+                    alertContext.dispatch({
+                        type: "INFO_ERRO",
+                        payload: "Something went wrong try again later please"
+                    });
+                }
+            )
+    };
+
+    const onButtonClicked = (action) => {
         // validation 
         if (!groupMembers.length){
             alertContext.dispatch({
@@ -85,6 +155,8 @@ export default ({name ,type ,members, update}) => {
                 payload: "You have to provide a name for your group"
             });
         }else {
+            // disable the button
+            setRequest(true);
             const members = groupMembers.map(member => member.id);
             const values = {
                 name: groupName,
@@ -92,11 +164,11 @@ export default ({name ,type ,members, update}) => {
                 members
             }
             const config = setConfig(userContext.state.token);
-            axios.post("/accounts/groups/", values, config)
-            .then(
-                res => console.log(res.data),
-                err => console.log(err.response.message)
-            )
+            if (action === "create"){
+                addGroup(config, values);
+            } else if (action === "update"){
+                updateGroup(config, values);
+            }
         }
     }
     return (
@@ -116,13 +188,23 @@ export default ({name ,type ,members, update}) => {
                 </RadioGroup>
                 <MembersTitle>Members</MembersTitle>
                 <MembersBox groupMembers={groupMembers} setGroupMembers={setGroupMembers} />
-                {!update && 
-                    <Button variant="contained" color="primary" onClick={addGroup}>
+                {!update && !request &&
+                    <Button variant="contained" color="primary" onClick={() => onButtonClicked("create")}>
                         Create
                     </Button>   
                 }
-                {update &&
-                    <Button variant="contained" color="primary" onClick={addGroup}>
+                {!update && request &&
+                    <Button variant="contained" color="primary" disabled>
+                        Create
+                    </Button>
+                }
+                {update && !request &&
+                    <Button variant="contained" color="primary" onClick={() => onButtonClicked("update")}>
+                        Update
+                    </Button>
+                }
+                {update && request &&
+                    <Button variant="contained" color="primary" disabled>
                         Update
                     </Button>
                 }

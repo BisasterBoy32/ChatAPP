@@ -1,5 +1,6 @@
 from .models import Message
 from django.contrib.auth.models import User
+from accounts.models import Group
 
 def get_messages(user_id ,receiver_id):
     return Message.objects.raw(f'''
@@ -52,3 +53,13 @@ def search_friends(u_p_id ,word):
             )
         '''.format(word , u_p_id, u_p_id, u_p_id, u_p_id, u_p_id)
     )
+
+def get_related_groups(user_id):
+    return Group.objects.raw(f'''
+        SELECT * FROM accounts_group 
+            WHERE creator_id = {user_id}
+            OR id IN (
+                SELECT group_id FROM accounts_group_members
+                WHERE user_id = {user_id}
+            )
+    ''')

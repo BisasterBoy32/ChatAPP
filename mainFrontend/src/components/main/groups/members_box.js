@@ -49,8 +49,9 @@ const MembersBox = ({ groupMembers, setGroupMembers, connectDropTarget, highligh
                         avatar={<Avatar alt="friend" src={member.icon} />}
                         label={member.username}
                         onDelete={() => handleDelete(member.id)}
-                        color="primary"
+                        variant="outlined"
                         style={{ margin : "5px"}}
+                        color="primary"
                     />
                 ))}
             </Friendsbox>

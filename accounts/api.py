@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from  django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from .custom_permissions import IsTheSameUser
 
 from rest_framework.response import Response
@@ -25,7 +26,7 @@ from .serializers import (
     NotificationSer,
     GroupSer
 )
-from chat.queries import get_friends, search_friends
+from chat.queries import get_friends, search_friends, get_related_groups
 
 class RegisterView(ListCreateAPIView):
     serializer_class = RegisterSerializer
@@ -273,11 +274,16 @@ class GroupView(GenericAPIView):
         group_ser.save()
 
         response = group_ser.data
-        return Response(status=status.HTTP_200_OK,data=response)
+        return Response(status=status.HTTP_200_OK,data=response)       
 
     def get(self ,request ,*args ,**kwargs):
         user = request.user 
         user_groups = user.chat_groups
+        # get the related group :
+        # user is a creator of this group
+        # or the user is a member inside this group
+        # with SQL QUERY
+        user_groups = get_related_groups(user.id)
         user_groups_ser = self.get_serializer(user_groups ,many=True)
         public_groups = Group.objects.filter(type="public")
         public_groups_ser = self.get_serializer(public_groups ,many=True)
@@ -287,3 +293,27 @@ class GroupView(GenericAPIView):
             "user_groups" : user_groups_ser.data,
         }
         return Response(status=status.HTTP_200_OK, data=response)
+
+class UpdateDeleteGroupView(GenericAPIView):
+    queryset = Group.objects.all()
+    serializer_class = GroupSer
+    permission_classes =[
+        permissions.IsAuthenticated
+    ] 
+
+    def put(self ,request ,*args ,**kwargs):
+        group_id = kwargs.get('id')
+        group = get_object_or_404(Group ,pk=group_id)
+        # check if this user is the creator of this group
+        if group.creator == request.user:
+            group_ser = self.get_serializer(group ,data=request.data)
+            group_ser.is_valid(raise_exception=True)
+            group_ser.save()
+
+            response = group_ser.data
+            return Response(status=status.HTTP_200_OK,data=response) 
+        else :
+            response = {
+                "permission denied" : "only the creator of the group can edit it"
+            }
+            return Response(status=status.HTTP_403_FORBIDDEN,data=response) 

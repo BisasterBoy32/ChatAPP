@@ -61,6 +61,7 @@ class Notification(models.Model):
         return f"Notification to {self.profile.user.username}"
 
 class Group(models.Model):
+    creator = models.ForeignKey(User ,related_name="my_groups" ,on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
     icon = models.CharField(max_length=256 ,null=True)
     members = models.ManyToManyField(User ,related_name="chat_groups")

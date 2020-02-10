@@ -15,5 +15,6 @@ urlpatterns = [
     path("get_notifications/",api.GetNotifications.as_view()),
     path("search/",api.SearchView.as_view()),
     path('groups/', api.GroupView.as_view()),
+    path('groups/<int:id>/', api.UpdateDeleteGroupView.as_view()),
     path('oauth/login/<str:backend>/', exchange_token),
 ]

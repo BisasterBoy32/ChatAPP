@@ -96,7 +96,6 @@ body {
 .request {
     color: rgb(235, 70, 59);
     font-size: 1rem;
-    transition: transform 300ms ease-in-out;
 }
 
 
@@ -114,7 +113,16 @@ body {
 }
 
 .accept-notify {
-    cursor : pointer;
+    cursor: pointer;
+}
+
+.edit-group {
+    font-size: inherit;
+    transition: transform 300ms ease-in-out;
+}
+
+.edit-group:hover {
+    transform: scale(1.6);
 }
 
 .k {

@@ -12,7 +12,7 @@ class MessageView(GenericAPIView):
     permission_classes =[
         permissions.IsAuthenticated
     ] 
-
+ 
     def post(self ,request):
         message_ser = self.get_serializer(data=request.data)
         message_ser.is_valid(raise_exception=True)
