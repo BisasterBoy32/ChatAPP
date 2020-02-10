@@ -48,17 +48,8 @@ class FriendShip(models.Model):
     # is this friendship accepted by the friend
     accepted = models.BooleanField(default=False)
 
-    def __self__():
+    def __str__(self):
         return f"friendship between {self.inviter} || {self.friend}"
-
-class Notification(models.Model):
-    profile = models.ForeignKey(Profile ,on_delete=models.CASCADE ,related_name="notifications") 
-    type = models.CharField(max_length=256)
-    friendship = models.ForeignKey(FriendShip ,on_delete=models.CASCADE ,related_name="notifications",null=True)
-    associated = models.ForeignKey(Profile ,on_delete=models.CASCADE ,related_name="nots",null=True) 
-
-    def __self__():
-        return f"Notification to {self.profile.user.username}"
 
 class Group(models.Model):
     creator = models.ForeignKey(User ,related_name="my_groups" ,on_delete=models.CASCADE)
@@ -66,3 +57,28 @@ class Group(models.Model):
     icon = models.CharField(max_length=256 ,null=True)
     members = models.ManyToManyField(User ,related_name="chat_groups")
     type = models.CharField(max_length=256)
+
+    # define the state of a giver user inside this group
+    # (member - sent request to join - admin - no relation)
+    def user_state(self ,user):
+        if user == self.creator:
+            return "admin"
+        # is this a member inside this group
+        elif user in self.members.all():
+            return "member"
+        # not member and not the creator 
+        else :
+            return "stranger"
+
+    def __str__(self):
+        return str(self.name)
+        
+class Notification(models.Model):
+    profile = models.ForeignKey(Profile ,on_delete=models.CASCADE ,related_name="notifications") 
+    type = models.CharField(max_length=256)
+    friendship = models.ForeignKey(FriendShip ,on_delete=models.CASCADE ,related_name="notifications",null=True)
+    group = models.ForeignKey(Group ,on_delete=models.CASCADE ,related_name="notifications",null=True)
+    associated = models.ForeignKey(Profile ,on_delete=models.CASCADE ,related_name="nots",null=True) 
+
+    def __str__(self):
+        return f"Notification to {self.profile.user.username}"

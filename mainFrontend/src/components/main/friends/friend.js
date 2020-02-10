@@ -136,11 +136,11 @@ export default ({ friend, selected }) => {
                 : 
                 undefined 
             }
-            {friend.name && friend.creator !== user_id &&
+            {friend.name && friend.creator_info.id !== user_id &&
                 <EditGroup onClick={() => setOpenGroupInfo(true)}><FaInfoCircle className="edit-group" /></EditGroup>
             }
             {/* if this a is group that it has a name so we can edit this group settings */}
-            {friend.name && friend.creator === user_id &&
+            {friend.name && friend.creator_info.id === user_id &&
                 <EditGroup onClick={editGroup}><FaCog className="edit-group" /></EditGroup>
             }
             {/*modal to change the group settings */}
@@ -161,6 +161,7 @@ export default ({ friend, selected }) => {
                     open={openGroupInfo}
                     handleClose={() => setOpenGroupInfo(false)}
                     name={friend.name}
+                    creator={friend.creator_info}
                     type={friend.type}
                     members={groupMembers}
                 />

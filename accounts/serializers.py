@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import Profile ,Notification ,Group
 from chat.models import Message
@@ -171,10 +172,29 @@ class NotificationSer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     # icon of the user that sent a request or accepted it
     icon = serializers.SerializerMethodField()
+    # the group associated to this notification if 
+    # it's a group notication
+    group_info = serializers.SerializerMethodField()
 
     class Meta:
         model = Notification
-        fields = ("id" ,"type" ,"icon","username","user")
+        fields = ("id" ,"type" ,"icon","username","user","group_info",'group')
+
+    def create(self ,validated_data):
+        user = self.context['request'].user 
+        group = validated_data['group']
+        if group.type == "private":
+            raise serializers.ValidationError("you can't send a request to a private group")
+
+        notification = Notification.objects.create(
+            profile = group.creator.profile,
+            type=validated_data['type'],
+            group=group,
+            associated=user.profile
+        )
+        notification.save()
+        return notification        
+
 
     def get_user(self ,object):
         if object.type == "request":
@@ -203,13 +223,21 @@ class NotificationSer(serializers.ModelSerializer):
             return  object.friendship.friend.icon 
         else :
             return object.associated.icon
-
+    
+    def get_group_info(self ,object):
+        if object.group:
+            return {
+                'id' : object.group.id,
+                'name' : object.group.name,
+            }
 
 class GroupSer(serializers.ModelSerializer):
+    creator_info = serializers.SerializerMethodField()
+    membership = serializers.SerializerMethodField()
 
     class Meta:
         model = Group
-        fields = ("id" ,"name" ,"creator" ,"type" ,"icon","members")
+        fields = ("id" ,"name" ,"creator_info" ,"type" ,"icon","members" ,"membership")
         read_only_fields = ("id" ,"icon","creator")
 
     def create(self ,validated_data):
@@ -224,3 +252,16 @@ class GroupSer(serializers.ModelSerializer):
         for member in validated_data['members']:
             group.members.add(member)
         return group
+
+    def get_creator_info(self ,object):
+        return {
+            "id" : object.creator.id,
+            "icon" : object.creator.profile.icon,
+            "username" : object.creator.username
+        }
+
+    # define the state of this user inside this group
+    # (member - sent request to join - admin - stranger)
+    def get_membership(self ,object):
+        user = self.context["request"].user 
+        return object.user_state(user)

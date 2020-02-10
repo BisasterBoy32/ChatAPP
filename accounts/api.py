@@ -28,6 +28,7 @@ from .serializers import (
 )
 from chat.queries import get_friends, search_friends, get_related_groups
 
+# ------------ USER VIEWS --------------------------
 class RegisterView(ListCreateAPIView):
     serializer_class = RegisterSerializer
     queryset = User.objects.all()
@@ -124,6 +125,7 @@ class ValidateView(GenericAPIView):
             "response" : "there is no error"
         })
 
+# ------------ FRIENDS AND ACCOUNTS VIEWS --------------------------
 class GetUsersView(GenericAPIView):
     queryset = User.objects.all()
     serializer_class = GetUsersSer
@@ -173,61 +175,6 @@ class GetFriendsView(GenericAPIView):
 
         return Response(users_ser.data)
 
-# get all the notification of this user
-
-class GetNotifications(GenericAPIView):
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSer
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
-    def get(self, request):
-        user = request.user
-        notifications = user.profile.notifications.all()
-        notifications_ser = self.get_serializer(notifications ,many=True)
-
-        return Response(notifications_ser.data)
-
-    def post(self, request):
-        notification = Notification.objects.get(pk = request.data["id"])
-        response = request.data["response"]
-        if response == "accept":
-            # apdate the friendship to accepted 
-            # between current user and the user
-            # who sent the friendship request 
-            friendship = notification.friendship
-            friendship.accepted = True
-            friendship.save()
-            notification.delete() 
-            # create a notification to notify this 
-            # user that his request has been accepted
-            inviter = friendship.inviter
-            notification = Notification(
-                profile = inviter,
-                type = "accept",
-                friendship = friendship
-            )
-            notification.save()
-        elif response == "reject":
-            friendship = notification.friendship
-            # notify this inviter that his request
-            # has been rejected
-            notification = Notification(
-                profile = friendship.inviter,
-                type = "reject",
-                associated = friendship.friend,
-            )
-            notification.save()
-            # delete the friendship between this two users
-            friendship.delete()
-        else :
-            # in case of simple notification delete it
-            # after the user click on it
-            notification.delete()
-      
-        return Response({"success" : "success"})
-
 class SearchView(GenericAPIView):
     queryset = User.objects.all()
     permission_classes =[
@@ -260,7 +207,91 @@ class SearchView(GenericAPIView):
 
             return  Response(accounts_ser.data)
 
+# ------------ NOTIFICATIONS VIEWS --------------------------
+# get all the notification of this user
+class GetNotifications(GenericAPIView):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
 
+    def get(self, request):
+        user = request.user
+        notifications = user.profile.notifications.all()
+        notifications_ser = self.get_serializer(notifications ,many=True)
+
+        return Response(notifications_ser.data)
+
+    def post(self, request):
+        response = request.data["response"]
+        if response == "accept":
+            notification = Notification.objects.get(pk = request.data["id"])
+            # apdate the friendship to accepted 
+            # between current user and the user
+            # who sent the friendship request 
+            friendship = notification.friendship
+            friendship.accepted = True
+            friendship.save()
+            notification.delete() 
+            # create a notification to notify this 
+            # user that his request has been accepted
+            inviter = friendship.inviter
+            notification = Notification(
+                profile = inviter,
+                type = "accept",
+                friendship = friendship
+            )
+            notification.save()
+        elif response == "reject":
+            notification = Notification.objects.get(pk = request.data["id"])
+            friendship = notification.friendship
+            # notify this inviter that his request
+            # has been rejected
+            notification = Notification(
+                profile = friendship.inviter,
+                type = "reject",
+                associated = friendship.friend,
+            )
+            notification.save()
+            # delete the friendship between this two users
+            friendship.delete()
+
+        elif response == "group":
+            not_ser = self.get_serializer(data=request.data)
+            not_ser.is_valid(raise_exception=True)
+            not_ser.save()
+
+            response = not_ser.data
+            return Response(status=status.HTTP_200_OK,data=response) 
+
+        else :
+            # in case of simple notification delete it
+            # after the user click on it
+            notification = Notification.objects.get(pk = request.data["id"])
+            notification.delete()
+      
+        return Response({"success" : "success"})
+
+
+# GroupNotificationsView
+class GroupNotificationsView(GenericAPIView):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def post(self ,request ,*args ,**kwargs):
+        not_ser = self.get_serializer(data=request.data)
+        not_ser.is_valid(raise_exception=True)
+        not_ser.save()
+
+        response = not_ser.data
+        return Response(status=status.HTTP_200_OK,data=response) 
+
+
+# ------------ GROUP VIEWS --------------------------
 class GroupView(GenericAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSer

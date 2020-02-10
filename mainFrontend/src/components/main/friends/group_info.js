@@ -7,6 +7,7 @@ import styled from "styled-components";
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 import { UserContext } from "../../../store/context";
+import { FaUserShield } from "react-icons/fa";
 
 const Title = styled.legend`
     font-size : 1.3rem;
@@ -43,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default ({ open, handleClose, name, type, members }) => {
+export default ({ open, handleClose, name, type, members ,creator }) => {
     const classes = useStyles();
     const userContext = useContext(UserContext);
     const { user } = userContext.state
@@ -64,8 +65,16 @@ export default ({ open, handleClose, name, type, members }) => {
             <Fade in={open}>
                 <div className={classes.paper}>
                     <Container>
-                        <Title> {name}({type}) </Title>
-                        <MembersTag>members ({members.length})</MembersTag>
+                        <Title> {name} ({type}) </Title>
+                        <MembersTag>members ({members.length+2})</MembersTag>
+                        <Chip
+                            avatar={<Avatar alt="friend" src={creator.icon} />}
+                            label={creator.username}
+                            variant="outlined"
+                            color="primary"
+                            deleteIcon={<FaUserShield />}
+                            style={{ margin: "5px" }}
+                        />
                         {
                             members.map(member => (
                                 <Chip
@@ -73,6 +82,7 @@ export default ({ open, handleClose, name, type, members }) => {
                                     avatar={<Avatar alt="friend" src={member.icon} />}
                                     label={member.username}
                                     variant="outlined"
+                                    style={{ margin : "5px"}}
                                 />
                             ))  
                         }
@@ -80,6 +90,7 @@ export default ({ open, handleClose, name, type, members }) => {
                             avatar={<Avatar alt="friend" src={user.profile.icon} />}
                             label={user.username}
                             variant="outlined"
+                            style={{ margin: "5px" }}
                         />
                     </Container>
                 </div>

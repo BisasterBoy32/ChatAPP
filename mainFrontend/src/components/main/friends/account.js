@@ -4,7 +4,10 @@ import {
     FaUserPlus,
     FaPaperPlane,
     FaUserFriends,
-    FaHourglassStart 
+    FaHourglassStart,
+    FaUsers,
+    FaShareSquare,
+    FaUserShield
 } from "react-icons/fa";
 import axios from "axios";
 import  { setConfig } from "../../../helpers"
@@ -56,6 +59,40 @@ export default ({ account }) => {
     const accountsContext = useContext(AccountsContext);
     const userContext = useContext(UserContext);
 
+    // send request to join a group
+    const joinGroup = () => {
+        // show the loader
+        setLoader(true);
+        const config = setConfig(userContext.state.token);
+        const values = {
+            group: account.id,
+            response : "group",
+            type: "group request"
+        }
+
+        // send a request to join this group
+        axios.post("/accounts/get_notifications/", values, config)
+            .then(
+                res => {
+                    // hide the loader
+                    setLoader(false);
+                    alertContext.dispatch({
+                        type: "INFO_SUCCESS",
+                        payload: `you sent a request to join ${account.name} group`
+                    });
+                },
+                err => {
+                    // show the loader
+                    setLoader(false);
+                    alertContext.dispatch({
+                        type: "INFO_ERRO",
+                        payload: "something went wrong try again later"
+                    });
+                }
+            )
+    };
+
+    // send a friend request
     const sendRequest = () => {
         // show the loader
         setLoader(true);
@@ -93,26 +130,52 @@ export default ({ account }) => {
         <Container>
             <ProfileImage image={account.icon}></ProfileImage>
             <Username > {account.username || account.name} </Username>
-            <Invite>
-                {
-                    account.friendship === "false" && loader ? 
-                    <div className="request-loader"></div> :
-                    account.friendship === "false" ? 
-                    <FaUserPlus className="add-user" onClick={sendRequest}></FaUserPlus> : ""
-                }
-                {
-                    account.friendship === "holded" ?
-                    <FaPaperPlane className="request"></FaPaperPlane> : ""
-                }
-                {
-                    account.friendship === "sent" ?
-                    <FaHourglassStart className="request"></FaHourglassStart> : ""
-                }
-                {
-                    account.friendship === "true" ?
-                    <FaUserFriends className="friend"></FaUserFriends> : ""
-                }
-            </Invite>
+            {/* if this is a normale account */}
+            {account.username &&
+                <Invite>
+                    {
+                        account.friendship === "false" && loader ?
+                            <div className="request-loader"></div> :
+                            account.friendship === "false" ?
+                                <FaUserPlus className="add-user" onClick={sendRequest}></FaUserPlus> : ""
+                    }
+                    {
+                        account.friendship === "holded" ?
+                            <FaPaperPlane className="request"></FaPaperPlane> : ""
+                    }
+                    {
+                        account.friendship === "sent" ?
+                            <FaHourglassStart className="request"></FaHourglassStart> : ""
+                    }
+                    {
+                        account.friendship === "true" ?
+                            <FaUserFriends className="friend"></FaUserFriends> : ""
+                    }
+                </Invite>
+            }
+            {/* if this is account is a  group */}
+            {account.name &&
+                <Invite>
+                    {
+                        account.membership === "stranger" && loader ?
+                            <div className="request-loader"></div> :
+                            account.membership === "stranger" ?
+                                <FaShareSquare className="add-user" onClick={joinGroup}></FaShareSquare> : ""
+                    }
+                    {
+                        account.membership === "sent" ?
+                            <FaPaperPlane className="request"></FaPaperPlane> : ""
+                    }
+                    {
+                        account.membership === "member" ?
+                            <FaUsers className="friend"></FaUsers> : ""
+                    }
+                    {
+                        account.membership === "admin" ?
+                            <FaUserShield className="friend"></FaUserShield> : ""
+                    }
+                </Invite>
+            }
         </Container>
     )
 };
