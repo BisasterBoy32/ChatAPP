@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
-from rest_framework import permissions
-from .serializes import MessageSerializer ,GetMessagesSer
+from rest_framework import permissions, status
+from .serializes import MessageSerializer, GroupMessagesSer
 from .models import Message
+from accounts.models import Group
 from .queries import get_messages
 
 class MessageView(GenericAPIView):
@@ -54,3 +56,26 @@ class SetMessageAsReadView(GenericAPIView):
         message.save()
         
         return Response({"success":True})
+
+class GroupMessageView(GenericAPIView):
+    queryset = Message.objects.all()
+    serializer_class = GroupMessagesSer
+    permission_classes =[
+        permissions.IsAuthenticated
+    ] 
+    
+    def get(self, request):
+        user = request.user
+        group_id = request.query_params.get("g_id")
+        group = get_object_or_404(Group ,pk=group_id)
+        # check if this user is a member or not inside this group
+        if user in group.members.all() or group.creator == user :
+            # get all the messages sent inside this group
+            messages = group.messages.all()
+            
+            # serialize the data
+            message_ser = self.get_serializer(messages ,many=True)
+            return  Response(message_ser.data)
+        else :
+            response = "you are not a member you can see the messages for this group"
+            return Response(status=status.HTTP_403_FORBIDDEN , data=response)

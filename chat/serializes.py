@@ -42,3 +42,19 @@ class GetMessagesSer(serializers.Serializer):
     date = serializers.DateTimeField()
     content = serializers.CharField()
     receiver_id = serializers.IntegerField()
+
+
+class GroupMessagesSer(serializers.ModelSerializer):
+
+    sender_info = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Message
+        fields = ("id", "sender", "sender_info", "date", "content")
+
+    def get_sender_info(self, object):
+        return {
+            "id" : object.sender.id,
+            "icon": object.sender.profile.icon,
+            "username": object.sender.username
+        }

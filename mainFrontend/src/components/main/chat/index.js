@@ -1,6 +1,10 @@
 import React,{ useContext,useState } from "react";
 import styled from "styled-components";
-import { AccountsContext ,UserContext ,WebSocketContext} from "../../../store/context";
+import {
+    AccountsContext ,
+    WebSocketContext,
+    GroupWebSocketContext
+} from "../../../store/context";
 import ChatBox from "./chat_box";
 
 const Container = styled.div`
@@ -32,8 +36,8 @@ const Button = styled.button`
 export default ({showProfile}) => {
     const accountsContext = useContext(AccountsContext);
     const selectedFriend = accountsContext.state.selectedFriend;
-    const userContext = useContext(UserContext);
     const websocketContext = useContext(WebSocketContext);
+    const groupWebSocketContext = useContext(GroupWebSocketContext)
     const [message, setMessage] = useState("");
     
     const sendMessage = (e) => {
@@ -45,7 +49,13 @@ export default ({showProfile}) => {
             content: message
         };  
         // create new message
-        websocketContext.websockets[selectedFriend.id].send(JSON.stringify(values));
+        // if this is a friend
+        if (selectedFriend.username){
+            websocketContext.websockets[selectedFriend.id].send(JSON.stringify(values));
+        // if this is a group
+        }else if (selectedFriend.name){
+            groupWebSocketContext.websockets[selectedFriend.id].send(JSON.stringify(values));
+        }
         setMessage("");
     };
 

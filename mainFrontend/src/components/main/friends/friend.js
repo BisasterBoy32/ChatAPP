@@ -119,7 +119,23 @@ export default ({ friend, selected }) => {
                     err => console.log(err.response.message)
                 ) 
         } else if (friend.name){
-
+            // get all the group messages
+            axios.get(`/message/group_messages?g_id=${friend.id}`, config)
+                .then(
+                    res => {
+                        // change the selected friend
+                        accountsContext.dispatch({
+                            type: "SELECT_FRIEND",
+                            payload: friend
+                        });
+                        // store the selected friend messages
+                        accountsContext.dispatch({
+                            type: "GET_MESSAGES",
+                            payload: res.data
+                        })
+                    },
+                    err => console.log(err.response.message)
+                )    
         }
     };
 

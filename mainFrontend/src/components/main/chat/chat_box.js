@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 
-import { AccountsContext } from "../../../store/context";
+import { AccountsContext,UserContext } from "../../../store/context";
 
 const Container = styled.div`
     height: calc(100% - 5.4rem);
@@ -39,12 +39,14 @@ const ProfileImage = styled.div`
 
 export default () => {
     const accountsContext = useContext(AccountsContext);
+    const userContext = useContext(UserContext);
+    const { user } = userContext.state
     const messages = accountsContext.state.messages;
     const selectedFriend = accountsContext.state.selectedFriend;
 
     return (
         <Container>
-            {messages.length
+            {messages.length && selectedFriend.username
                 ?
                 messages.map(message => {
                     const isSender = selectedFriend.id !== message.receiver_id;
@@ -53,6 +55,21 @@ export default () => {
                         <Content receiver={isSender} key={message.id} >
                             <Message >  {message.content}  </Message>
                             {isSender && <ProfileImage image={selectedFriend.icon} />}
+                        </Content>
+                    )
+                })
+                :
+                null
+            }
+            {messages.length && selectedFriend.name
+                ?
+                messages.map(message => {
+                    const isSender = user.profile.user !== message.sender;
+
+                    return(
+                        <Content receiver={isSender} key={message.id} >
+                            <Message >  {message.content}  </Message>
+                            {isSender && <ProfileImage image={message.sender_info.icon} />}
                         </Content>
                     )
                 })
