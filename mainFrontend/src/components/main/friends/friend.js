@@ -92,8 +92,8 @@ export default ({ friend, selected }) => {
     const getGroupMembers = () => {
         // if this is a group
         if (friend.members){
-            const { friends } = accountsContext.state;
-            return friends.filter(elem => friend.members.includes(elem.id))
+            const { accounts } = accountsContext.state;
+            return accounts.filter(elem => friend.members.includes(elem.id))
         }
     };
     const groupMembers = getGroupMembers();
@@ -118,8 +118,10 @@ export default ({ friend, selected }) => {
                     },
                     err => console.log(err.response.message)
                 ) 
-            }
-        };
+        } else if (friend.name){
+
+        }
+    };
 
     return (
         <Container

@@ -265,6 +265,43 @@ class GetNotifications(GenericAPIView):
             response = not_ser.data
             return Response(status=status.HTTP_200_OK,data=response) 
 
+        elif response == "group accept":
+            notification = Notification.objects.get(pk = request.data["id"])
+            # add this user who sent the request to the group members
+            group = notification.group
+            group.members.add(notification.associated.user)
+            # create a notification to tell this user who sent
+            # a request to join a group that his request has been accepted
+            accepted_not = Notification(
+                profile = notification.associated,
+                type = "group accept",
+                group = group,
+                associated = notification.profile
+            )
+            accepted_not.save()
+            not_ser = self.get_serializer(accepted_not)
+            # delete the old notification 
+            notification.delete()
+            response = not_ser.data
+            return Response(status=status.HTTP_200_OK,data=response) 
+
+        elif response == "group reject":
+            notification = Notification.objects.get(pk = request.data["id"])
+            # create a notification to tell this user who sent
+            # a request to join a group that his request has been accepted
+            accepted_not = Notification(
+                profile = notification.associated,
+                type = "group reject",
+                group = notification.group,
+                associated = notification.profile
+            )
+            accepted_not.save()
+            not_ser = self.get_serializer(accepted_not)
+            # delete the old notification 
+            notification.delete()
+            response = not_ser.data
+            return Response(status=status.HTTP_200_OK,data=response) 
+
         else :
             # in case of simple notification delete it
             # after the user click on it

@@ -1,17 +1,13 @@
 import React, { useContext, useState } from 'react';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import ListItem from '@material-ui/core/ListItem';
-import Typography from '@material-ui/core/Typography';
 import axios from "axios";
 import { setConfig } from "../../../helpers";
+import NotComponent from "./request_not_comp";
 import { 
     UserContext,
     AlerContext, 
     NotificationContext, 
     AccountsContext,
+    GroupsContext,
     WebSocketContext
 } from "../../../store/context";
 
@@ -21,7 +17,8 @@ export default ({ notification }) => {
     const notContext = useContext(NotificationContext);
     const accountsContext = useContext(AccountsContext);
     const webSocketContext = useContext(WebSocketContext);
-    const [disabled, setDisabled] = useState(false)
+    const groupsContext = useContext(GroupsContext);
+    const [disabled, setDisabled] = useState(false);
 
     const responseToRequest = (response) => {
         const config = setConfig(userContext.state.token);
@@ -88,74 +85,79 @@ export default ({ notification }) => {
             )
     };
 
-    return (
-        <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-                <Avatar alt="Remy Sharp" src={notification.icon} />
-            </ListItemAvatar>
-            <ListItemText
-                primary="Friend Request"
-                secondary={
-                    <React.Fragment>
-                        <Typography
-                            component="span"
-                            variant="body2"
-                            color="textPrimary"
-                        >
-                            {notification.username}
-                        </Typography>
-                        {" has sent you a friend request"}
-                        {
-                            disabled &&
-                            <>
-                                <Button
-                                    style={{ margin: "4px 4px 0px 0px" }}
-                                    size="small"
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => responseToRequest("accept")}
-                                    disabled
-                                >
-                                    Accept
-                        </Button>
-                                <Button
-                                    style={{ margin: "4px 4px 0px 0px" }}
-                                    size="small"
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={() => responseToRequest("reject")}
-                                    disabled
-                                >
-                                    Reject
-                        </Button>
-                            </>
-                        }
-                        {
-                            !disabled &&
-                            <>
-                                <Button
-                                    style={{ margin: "4px 4px 0px 0px" }}
-                                    size="small"
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => responseToRequest("accept")}
-                                >
-                                    Accept
-                        </Button>
-                                <Button
-                                    style={{ margin: "4px 4px 0px 0px" }}
-                                    size="small"
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={() => responseToRequest("reject")}
-                                >
-                                    Reject
-                        </Button>
-                            </>
-                        }
-                    </React.Fragment>
+    const responseToGroupRequest = (response) => {
+        const config = setConfig(userContext.state.token);
+        const groupResponse = response === "accept" ? "group accept" : "group reject"
+        const values = {
+            id: notification.id,
+            response: groupResponse
+        }
+        // disaple the batton
+        setDisabled(true);
+        // delete notification and update the friendship state
+        axios.post("/accounts/get_notifications/", values, config)
+            .then(
+                res => {
+                    // enables the batton
+                    setDisabled(false);
+                    alertContext.dispatch({
+                        type: "INFO_SUCCESS",
+                        payload: response === "accept"
+                            ?
+                            `you accepted ${notification.username} to join your group ${notification.group_info.name}`
+                            :
+                            `you rejected ${notification.username} to join your group ${notification.group_info.name}`
+                    });
+                    // if he accepted this user add him to the group members
+                    if (response === "accept") {
+                        // find this user and added to the friends list
+                        groupsContext.dispatch({
+                            type: "ADD_MEMBER",
+                            payload: {
+                                member: notification.user,
+                                group: notification.group
+                            }
+                        });
+                        // open a channel between this friend and 
+                        // and this group
+                        // webSocketContext.connect(friend.id);
+                    }
+                    // delete this notification
+                    notContext.dispatch({
+                        type: "DELETE_NOTIFICATION",
+                        payload: notification.id
+                    });
+                },
+                err => {
+                    // enables the buttons
+                    setDisabled(false);
+                    alertContext.dispatch({
+                        type: "INFO_ERRO",
+                        payload: "something went wrong"
+                    });
                 }
+            )
+    };
+
+    // if it's a notification to a friend request
+    if (notification.type === "request"){
+        return (
+            <NotComponent 
+                disabled={disabled} 
+                notification={notification}
+                action={responseToRequest} 
+                content={" has sent you a friend request"}
             />
-        </ListItem>
-    )
+        )
+    // if it's notification to join a group
+    } else if (notification.type === "group request") {
+        return (
+            <NotComponent 
+                disabled={disabled} 
+                notification={notification}
+                action={responseToGroupRequest} 
+                content={` wants to join your group named ${notification.group_info.name}`} 
+            />
+        )
+    }
 }

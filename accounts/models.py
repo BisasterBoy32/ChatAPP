@@ -66,6 +66,9 @@ class Group(models.Model):
         # is this a member inside this group
         elif user in self.members.all():
             return "member"
+        # if this user sent a request to join this group
+        elif Notification.objects.filter(type="group request", group=self ,associated=user.profile) :
+            return "sent"
         # not member and not the creator 
         else :
             return "stranger"

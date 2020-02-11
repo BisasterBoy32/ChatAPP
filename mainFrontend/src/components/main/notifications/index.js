@@ -7,7 +7,7 @@ import { FaBell } from "react-icons/fa";
 import styled from "styled-components";
 
 import { NotificationContext } from "../../../store/context";
-import AcceptNot from "./accept_notification";
+import OtherNot from "./other_notification";
 import RequestNot from "./request_not";
 
 const Container = styled.div`
@@ -79,11 +79,11 @@ export default function SimplePopover() {
                 <List className={classes.root}>
                     {
                         notifications.map(notification => (
-                            notification.type === "request"
+                            notification.type === "request" || notification.type === "group request"
                                 ?
                                 <RequestNot key={notification.id} notification={notification} />
                                 :
-                                <AcceptNot key={notification.id} notification={notification} />
+                                <OtherNot key={notification.id} notification={notification} />
                         ))
                     }
                 </List>

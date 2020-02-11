@@ -12,6 +12,7 @@ import { initAccountsValue , accountsReducer} from "./reducers/accounts_reducer"
 import { notificationReducer, initNotificationValue } from "./reducers/notification_reducer.js";
 import { initGroupsValue, groupsReducer } from "./reducers/groups_reducer.js";
 import WebSokcetComp from "./websocket";
+import GroupWebSocket from "./groupWebSocket";
 
 export default ({children}) => {
 
@@ -38,7 +39,9 @@ export default ({children}) => {
                             state: notificationState, dispatch: notificationDispatch
                         }}>
                             <WebSokcetComp>
-                                {children}
+                                <GroupWebSocket>
+                                    {children}
+                                </GroupWebSocket>
                             </WebSokcetComp>
                         </NotificationContext.Provider>
                     </GroupsContext.Provider>

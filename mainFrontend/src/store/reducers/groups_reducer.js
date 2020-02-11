@@ -10,19 +10,13 @@ export const groupsReducer = (state, action) => {
         case "LOAD_PUBLIC":
             return {
                 ...state,
-                groups : [
-                    ...state.groups ,
-                    ...action.payload
-                ]
+                groups : [...action.payload]
             };
 
         case "LOAD_USER_GROUPS":
             return {
                 ...state,
-                userGroups: [
-                    ...state.userGroups,
-                    ...action.payload
-                ]
+                userGroups: [...action.payload]
             };
 
         case "ADD_GROUP":
@@ -42,11 +36,40 @@ export const groupsReducer = (state, action) => {
                     return action.payload;
                 }
                 return group;
-            })
+            });
             return {
                 ...state,
                 userGroups: [...newGroups]
             };
+
+        case "ADD_MEMBER":
+            // add the accepted user to the group members
+            newGroups = state.userGroups.map(group => {
+                if (group.id === action.payload.group) {
+                    group.members.push(action.payload.member)
+                    return group;
+                }
+                return group;
+            });
+            return {
+                ...state,
+                userGroups: [...newGroups]
+            };
+
+        case "CHANGE_MEMBERSHIP":
+            // change the memberchip of this group
+            newGroups = state.groups.map(group => {
+                if (group.id === action.payload) {
+                    group.membership = "sent" 
+                    return group;
+                }
+                return group;
+            });
+            return {
+                ...state,
+                groups: [...newGroups]
+            };
+
         default:
             return state
     }

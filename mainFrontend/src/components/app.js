@@ -7,7 +7,8 @@ import {
     AccountsContext, 
     NotificationContext,
     WebSocketContext,
-    GroupsContext
+    GroupsContext,
+    GroupWebSocketContext
 } from "../store/context";
 import { setConfig } from "../helpers";
 
@@ -22,6 +23,16 @@ const App = () => {
     const notificationContext = useContext(NotificationContext);
     const groupContext = useContext(GroupsContext);
     const webSocketContext = useContext(WebSocketContext);
+    const groupWebSocketContext = useContext(GroupWebSocketContext);
+
+    const getUserNotifications = () => {
+        const config = setConfig(user.state.token);
+        axios.get("/accounts/get_notifications/", config)
+            .then(
+                res => notificationContext.dispatch({ type: "LOAD_NOTIFICATIONS", payload: res.data }),
+                err => console.log(err.response.data)
+            )
+    };
 
     // see if there is a current user 
     useEffect(() => {
@@ -64,9 +75,9 @@ const App = () => {
                     // add all the user groups that he is a member inside them
                     groupContext.dispatch({ type: "LOAD_USER_GROUPS", payload: res.data.user_groups });
                     // open a channel between those friends and this user
-                    // res.data.map(friend => {
-                    //     webSocketContext.connect(friend.id);
-                    // });
+                    res.data.user_groups.map(group => {
+                        groupWebSocketContext.connect(group.id);
+                    });
                 },
                 err => console.log(err.response.message)
             )
@@ -77,6 +88,9 @@ const App = () => {
                 res => notificationContext.dispatch({ type: "LOAD_NOTIFICATIONS", payload: res.data }),
                 err => console.log(err.response.data)
             )
+
+        // get all Notification for this user after each 1min
+        setInterval(getUserNotifications , 30000);
 
     }, []);
 

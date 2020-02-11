@@ -229,6 +229,7 @@ class NotificationSer(serializers.ModelSerializer):
             return {
                 'id' : object.group.id,
                 'name' : object.group.name,
+                "icon" : object.group.icon
             }
 
 class GroupSer(serializers.ModelSerializer):

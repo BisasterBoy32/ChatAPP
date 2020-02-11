@@ -15,7 +15,8 @@ import  { setConfig } from "../../../helpers"
 import {
     AccountsContext,
     AlerContext,
-    UserContext
+    UserContext,
+    GroupsContext
 } from "../../../store/context";
 
 
@@ -58,6 +59,7 @@ export default ({ account }) => {
     const alertContext = useContext(AlerContext);
     const accountsContext = useContext(AccountsContext);
     const userContext = useContext(UserContext);
+    const groupsContext = useContext(GroupsContext);
 
     // send request to join a group
     const joinGroup = () => {
@@ -80,6 +82,11 @@ export default ({ account }) => {
                         type: "INFO_SUCCESS",
                         payload: `you sent a request to join ${account.name} group`
                     });
+                    // change the membership of this group
+                    groupsContext.dispatch({
+                        type: "CHANGE_MEMBERSHIP",
+                        payload: account.id
+                    }); 
                 },
                 err => {
                     // show the loader
@@ -110,7 +117,7 @@ export default ({ account }) => {
                     });
                     alertContext.dispatch({
                         type: "INFO_SUCCESS",
-                        payload: "your request has been sent succefully"
+                        payload: `you sent a friend request ${account.username}`
                     });
                     setLoader(false);
                 },

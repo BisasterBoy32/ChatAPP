@@ -100,12 +100,19 @@ export const accountsReducer = (state, action) => {
                 }
                 return account;
             });
+            // add this new friend if he doesn't exist on the friends list
+            if (state.friends.find(friend => friend.id === action.payload.id)){
+                newFriends = [...state.friends]
+            } else {
+                newFriends =  [...state.friends, action.payload]
+            }
             return {
                 ...state,
                 accounts: [...newAccounts],
                 // add the new friend
-                friends : [...state.friends, action.payload]
+                friends: [...newFriends]
             }
+            
         // search for a friend
         case "SEARCH_FRIENDS":
             return {

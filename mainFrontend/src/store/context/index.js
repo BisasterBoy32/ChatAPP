@@ -5,5 +5,6 @@ export const AlerContext = createContext();
 // all the users friends and non friends
 export const AccountsContext = createContext();
 export const WebSocketContext = createContext();
+export const GroupWebSocketContext = createContext();
 export const NotificationContext = createContext();
 export const GroupsContext = createContext();
