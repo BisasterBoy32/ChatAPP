@@ -269,6 +269,11 @@ class GetNotifications(GenericAPIView):
             notification = Notification.objects.get(pk = request.data["id"])
             # add this user who sent the request to the group members
             group = notification.group
+            # check if the current user is the creator of the group
+            if request.user != group.creator:
+                response = {"action forbidden" : "only the creator of the group can accept a member to join"}
+                return Response(status=status.HTTP_403_FORBIDDEN, data=response)
+
             group.members.add(notification.associated.user)
             # create a notification to tell this user who sent
             # a request to join a group that his request has been accepted

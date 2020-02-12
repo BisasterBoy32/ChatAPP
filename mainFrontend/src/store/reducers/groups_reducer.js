@@ -99,6 +99,18 @@ export const groupsReducer = (state, action) => {
                 userGroups: [...newGroups]
             }; 
 
+        case "REJECT_REQUEST":
+            newGroups = state.groups.map(group => {
+                if (group.id === action.payload) {
+                    group.membership = "stranger";
+                }
+                return group
+            })
+            return {
+                ...state,
+                groups: [...newGroups]
+            };
+
         default:
             return state
     }

@@ -70,7 +70,10 @@ export default ({notification}) => {
                     },
                     err => console.log(err.response.message)
                 )
-        };
+        } else if (notification.group && notification.type === "group reject"){
+            // go to this group and change the member of this group from sent to stranger
+            groupsContext.dispatch({ type: "REJECT_REQUEST", payload: notification.group });
+        }
 
         // delete notification
         axios.post("/accounts/get_notifications/", values, config)

@@ -5,7 +5,7 @@ from asgiref.sync import async_to_sync
 from .models import Message
 from accounts.models import Group
 from .views import create_message ,create_message_for_group
-from .helpers import create_group_name ,create_group_name_for_group
+from .helpers import create_group_name ,create_group_name_for_group ,check_friendship
 from .serializes import GroupMessagesSer
 
 class ChatConsumer(WebsocketConsumer):
@@ -17,6 +17,7 @@ class ChatConsumer(WebsocketConsumer):
         # other user is the one who the user
         # want to chat with him
         other_user = self.scope['url_route']['kwargs']['receiver']
+
         group_name = create_group_name(user.id ,other_user)
         self.group_name = group_name
         # add key-value (channel, group) to redis 
@@ -27,6 +28,13 @@ class ChatConsumer(WebsocketConsumer):
             self.group_name,
             self.channel_name
         )
+        # check if this user is friend with the current user
+        # and open a channel between them only if they are friends
+        friend = User.objects.get(pk=other_user)
+        # if there arn't a friend there close the channel
+        if not check_friendship(user, friend):
+            self.disconnect(self, None)
+        # otherways open a channel between them
         self.accept()
 
     def disconnect(self, close_code):
@@ -97,7 +105,12 @@ class ChatGroupConsumer(WebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-        self.accept()
+        # check if this user is member inside this group 
+        # if true open a channel otherways close the channel
+        if user in group.members.all() or user == group.creator:
+            self.accept()
+        else :
+            self.disconnect(self ,None)
 
     def receive(self, text_data):
         user = self.scope['user']
