@@ -43,10 +43,11 @@ export default () => {
     const { user } = userContext.state
     const messages = accountsContext.state.messages;
     const selectedFriend = accountsContext.state.selectedFriend;
+    const group = selectedFriend && selectedFriend.username ? false : true
 
     return (
         <Container>
-            {messages.length && selectedFriend.username
+            {messages.length && !group
                 ?
                 messages.map(message => {
                     const isSender = selectedFriend.id !== message.receiver_id;
@@ -61,7 +62,7 @@ export default () => {
                 :
                 null
             }
-            {messages.length && selectedFriend.name
+            {messages.length && group
                 ?
                 messages.map(message => {
                     const isSender = user.profile.user !== message.sender;

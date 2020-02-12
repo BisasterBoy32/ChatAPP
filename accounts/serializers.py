@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import Profile ,Notification ,Group
-from chat.models import Message
+from chat.models import Message ,ReadMessage
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -235,10 +235,11 @@ class NotificationSer(serializers.ModelSerializer):
 class GroupSer(serializers.ModelSerializer):
     creator_info = serializers.SerializerMethodField()
     membership = serializers.SerializerMethodField()
+    unReadMessages = serializers.SerializerMethodField()
 
     class Meta:
         model = Group
-        fields = ("id" ,"name" ,"creator_info" ,"type" ,"icon","members" ,"membership")
+        fields = ("id" ,"name" ,"creator_info" ,"type" ,"icon","members" ,"membership" ,"unReadMessages")
         read_only_fields = ("id" ,"icon","creator")
 
     def create(self ,validated_data):
@@ -266,3 +267,12 @@ class GroupSer(serializers.ModelSerializer):
     def get_membership(self ,object):
         user = self.context["request"].user 
         return object.user_state(user)
+
+    def get_unReadMessages(self, object):
+        user = self.context["request"].user
+        unread_msg = ReadMessage.objects.filter(
+            group=object,
+            user=user,
+            read=False
+        )
+        return unread_msg.count()

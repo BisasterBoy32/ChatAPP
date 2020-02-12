@@ -8,6 +8,7 @@ import { setConfig } from "../../../helpers";
 import { 
     AccountsContext,
     UserContext,
+    GroupsContext
 } from "../../../store/context";
 import Model from "../groups/group_model";
 import GroupInfo from "./group_info";
@@ -52,17 +53,18 @@ const IsActive = styled.div`
 `
 
 const UnreadMessages = styled.div`
-position: absolute;
-background-color: rgb(243,83,83);
-color: #fff;
-border-radius: 50%;
-width: 25px;
-height: 25px;
-padding: 4px;
-text-align: center;
-right: 30px;
-top: 50%;
-transform: translateY(-50%);
+    position: absolute;
+    background-color: rgb(243,83,83);
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    padding: 2px;
+    text-align: center;
+    right: 35px;
+    font-size: 14px;
+    top: 50%;
+    transform: translateY(-90%);
 `
 
 const EditGroup = styled.div`
@@ -78,6 +80,7 @@ const EditGroup = styled.div`
 export default ({ friend, selected }) => {
     const accountsContext = useContext(AccountsContext);
     const userContext = useContext(UserContext);
+    const groupsContext = useContext(GroupsContext);
     const user_id = userContext.state.user.profile.user;
     const [open, setOpen] = useState(false);
     const [openGroupInfo, setOpenGroupInfo] = useState(false);
@@ -123,16 +126,21 @@ export default ({ friend, selected }) => {
             axios.get(`/message/group_messages?g_id=${friend.id}`, config)
                 .then(
                     res => {
-                        // change the selected friend
-                        accountsContext.dispatch({
-                            type: "SELECT_FRIEND",
-                            payload: friend
-                        });
                         // store the selected friend messages
                         accountsContext.dispatch({
                             type: "GET_MESSAGES",
                             payload: res.data
                         })
+                        // change the selected friend
+                        accountsContext.dispatch({
+                            type: "SELECT_FRIEND",
+                            payload: friend
+                        });
+                        // mark all the selected group message as has been read
+                        groupsContext.dispatch({
+                            type: "SELECT_FRIEND",
+                            payload: friend
+                        });
                     },
                     err => console.log(err.response.message)
                 )    
@@ -147,7 +155,7 @@ export default ({ friend, selected }) => {
                 {friend.active && <IsActive />}
             </ProfileImage>
             <Username > {friend.username || friend.name} </Username>
-            { 
+            {
                 friend.unReadMessages 
                 ?  
                 <UnreadMessages>{friend.unReadMessages}</UnreadMessages>

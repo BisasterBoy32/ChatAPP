@@ -40,7 +40,11 @@ export default ({children}) => {
         // mark this message as has been read if the sender is the selected friend
         if (msg.sender_id === selectedFriendId) {   
             const config = setConfig(userContext.state.token)
-            axios.post("/message/set_message/", { message_id: msg.id }, config)
+            const values = {
+                message_id: msg.id,
+                type: "friend"
+            }
+            axios.post("/message/set_message/", values, config)
                 .then(
                     res => console.log(res.data),
                     err => console.log(err.response.data)

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework import permissions, status
 from .serializes import MessageSerializer, GroupMessagesSer
-from .models import Message
+from .models import Message ,ReadMessage
 from accounts.models import Group
 from .queries import get_messages
 
@@ -40,7 +40,7 @@ class MessageView(GenericAPIView):
             message.save()
         
         # serialize the data
-        message_ser = GetMessagesSer(messages ,many=True)
+        message_ser = self.get_serializer(messages ,many=True)
         return  Response(message_ser.data)
 
 class SetMessageAsReadView(GenericAPIView):
@@ -51,10 +51,20 @@ class SetMessageAsReadView(GenericAPIView):
     ] 
 
     def post(self ,request):
-        message = Message.objects.get(pk=request.data["message_id"])
-        message.hasBeenRead = True 
-        message.save()
-        
+        # the message could come from a group or a normale chat
+        # between two friends
+        if request.data["type"] == "friend":
+            message = Message.objects.get(pk=request.data["message_id"])
+            message.hasBeenRead = True 
+            message.save()
+
+        elif request.data["type"] == "group":
+            user = request.user
+            message = Message.objects.get(pk=request.data["message_id"])
+            ReadMessage.objects.filter(
+                message=message, user=user
+            ).update(read=True)
+
         return Response({"success":True})
 
 class GroupMessageView(GenericAPIView):
@@ -72,7 +82,13 @@ class GroupMessageView(GenericAPIView):
         if user in group.members.all() or group.creator == user :
             # get all the messages sent inside this group
             messages = group.messages.all()
-            
+            # turn all the unread messages to read
+            # for this current user
+            for message in messages:
+                ReadMessage.objects.filter(
+                    message=message, user=user
+                ).update(read=True)
+                
             # serialize the data
             message_ser = self.get_serializer(messages ,many=True)
             return  Response(message_ser.data)

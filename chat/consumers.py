@@ -109,7 +109,11 @@ class ChatGroupConsumer(WebsocketConsumer):
     def create_message(self ,data ,user):
         msg = create_message_for_group(user ,self.group_id,data)
         msg_ser = GroupMessagesSer(msg)
-        data = json.dumps(msg_ser.data)
+        data = {
+            "command" : "new_message",
+            "msg": msg_ser.data
+        }
+        data = json.dumps(data)
         async_to_sync(self.channel_layer.group_send)(
             self.group_name,
             {

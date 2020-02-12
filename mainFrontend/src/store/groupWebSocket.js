@@ -4,7 +4,8 @@ import { setConfig } from "../helpers";
 import {
     AccountsContext,
     GroupWebSocketContext,
-    UserContext
+    UserContext,
+    GroupsContext
 } from "./context";
 
 // we open a channel between all the group and this user
@@ -17,6 +18,7 @@ export default ({ children }) => {
     const [websockets, setWebsockets] = useState({});
     const userContext = useContext(UserContext);
     const accountsContext = useContext(AccountsContext);
+    const groupsContext = useContext(GroupsContext);
     const { selectedFriend } = accountsContext.state;
 
     // add message
@@ -24,23 +26,27 @@ export default ({ children }) => {
         // check if this message is comming or going
         // to the selected friend 'Group'
         const selectedFriendId = selectedFriend ? selectedFriend.id : null
-        if (msg.group_id === selectedFriendId) {
+        if (msg.group === selectedFriendId) {
             // add the message
             accountsContext.dispatch({
                 type: "ADD_MESSAGE",
                 payload: msg
             })
         } else {
-            accountsContext.dispatch({
+            groupsContext.dispatch({
                 type: "RECIEVE_MESSAGE",
-                payload: msg
+                payload: msg.group
             })
         }
 
-        // mark this message as has been read if the sender is the selected friend
-        if (msg.sender_id === selectedFriendId) {
+        // mark this message as has been read if the message is coming from the selected group
+        if (msg.group === selectedFriendId) {
             const config = setConfig(userContext.state.token)
-            axios.post("/message/set_message/", { message_id: msg.id }, config)
+            const values = {
+                message_id: msg.id,
+                type : "group"
+            }
+            axios.post("/message/set_message/", values, config)
                 .then(
                     res => console.log(res.data),
                     err => console.log(err.response.data)
@@ -81,7 +87,7 @@ export default ({ children }) => {
 
         ws.onmessage = (event) => {
             const recieved_data = JSON.parse(event.data);
-            const { command, ...msg } = recieved_data;
+            const { command, msg } = recieved_data;
             if (command === "new_message") {
                 add_message(msg);
             };
@@ -107,7 +113,7 @@ export default ({ children }) => {
             if (websockets.hasOwnProperty(key)) {
                 websockets[key].onmessage = (event) => {
                     const recieved_data = JSON.parse(event.data);
-                    const { command, ...msg } = recieved_data;
+                    const { command, msg } = recieved_data;
                     if (command === "new_message") {
                         add_message(msg);
                     };

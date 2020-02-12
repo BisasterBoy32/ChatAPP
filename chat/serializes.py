@@ -50,7 +50,7 @@ class GroupMessagesSer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ("id", "sender", "sender_info", "date", "content")
+        fields = ("id", "group","sender", "sender_info", "date", "content")
 
     def get_sender_info(self, object):
         return {

@@ -70,6 +70,35 @@ export const groupsReducer = (state, action) => {
                 groups: [...newGroups]
             };
 
+        case "SELECT_FRIEND":
+            // make all the selected Group 
+            // messages as has been read
+            newGroups = state.userGroups.map(group => {
+                if (group.id === action.payload.id) {
+                    group.unReadMessages = 0;
+                }
+                return group
+            })
+            return {
+                ...state,
+                userGroups: [...newGroups]
+            }; 
+
+        case "RECIEVE_MESSAGE":
+            // whene the user receiver a message from this group
+            // and the selected one is not this group
+            // increamen the unread messages for this group
+            newGroups = state.userGroups.map(group => {
+                if (group.id === action.payload) {
+                    group.unReadMessages++;
+                }
+                return group
+            })
+            return {
+                ...state,
+                userGroups: [...newGroups]
+            }; 
+
         default:
             return state
     }
