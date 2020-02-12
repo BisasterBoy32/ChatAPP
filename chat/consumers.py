@@ -31,6 +31,7 @@ class ChatConsumer(WebsocketConsumer):
         # check if this user is friend with the current user
         # and open a channel between them only if they are friends
         friend = User.objects.get(pk=other_user)
+        self.friend = friend
         # if there arn't a friend there close the channel
         if not check_friendship(user, friend):
             self.disconnect(self, None)
@@ -49,6 +50,22 @@ class ChatConsumer(WebsocketConsumer):
         data = json.loads(text_data)
         #  apply a task (create message ..etc)
         self.commands[data["command"]](self, data ,user) 
+
+    def friend_typing(self, data ,user):
+        text_data = {
+            "friend" : user.id,
+            "typing" : data['typing'],
+            "command": "friend_typing"
+        }
+        # strigngify data
+        data = json.dumps(text_data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                "type": "broadcast_message",
+                "data": data
+            }
+        )
 
     def new_message(self ,data ,sender):
         msg = create_message(data ,sender)
@@ -79,7 +96,8 @@ class ChatConsumer(WebsocketConsumer):
         return data
        
     commands = {
-        "create_message" : new_message
+        "create_message" : new_message,
+        "friend_typing": friend_typing
     }
 
 

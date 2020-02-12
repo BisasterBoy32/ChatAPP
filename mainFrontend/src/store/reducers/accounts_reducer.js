@@ -2,7 +2,8 @@ export const initAccountsValue = {
     accounts : [],
     friends : [],
     selectedFriend : null,
-    messages : []
+    messages : [],
+    friendTyping : false
 };
 
 export const accountsReducer = (state, action) => {
@@ -34,7 +35,8 @@ export const accountsReducer = (state, action) => {
             return {
                 ...state,
                 friends : newFriends,
-                selectedFriend: action.payload
+                selectedFriend: action.payload,
+                friendTyping : false
             }  
         case "GET_MESSAGES":
             return {
@@ -124,6 +126,13 @@ export const accountsReducer = (state, action) => {
             return {
                 ...state,
                 accounts: [...action.payload]
+            }
+
+        // search for a users
+        case "FRIEND_TYPING":
+            return {
+                ...state,
+                friendTyping:action.payload
             }
         default:
             return state;

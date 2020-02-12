@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useEffect } from "react";
 import styled from "styled-components";
 
 import { AccountsContext,UserContext } from "../../../store/context";
@@ -36,6 +36,14 @@ const ProfileImage = styled.div`
     border : 1px solid #fff;
     margin-left : 5px;
 `
+const Typing = styled.div`
+    height: 50px;
+    width: 100%;
+    font-size: 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
 
 export default () => {
     const accountsContext = useContext(AccountsContext);
@@ -43,7 +51,15 @@ export default () => {
     const { user } = userContext.state
     const messages = accountsContext.state.messages;
     const selectedFriend = accountsContext.state.selectedFriend;
+    const {friendTyping} = accountsContext.state;
     const group = selectedFriend && selectedFriend.username ? false : true
+    const typing = useRef(null)
+    
+    useEffect(() => {
+        // scroll to the bottom of the page whene the component mount
+            typing.current.scrollIntoView()
+    }, [selectedFriend])
+    
 
     return (
         <Container>
@@ -77,6 +93,8 @@ export default () => {
                 :
                 null
             }
+            <Typing ref={typing}>{friendTyping ? `${selectedFriend.username} is typing... `: ''}</Typing>
+            
         </Container>
     )
 }

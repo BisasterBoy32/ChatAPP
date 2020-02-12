@@ -52,6 +52,17 @@ export default ({children}) => {
         }
     };
 
+    // whene the selected friend is typing
+    const friendTyping = (data) => {
+        const selectedFriendId = selectedFriend ? selectedFriend.id : null
+        if (selectedFriendId === data.friend){
+            accountsContext.dispatch({
+                type: "FRIEND_TYPING",
+                payload: data.typing
+            })
+        }
+    }
+
     // function to coonect to the web socket
     const connect = (receiver_id) => {
 
@@ -89,7 +100,9 @@ export default ({children}) => {
             const { command , ...msg } = recieved_data;
             if ( command === "new_message"){
                 add_message(msg);
-            };
+            } else if (command === "friend_typing"){
+                friendTyping(recieved_data)
+            }
         };
 
         // stock all the sockets with their reciever id
@@ -115,6 +128,8 @@ export default ({children}) => {
                 const { command , ...msg } = recieved_data;
                     if ( command === "new_message"){
                         add_message(msg);
+                    } else if (command === "friend_typing") {
+                        friendTyping(recieved_data)
                     };
                 };
             }

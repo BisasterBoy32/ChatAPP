@@ -1,4 +1,4 @@
-import React,{ useContext,useState } from "react";
+import React,{ useContext,useState ,useEffect} from "react";
 import styled from "styled-components";
 import {
     AccountsContext ,
@@ -59,6 +59,32 @@ export default ({showProfile}) => {
         setMessage("");
     };
 
+    useEffect(() => {
+        if (selectedFriend && selectedFriend.username){
+            const data = {
+                command: "friend_typing",
+                typing: message === "" ? false : true
+            }
+            // send a signale that this friend is typing
+            websocketContext.websockets[selectedFriend.id].send(JSON.stringify(data));
+        }
+    }, [message]);
+
+    // each time selected friend change send a signale to
+    // change is typing to false
+    useEffect(() => {
+        if (selectedFriend && selectedFriend.username) {
+            const data = {
+                command: "friend_typing",
+                typing: false
+            }
+            // send to all friends typing is false
+            for (let key in websocketContext.websockets){
+                websocketContext.websockets[key].send(JSON.stringify(data));
+            }
+        }
+    }, [selectedFriend]);
+
     return (
         <Container shrink={showProfile}>
             <ChatBox></ChatBox>
@@ -67,7 +93,7 @@ export default ({showProfile}) => {
                     name="text" 
                     value={message} 
                     type="text" 
-                    onChange={(e) => setMessage(e.target.value) }
+                    onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type ypur message..."
                     />
                 <Button type="submit" onClick={sendMessage}>Send</Button>
