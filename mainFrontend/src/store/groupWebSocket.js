@@ -54,6 +54,17 @@ export default ({ children }) => {
         }
     };
 
+    // send a signale to the channel when a member is typing
+    const memberTyping = (member) => {
+        const selectedFriendId = selectedFriend ? selectedFriend.id : null
+        const {user} = userContext.state
+        if (selectedFriendId === member.group && member.typer !== user.username)
+        groupsContext.dispatch({
+            type: "MEMBER_TYPING",
+            payload: member
+        })
+    };
+
     // function to coonect to the web socket
     const connect = (group_id) => {
 
@@ -90,6 +101,8 @@ export default ({ children }) => {
             const { command, msg } = recieved_data;
             if (command === "new_message") {
                 add_message(msg);
+            } else if (command === "member_typing") {
+                memberTyping(recieved_data)
             };
         };
 
@@ -116,6 +129,8 @@ export default ({ children }) => {
                     const { command, msg } = recieved_data;
                     if (command === "new_message") {
                         add_message(msg);
+                    } else if (command === "member_typing") {
+                        memberTyping(recieved_data)
                     };
                 };
             }

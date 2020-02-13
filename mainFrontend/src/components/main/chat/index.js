@@ -67,12 +67,20 @@ export default ({showProfile}) => {
             }
             // send a signale that this friend is typing
             websocketContext.websockets[selectedFriend.id].send(JSON.stringify(data));
+        } else if (selectedFriend && selectedFriend.name){
+            const data = {
+                command: "member_typing",
+                typing: message === "" ? false : true
+            }
+            // send a signale to this group that i'm typing
+            groupWebSocketContext.websockets[selectedFriend.id].send(JSON.stringify(data)); 
         }
     }, [message]);
 
     // each time selected friend change send a signale to
     // change is typing to false
     useEffect(() => {
+        setMessage("")
         if (selectedFriend && selectedFriend.username) {
             const data = {
                 command: "friend_typing",
@@ -82,6 +90,14 @@ export default ({showProfile}) => {
             for (let key in websocketContext.websockets){
                 websocketContext.websockets[key].send(JSON.stringify(data));
             }
+            const data2 = {
+                command: "member_typing",
+                typing: false 
+            }
+            // send a signale that this groups that i stoped typing
+            for (let key in groupWebSocketContext.websockets) {
+                groupWebSocketContext.websockets[key].send(JSON.stringify(data2));
+            } 
         }
     }, [selectedFriend]);
 

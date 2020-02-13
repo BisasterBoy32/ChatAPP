@@ -153,6 +153,23 @@ class ChatGroupConsumer(WebsocketConsumer):
             }
         )
 
+    def member_typing(self ,data ,user):
+        text_data = {
+            "command": "member_typing",
+            "typing": data['typing'],
+            "typer": user.username,
+            "group" : self.group_id
+        }
+        text_data = json.dumps(text_data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                "type": "broadcast_message",
+                "data": text_data
+            }
+        )
+
+
     def broadcast_message(self, event):
         self.send(text_data=event["data"])
 
@@ -164,7 +181,8 @@ class ChatGroupConsumer(WebsocketConsumer):
 
     commands = {
         "close_socket" : disconnect,
-        "create_message" : create_message
+        "create_message" : create_message,
+        "member_typing": member_typing
     }
 
 

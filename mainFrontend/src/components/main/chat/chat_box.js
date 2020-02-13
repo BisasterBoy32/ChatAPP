@@ -1,7 +1,11 @@
 import React, { useContext, useRef, useEffect } from "react";
 import styled from "styled-components";
 
-import { AccountsContext,UserContext } from "../../../store/context";
+import { 
+    AccountsContext,
+    UserContext,
+    GroupsContext
+} from "../../../store/context";
 
 const Container = styled.div`
     height: calc(100% - 5.4rem);
@@ -48,10 +52,12 @@ const Typing = styled.div`
 export default () => {
     const accountsContext = useContext(AccountsContext);
     const userContext = useContext(UserContext);
+    const groupsContext = useContext(GroupsContext);
     const { user } = userContext.state
     const messages = accountsContext.state.messages;
     const selectedFriend = accountsContext.state.selectedFriend;
     const {friendTyping} = accountsContext.state;
+    const {memberTyping} = groupsContext.state
     const group = selectedFriend && selectedFriend.username ? false : true
     const typing = useRef(null)
     
@@ -93,7 +99,13 @@ export default () => {
                 :
                 null
             }
-            <Typing ref={typing}>{friendTyping ? `${selectedFriend.username} is typing... `: ''}</Typing>
+            {/* check if there is a friend or member typing */}
+            <Typing ref={typing}>
+                {friendTyping ? 
+                    `${selectedFriend.username} is typing... ` : memberTyping.state ?
+                    `${memberTyping.member} is typing... ` : " "
+                }
+            </Typing>
             
         </Container>
     )

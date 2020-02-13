@@ -1,6 +1,10 @@
 export const initGroupsValue = {
     groups : [],
-    userGroups : []
+    userGroups : [],
+    memberTyping : {
+        state : false,
+        member : null
+    }
 }
 
 export const groupsReducer = (state, action) => {
@@ -109,6 +113,15 @@ export const groupsReducer = (state, action) => {
             return {
                 ...state,
                 groups: [...newGroups]
+            };
+
+        case "MEMBER_TYPING":
+            return {
+                ...state,
+                memberTyping: {
+                    state: action.payload.typing,
+                    member: action.payload.typer
+                }
             };
 
         default:
