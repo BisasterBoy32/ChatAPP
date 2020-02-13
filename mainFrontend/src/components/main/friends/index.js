@@ -64,8 +64,12 @@ class Index extends React.Component {
         // each time the value of the search change 
         // send a request to serach
         if (prevState.value !== this.state.value) {
-            this.search();
+            this.search(this.state.value)
         }
+    }
+
+    componentWillUnmount() {
+        console.log("bye bye!");
     }
     onInputChange = (e) => {
         // update input value
@@ -83,19 +87,19 @@ class Index extends React.Component {
             })
     }
 
-    search = () => {
+    search = (word) => {
         // search for this friend or account
         let values;
         const { value } = this.state;
         if (this.state.showFriends) {
             values = {
                 s_type: "friends",
-                word: value
+                word: word 
             }
         } else {
             values = {
                 s_type: "accounts",
-                word: value
+                word: word
             }
         };
         const config = setConfig(this.props.userContext.state.token);
@@ -117,8 +121,7 @@ class Index extends React.Component {
                 err => console.log(err.response.message)
             )
         // group search
-        const groupValues = { word: value}
-        axios.post('/accounts/search_groups/', groupValues, config)
+        axios.post('/accounts/search_groups/', { word }, config)
             .then(
                 res => {
                     // add all the public groups 
@@ -127,7 +130,7 @@ class Index extends React.Component {
                     this.props.groupContext.dispatch({ type: "LOAD_USER_GROUPS", payload: res.data.user_groups });
                 },
                 err => console.log(err.response.message)
-            )  
+        )  
     }
 
     render() {
@@ -136,7 +139,6 @@ class Index extends React.Component {
         const { showFriends } = this.state;
         const { value } = this.state;
         const { selectedFriend } = this.props;
-
 
         return (
             <Container>
