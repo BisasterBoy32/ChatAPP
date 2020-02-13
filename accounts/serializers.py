@@ -1,6 +1,10 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
+
+from knox.models import AuthToken
 from rest_framework import serializers
 from .models import Profile ,Notification ,Group
 from chat.models import Message ,ReadMessage
@@ -118,8 +122,18 @@ class GetUsersSer(serializers.ModelSerializer):
     def get_icon(self ,object):
         return object.profile.icon
 
+    # check if this user is active
     def get_active(self ,object):
-        return object.profile.active
+        try:
+            token = AuthToken.objects.get(user_id=object.id)
+            # if the user have a token and it's not 
+            # expired than that user is active other ways he offline
+            if token.expiry > timezone.now() :
+                return True 
+            else :
+                return False
+        except ObjectDoesNotExist:
+            return False
 
     def get_friendship(self ,object):
         user = self.context["request"].user 
@@ -147,10 +161,20 @@ class GetFriendsSer(serializers.ModelSerializer):
         fields = ("id" ,"username" ,"icon","active","unReadMessages")
 
     def get_icon(self ,object):
+
         return object.profile.icon
 
     def get_active(self ,object):
-        return object.profile.active
+        try:
+            token = AuthToken.objects.get(user_id=object.id)
+            # if the user have a token and it's not 
+            # expired than that user is active other ways he offline
+            if token.expiry > timezone.now():
+                return True
+            else:
+                return False
+        except ObjectDoesNotExist:
+            return False
 
     def get_unReadMessages(self ,object):
         loged_in_user = self.context["request"].user 

@@ -63,3 +63,15 @@ def get_related_groups(user_id):
                 WHERE user_id = {user_id}
             )
     ''')
+
+
+def search_related_groups(user_id ,word):
+    return Group.objects.raw(f'''
+        SELECT * FROM accounts_group 
+            WHERE creator_id = {user_id}
+            OR id IN (
+                SELECT group_id FROM accounts_group_members
+                WHERE user_id = {user_id}
+            )
+            AND name LIKE "%%{word}%%"
+    ''')

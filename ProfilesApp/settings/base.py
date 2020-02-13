@@ -1,5 +1,6 @@
 import os
 from decouple import config
+from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
@@ -36,7 +37,13 @@ REST_FRAMEWORK = {
     # ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'knox.auth.TokenAuthentication',
-    )
+    ),
+}
+
+REST_KNOX = {
+    'TOKEN_TTL': timedelta(minutes=1),
+    'AUTO_REFRESH': True,
+    "MIN_REFRESH_INTERVAL" : 2,
 }
 
 MIDDLEWARE = [

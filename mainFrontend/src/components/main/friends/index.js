@@ -116,6 +116,18 @@ class Index extends React.Component {
                 },
                 err => console.log(err.response.message)
             )
+        // group search
+        const groupValues = { word: value}
+        axios.post('/accounts/search_groups/', groupValues, config)
+            .then(
+                res => {
+                    // add all the public groups 
+                    this.props.groupContext.dispatch({ type: "LOAD_PUBLIC", payload: res.data.public_groups });
+                    // add all the user groups that he is a member inside them
+                    this.props.groupContext.dispatch({ type: "LOAD_USER_GROUPS", payload: res.data.user_groups });
+                },
+                err => console.log(err.response.message)
+            )  
     }
 
     render() {

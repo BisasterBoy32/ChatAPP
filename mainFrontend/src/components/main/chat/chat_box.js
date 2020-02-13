@@ -72,8 +72,7 @@ export default () => {
             {messages.length && !group
                 ?
                 messages.map(message => {
-                    const isSender = selectedFriend.id !== message.receiver_id;
-
+                    const isSender = selectedFriend.id !== message.receiver;
                     return(
                         <Content receiver={isSender} key={message.id} >
                             <Message >  {message.content}  </Message>
@@ -103,7 +102,7 @@ export default () => {
             <Typing ref={typing}>
                 {friendTyping ? 
                     `${selectedFriend.username} is typing... ` : memberTyping.state ?
-                    `${memberTyping.member} is typing... ` : " "
+                        `${memberTyping.member} is typing... ` : <p>😀</p>
                 }
             </Typing>
             

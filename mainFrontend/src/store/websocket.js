@@ -24,7 +24,7 @@ export default ({children}) => {
         // check if this message is comming or going
         // to the selected friend
         const selectedFriendId = selectedFriend ? selectedFriend.id : null
-        if (msg.receiver_id === selectedFriendId || msg.sender_id === selectedFriendId) {
+        if (msg.receiver === selectedFriendId || msg.sender === selectedFriendId) {
             // add the message
             accountsContext.dispatch({
                 type : "ADD_MESSAGE",
@@ -38,7 +38,7 @@ export default ({children}) => {
         }
 
         // mark this message as has been read if the sender is the selected friend
-        if (msg.sender_id === selectedFriendId) {   
+        if (msg.sender === selectedFriendId) {   
             const config = setConfig(userContext.state.token)
             const values = {
                 message_id: msg.id,
@@ -59,6 +59,30 @@ export default ({children}) => {
             accountsContext.dispatch({
                 type: "FRIEND_TYPING",
                 payload: data.typing
+            })
+        }
+    }
+
+    // change the state to live whene a friend logges in
+    const connectFriend = (data) => {
+        const { user } = userContext.state
+        const user_id = user.profile ? user.profile.user : null 
+        if (data.user !== user_id) {
+            accountsContext.dispatch({
+                type: "FRIEND_CONNECT",
+                payload: data.user
+            })
+        }
+    }
+
+    // change the state to live whene a friend logges in
+    const disconnectFriend = (data) => {
+        const { user } = userContext.state
+        const user_id = user.profile ? user.profile.user : null 
+        if (data.user !== user_id) {
+            accountsContext.dispatch({
+                type: "FRIEND_DISCONNECT",
+                payload: data.user
             })
         }
     }
@@ -102,7 +126,11 @@ export default ({children}) => {
                 add_message(msg);
             } else if (command === "friend_typing"){
                 friendTyping(recieved_data)
-            }
+            } else if (command === "disconnecting") {
+                 disconnectFriend(recieved_data);
+            } else if (command === "connecting") {
+                connectFriend(recieved_data);
+            };
         };
 
         // stock all the sockets with their reciever id
@@ -124,12 +152,17 @@ export default ({children}) => {
         for (let key in websockets){
             if(websockets.hasOwnProperty(key)){
                 websockets[key].onmessage = (event) => {
+                console.log("from onmessage  :",event)
                 const recieved_data = JSON.parse(event.data);
                 const { command , ...msg } = recieved_data;
                     if ( command === "new_message"){
                         add_message(msg);
                     } else if (command === "friend_typing") {
                         friendTyping(recieved_data)
+                    } else if (command === "disconnecting") {
+                        disconnectFriend(recieved_data);
+                    } else if (command === "connecting") {
+                        connectFriend(recieved_data);
                     };
                 };
             }

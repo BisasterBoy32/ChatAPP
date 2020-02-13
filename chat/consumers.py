@@ -36,9 +36,29 @@ class ChatConsumer(WebsocketConsumer):
         if not check_friendship(user, friend):
             self.disconnect(self, None)
         # otherways open a channel between them
+        data = {"command": "connecting", "user": user.id}
+        data = json.dumps(data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                "type": "broadcast_message",
+                "data": data
+            }
+        )
         self.accept()
 
     def disconnect(self, close_code):
+        # send a message for the friend that this user
+        # has disconnectd
+        data = {"command" : "disconnecting", "user" : self.scope['user'].id}
+        data = json.dumps(data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                "type": "broadcast_message",
+                "data": data
+            }
+        )
         async_to_sync(self.channel_layer.group_discard)(
             self.group_name,
             self.channel_name
@@ -89,8 +109,8 @@ class ChatConsumer(WebsocketConsumer):
             'id' : message.id,
             'date' : message.date,
             'content' : message.content,
-            'receiver_id' : message.receiver.id,
-            'sender_id' : message.sender.id,
+            'receiver' : message.receiver.id,
+            'sender' : message.sender.id,
             'command' : 'new_message'
         }
         return data

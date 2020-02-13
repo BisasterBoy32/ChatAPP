@@ -26,7 +26,12 @@ from .serializers import (
     NotificationSer,
     GroupSer
 )
-from chat.queries import get_friends, search_friends, get_related_groups
+from chat.queries import(
+    get_friends, 
+    search_friends, 
+    get_related_groups,
+    search_related_groups
+) 
 
 # ------------ USER VIEWS --------------------------
 class RegisterView(ListCreateAPIView):
@@ -366,6 +371,34 @@ class GroupView(GenericAPIView):
             "user_groups" : user_groups_ser.data,
         }
         return Response(status=status.HTTP_200_OK, data=response)
+
+
+class GroupSearchView(GenericAPIView):
+    queryset = Group.objects.all()
+    serializer_class = GroupSer
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        search_field = request.data["word"]
+        # get the related group :
+        # user is a creator of this group
+        # or the user is a member inside this group
+        # with the name of this group unclude search_field
+        # with SQL QUERY
+        user_groups = search_related_groups(user.id ,search_field)
+        user_groups_ser = self.get_serializer(user_groups, many=True)
+        public_groups = Group.objects.filter(type="public", name__icontains=search_field)
+        public_groups_ser = self.get_serializer(public_groups, many=True)
+
+        response = {
+            "public_groups": public_groups_ser.data,
+            "user_groups": user_groups_ser.data,
+        }
+        return Response(status=status.HTTP_200_OK, data=response)
+
 
 class UpdateDeleteGroupView(GenericAPIView):
     queryset = Group.objects.all()

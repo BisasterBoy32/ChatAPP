@@ -55,7 +55,7 @@ export const accountsReducer = (state, action) => {
             // add 1 unReadMessage to the friend 
             // that recieved that message
             newFriends = friends.map(friend => {
-                if (friend.id === action.payload.sender_id) {
+                if (friend.id === action.payload.sender) {
                     friend.unReadMessages++;
                 }
                 return friend
@@ -64,6 +64,7 @@ export const accountsReducer = (state, action) => {
                 ...state,
                 friends : newFriends
             };
+
         case "LOAD_ACCOUNTS_FAILED":
             return state;
 
@@ -134,6 +135,32 @@ export const accountsReducer = (state, action) => {
                 ...state,
                 friendTyping:action.payload
             }
+
+        case "FRIEND_CONNECT":
+            // change the state of this friend to active
+            newFriends = friends.map(friend => {
+                if (friend.id === action.payload) {
+                    friend.active = true;
+                }
+                return friend
+            });
+            return {
+                ...state,
+                friends: newFriends
+            };
+
+        case "FRIEND_DISCONNECT":
+            // change the state of this friend to not active
+            newFriends = friends.map(friend => {
+                if (friend.id === action.payload) {
+                    friend.active = false;
+                }
+                return friend
+            });
+            return {
+                ...state,
+                friends: newFriends
+            };
         default:
             return state;
     }

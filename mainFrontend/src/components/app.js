@@ -25,6 +25,7 @@ const App = () => {
     const webSocketContext = useContext(WebSocketContext);
     const groupWebSocketContext = useContext(GroupWebSocketContext);
 
+    // get user notifications each 30seconds
     const getUserNotifications = () => {
         const config = setConfig(user.state.token);
         axios.get("/accounts/get_notifications/", config)
