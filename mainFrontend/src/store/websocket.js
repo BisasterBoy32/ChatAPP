@@ -4,7 +4,7 @@ import {setConfig} from "../helpers";
 import { 
     AccountsContext,
     WebSocketContext,
-    UserContext 
+    UserContext
 } from "./context";
 
 // we open a channel between all the friends and this user
@@ -152,7 +152,6 @@ export default ({children}) => {
         for (let key in websockets){
             if(websockets.hasOwnProperty(key)){
                 websockets[key].onmessage = (event) => {
-                console.log("from onmessage  :",event)
                 const recieved_data = JSON.parse(event.data);
                 const { command , ...msg } = recieved_data;
                     if ( command === "new_message"){

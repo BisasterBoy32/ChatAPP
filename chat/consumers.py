@@ -4,8 +4,16 @@ import json
 from asgiref.sync import async_to_sync
 from .models import Message
 from accounts.models import Group
-from .views import create_message ,create_message_for_group
-from .helpers import create_group_name ,create_group_name_for_group ,check_friendship
+from .views import (
+    delete_group_action,
+    create_message,
+    create_message_for_group
+)
+from .helpers import (
+    create_group_name,
+    create_group_name_for_group, 
+    check_friendship
+) 
 from .serializes import GroupMessagesSer
 
 class ChatConsumer(WebsocketConsumer):
@@ -189,6 +197,22 @@ class ChatGroupConsumer(WebsocketConsumer):
             }
         )
 
+    def delete_group(self ,data ,user):
+        delete_group_action(data['group'],user)
+        text_data = {
+            "command": "delete_group",
+            "group": data['group'],
+            "user" : user.id
+
+        }
+        text_data = json.dumps(text_data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                "type": "broadcast_message",
+                "data": text_data
+            }
+        )
 
     def broadcast_message(self, event):
         self.send(text_data=event["data"])
@@ -202,7 +226,8 @@ class ChatGroupConsumer(WebsocketConsumer):
     commands = {
         "close_socket" : disconnect,
         "create_message" : create_message,
-        "member_typing": member_typing
+        "member_typing": member_typing,
+        "delete_group": delete_group
     }
 
 

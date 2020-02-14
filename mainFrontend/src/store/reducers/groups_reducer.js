@@ -124,6 +124,13 @@ export const groupsReducer = (state, action) => {
                 }
             };
 
+        case "DELETE_GROUP":
+            newGroups = state.userGroups.filter(group => action.payload !== group.id);
+            return {
+                ...state,
+                userGroups: newGroups
+            };
+
         default:
             return state
     }

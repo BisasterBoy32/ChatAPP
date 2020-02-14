@@ -5,7 +5,8 @@ import {
     AccountsContext,
     GroupWebSocketContext,
     UserContext,
-    GroupsContext
+    GroupsContext,
+    AlerContext
 } from "./context";
 
 // we open a channel between all the group and this user
@@ -20,6 +21,7 @@ export default ({ children }) => {
     const accountsContext = useContext(AccountsContext);
     const groupsContext = useContext(GroupsContext);
     const { selectedFriend } = accountsContext.state;
+    const alertContext = useContext(AlerContext);
 
     // add message
     const add_message = (msg) => {
@@ -65,6 +67,20 @@ export default ({ children }) => {
         })
     };
 
+    const deleteGroup = (data) => {
+        // delete this group
+        groupsContext.dispatch({
+            type: "DELETE_GROUP",
+            payload: data.group
+        });
+        if (data.user === user.profile.user ){
+            alertContext.dispatch({
+                type: "INFO_SUCCESS",
+                payload: "this group has been delete succefully"
+            });
+        }
+    };
+
     // function to coonect to the web socket
     const connect = (group_id) => {
 
@@ -103,6 +119,8 @@ export default ({ children }) => {
                 add_message(msg);
             } else if (command === "member_typing") {
                 memberTyping(recieved_data)
+            } else if (command === "delete_group") {
+                deleteGroup(recieved_data)
             };
         };
 
@@ -131,6 +149,8 @@ export default ({ children }) => {
                         add_message(msg);
                     } else if (command === "member_typing") {
                         memberTyping(recieved_data)
+                    } else if (command === "delete_group") {
+                        deleteGroup(recieved_data)
                     };
                 };
             }

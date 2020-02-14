@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
 from .models import Message, ReadMessage
-from accounts.models import Group
+from accounts.models import Group, Notification
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
+
 from .helpers import check_friendship
 
 def create_message(data,sender):
@@ -50,3 +52,11 @@ def create_message_for_group(sender, group, data):
         return msg
     else :
         return None
+
+
+def delete_group_action(group_id, user):
+    group = get_object_or_404(Group ,pk=group_id)
+    if user == group.creator:
+        group.delete()
+
+    

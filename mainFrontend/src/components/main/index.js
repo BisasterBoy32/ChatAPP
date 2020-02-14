@@ -28,7 +28,7 @@ const Header = styled.div`
 
 export default () => {
     const [show, setShow] = useState(false);
-        
+
     return (
         <div>
         <Profile show={show} setShow={setShow}/>
