@@ -1,4 +1,4 @@
-import React, { useContext ,useState } from "react";
+import React, { useContext ,useState ,useEffect} from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { FaCog } from "react-icons/fa";
@@ -84,6 +84,14 @@ export default ({ friend, selected }) => {
     const user_id = userContext.state.user.profile.user;
     const [open, setOpen] = useState(false);
     const [openGroupInfo, setOpenGroupInfo] = useState(false);
+
+    // whene the component unmount close the settings modal
+    useEffect(() => {
+        return () =>{
+            setOpen(false);
+            setOpenGroupInfo(false);
+        } 
+    },[]);
 
     const editGroup = () => {
         setOpen(true);

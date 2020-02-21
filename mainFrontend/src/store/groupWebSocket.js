@@ -68,17 +68,37 @@ export default ({ children }) => {
     };
 
     const deleteGroup = (data) => {
-        // delete this group
-        groupsContext.dispatch({
-            type: "DELETE_GROUP",
-            payload: data.group
-        });
-        if (data.user === user.profile.user ){
-            alertContext.dispatch({
-                type: "INFO_SUCCESS",
-                payload: "this group has been delete succefully"
-            });
+        const selectedFriendId = selectedFriend ? selectedFriend.id : null;
+        debugger
+        const { user } = userContext.state;
+        // delete all the messages if the selected friend
+        // is this group that we just deleted
+        if (data.group === selectedFriendId ){
+            accountsContext.dispatch({
+                type: "GET_MESSAGES",
+                payload: []  
+            })
         }
+        // delete this group
+        // after 1s till the model unmount
+        setTimeout(() => {
+            groupsContext.dispatch({
+                type: "DELETE_GROUP",
+                payload: data.group
+            });
+            // alert that this group has been deleted
+            if (data.user === user.profile.user) {
+                alertContext.dispatch({
+                    type: "INFO_SUCCESS",
+                    payload: "this group has been delete succefully"
+                });
+            } else {
+                alertContext.dispatch({
+                    type: "INFO_ERRO",
+                    payload: "a group has been deleted"
+                });
+            }
+        },1000)
     };
 
     // function to coonect to the web socket
