@@ -37,11 +37,11 @@ DEBUG_TOOLBAR_CONFIG = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "profiles",
+        'NAME': "chat",
         'USER': "root",
         'PASSWORD': "",
         'HOST': "127.0.0.1",
-        'PORT': '3306'
+        'PORT': '3308'
     }
 }
 

@@ -13,11 +13,11 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         # accept connection
         # authenticate the logged in user
+        breakpoint()
         user = self.scope['user']
         # other user is the one who the user
         # want to chat with him
         other_user = self.scope['url_route']['kwargs']['receiver']
-
         group_name = create_group_name(user.id ,other_user)
         self.group_name = group_name
         # add key-value (channel, group) to redis 

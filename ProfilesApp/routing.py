@@ -6,14 +6,12 @@ from channels.security.websocket import AllowedHostsOriginValidator, OriginValid
 from chat.consumers import ChatConsumer, ChatGroupConsumer
 
 application = ProtocolTypeRouter({
-    'websocket': AllowedHostsOriginValidator(
-        TokenAuthMiddlewareStack(
-            URLRouter(
+    'websocket': TokenAuthMiddlewareStack(
+        URLRouter(
                 [   
                     path("chat/<str:token>/<int:receiver>/",ChatConsumer),
                     path("group_chat/<str:token>/<int:group>/",ChatGroupConsumer)
                 ]
-            )
         )
-    )
+    ),
 })
