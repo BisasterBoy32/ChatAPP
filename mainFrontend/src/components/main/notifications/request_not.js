@@ -49,7 +49,7 @@ export default ({ notification }) => {
                             payload: notification.user
                         });
                     } else {
-                        // find this user and added to the friends list
+                        // find this user and added it to the friends list
                         let friend = accountsContext.state.accounts.find(
                             account => account.id === notification.user
                         );

@@ -84,7 +84,7 @@ export default ({ friend, selected }) => {
     const user_id = userContext.state.user.profile.user;
     const [open, setOpen] = useState(false);
     const [openGroupInfo, setOpenGroupInfo] = useState(false);
-
+    
     const editGroup = () => {
         setOpen(true);
     };

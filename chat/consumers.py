@@ -13,7 +13,6 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         # accept connection
         # authenticate the logged in user
-        breakpoint()
         user = self.scope['user']
         # other user is the one who the user
         # want to chat with him

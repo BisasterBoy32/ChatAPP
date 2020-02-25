@@ -152,7 +152,6 @@ export default ({children}) => {
         for (let key in websockets){
             if(websockets.hasOwnProperty(key)){
                 websockets[key].onmessage = (event) => {
-                console.log("from onmessage  :",event)
                 const recieved_data = JSON.parse(event.data);
                 const { command , ...msg } = recieved_data;
                     if ( command === "new_message"){

@@ -139,7 +139,7 @@ class Index extends React.Component {
         const { showFriends } = this.state;
         const { value } = this.state;
         const { selectedFriend } = this.props;
-
+        
         return (
             <Container>
                 <Header>
@@ -152,7 +152,10 @@ class Index extends React.Component {
                             <Friend
                                 key={friend.username}
                                 friend={friend}
-                                selected={selectedFriend && friend.id === selectedFriend.id}
+                                selected={
+                                    selectedFriend && selectedFriend.username &&
+                                    friend.username === selectedFriend.username
+                                }
                             />
                         )
                     )
@@ -163,7 +166,10 @@ class Index extends React.Component {
                             <Friend
                                 key={friend.id}
                                 friend={friend}
-                                selected={selectedFriend && friend.id === selectedFriend.id}
+                                selected={
+                                    selectedFriend && selectedFriend.name &&
+                                    friend.name === selectedFriend.name
+                                }
                             />
                         )
                     )
