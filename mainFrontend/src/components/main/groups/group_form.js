@@ -10,7 +10,8 @@ import  {
     AccountsContext ,
     AlerContext,
     UserContext,
-    GroupsContext
+    GroupsContext,
+    GroupWebSocketContext
 } from "../../../store/context";
 import Friend from "./friend";
 import MembersBox from "./members_box";
@@ -70,6 +71,7 @@ export default ({ name, type, members, update, setOpen, groupId}) => {
     const alertContext = useContext(AlerContext);
     const userContext = useContext(UserContext);
     const groupsContext = useContext(GroupsContext);
+    const groupWebSocketContext = useContext(GroupWebSocketContext);
     const { friends } = accountsContext.state
     const notMembers = friends.filter(friend => {
         if (!groupMembers.find(member => member.id === friend.id)){
@@ -98,6 +100,8 @@ export default ({ name, type, members, update, setOpen, groupId}) => {
                     });
                     // close the modal
                     setOpen(false);
+                    // open a socket for this group
+                    groupWebSocketContext.connect(res.data.id)
                 },
                 err => {
                     // enable the button
@@ -171,6 +175,17 @@ export default ({ name, type, members, update, setOpen, groupId}) => {
             }
         }
     }
+
+    const deleteGroup = () => {
+        const data = { 
+            "command" : "delete_group",
+            "group": groupId
+        }
+        setRequest(true);
+        groupWebSocketContext.websockets[groupId].send(JSON.stringify(data));
+        setTimeout(() => setRequest(false),1000);
+    };
+
     return (
         <Container>
             <Form>
@@ -203,9 +218,19 @@ export default ({ name, type, members, update, setOpen, groupId}) => {
                         Update
                     </Button>
                 }
+                {update && !request &&
+                    <Button variant="contained" color="secondary" style={{marginLeft : "5px"}} onClick={deleteGroup}>
+                        Delete
+                    </Button>
+                }
                 {update && request &&
                     <Button variant="contained" color="primary" disabled>
                         Update
+                    </Button>
+                }
+                {update && request &&
+                    <Button variant="contained" color="secondary" style={{ marginLeft: "5px" }} disabled>
+                        Delete
                     </Button>
                 }
             </Form>
