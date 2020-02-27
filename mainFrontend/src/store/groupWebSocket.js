@@ -69,7 +69,6 @@ export default ({ children }) => {
 
     const deleteGroup = (data) => {
         const selectedFriendId = selectedFriend ? selectedFriend.id : null;
-        debugger
         const { user } = userContext.state;
         // delete all the messages if the selected friend
         // is this group that we just deleted

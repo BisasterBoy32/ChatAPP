@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
 from .helpers import check_friendship
+from django.shortcuts import get_object_or_404
 
 def create_message(data,sender):
     reciever = User.objects.get(id=int(data["receiver"]))
@@ -52,7 +53,6 @@ def create_message_for_group(sender, group, data):
         return msg
     else :
         return None
-
 
 def delete_group_action(group_id, user):
     group = get_object_or_404(Group ,pk=group_id)

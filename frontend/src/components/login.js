@@ -7,6 +7,7 @@ import styled from "styled-components";
 import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 
+
 const Wrapper = styled.div`
     display : flex;
     justify-content : center;
@@ -61,7 +62,7 @@ export default () => {
     const user = useContext(UserContext);
     const [loginError ,setLoginError] = useState(false);
 
-    const sendAccessToken = (backend, response) => {
+    const sendAccessToken = (backend ,response) => {
         // send the access token to the server
         // the server will connect to the facebook with this access token and 
         // get this user data create a user or update
@@ -82,13 +83,13 @@ export default () => {
     }
     // whene user log in with google
     const responseGoogle = (response) => {
-        sendAccessToken("google-oauth2", response)
+        sendAccessToken("google-oauth2",response)
     }
     // whene user login with facebook
     const responseFacebook = (response) => {
-        sendAccessToken("facebook", response)
+        sendAccessToken("facebook",response)
     }
-
+    
     return (
         <Wrapper>
             <Title>
@@ -108,7 +109,7 @@ export default () => {
                     appId="612218419594833"
                     autoLoad={false}
                     fields="name,email,picture"
-                    callback={responseFacebook}
+                    callback={responseFacebook} 
                     icon="fa-facebook"
                     cssClass="facebook-css"
                 />
@@ -190,6 +191,8 @@ export default () => {
                 </Formik>
                 <br />
                 You don't have an account? Register from <Link to="/register">Here</Link>
+                <br />
+                Did you forget your password? reset your password from <Link to="/reset"> Here </Link>
             </Container>
         </Wrapper>
     )

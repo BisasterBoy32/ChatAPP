@@ -133,7 +133,7 @@ export default () => {
                 console.log(err.response.message)
             }
         }
-    }
+    }      
 
     return (
         <Container>
@@ -147,7 +147,10 @@ export default () => {
                         <Friend
                             key={friend.username}
                             friend={friend}
-                            selected={selectedFriend && friend.id === selectedFriend.id}
+                            selected={
+                                selectedFriend && selectedFriend.username &&
+                                friend.username === selectedFriend.username
+                            }
                         />
                     )
                 )
@@ -158,7 +161,10 @@ export default () => {
                         <Friend
                             key={friend.id}
                             friend={friend}
-                            selected={selectedFriend && friend.id === selectedFriend.id}
+                            selected={
+                                selectedFriend && selectedFriend.name &&
+                                friend.name === selectedFriend.name
+                            }
                         />
                     )
                 )
@@ -172,7 +178,6 @@ export default () => {
                         />
                     )
                 )
-
             }
             {!showFriends &&
                 groupContext.state.groups.map(
@@ -184,7 +189,7 @@ export default () => {
                     )
                 )
             }
-            <Input name="text" type="search" value={value} onChange={onInputChange} placeholder="Search..." />
-        </Container>
+        <Input name="text" type="search" value={value} onChange={onInputChange} placeholder="Search..." />
+    </Container>
     )
 }

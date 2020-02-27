@@ -17,20 +17,20 @@ def get_messages(user_id ,receiver_id):
 def get_friends(u_p_id):
     return User.objects.raw(
         f'''
-        SELECT id FROM auth_user 
-            WHERE id IN (
-                SELECT user_id from accounts_profile 
-                    WHERE id != {u_p_id} 
-                    AND ( 
-                        id IN ( 
-                            SELECT inviter_id from accounts_friendship
-                            WHERE accepted=true AND friend_id = {u_p_id} OR inviter_id = {u_p_id} 
-                        ) OR id IN ( 
+            SELECT id  FROM auth_user
+                WHERE id IN (
+                    SELECT user_id from accounts_profile 
+                        WHERE id != {u_p_id} 
+                        AND ( 
+                            id IN ( 
+                                SELECT inviter_id from accounts_friendship
+                                WHERE accepted=true AND friend_id = {u_p_id}
+                            ) OR id IN ( 
                                 SELECT friend_id from accounts_friendship 
-                                WHERE accepted=true AND friend_id = {u_p_id} OR inviter_id = {u_p_id}
+                                WHERE accepted=true AND inviter_id = {u_p_id}
+                            )
                         )
-                    )
-            )
+                )
         '''
     )
 
@@ -44,14 +44,14 @@ def search_friends(u_p_id ,word):
                     AND ( 
                         id IN ( 
                             SELECT inviter_id from accounts_friendship
-                            WHERE accepted=true AND friend_id = {} OR inviter_id = {} 
+                            WHERE accepted=true AND friend_id = {} 
                         ) OR id IN ( 
                                 SELECT friend_id from accounts_friendship 
-                                WHERE accepted=true AND friend_id = {} OR inviter_id = {}
+                                WHERE accepted=true AND inviter_id = {}
                         )
                     )
             )
-        '''.format(word , u_p_id, u_p_id, u_p_id, u_p_id, u_p_id)
+        '''.format(word , u_p_id, u_p_id, u_p_id)
     )
 
 def get_related_groups(user_id):
