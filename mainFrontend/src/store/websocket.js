@@ -4,7 +4,8 @@ import {setConfig} from "../helpers";
 import { 
     AccountsContext,
     WebSocketContext,
-    UserContext
+    UserContext,
+    AlerContext
 } from "./context";
 
 // we open a channel between all the friends and this user
@@ -17,6 +18,7 @@ export default ({children}) => {
     const [websockets, setWebsockets] = useState({});
     const userContext = useContext(UserContext);
     const accountsContext = useContext(AccountsContext);
+    const alertContext = useContext(AlerContext);
     const {selectedFriend} = accountsContext.state;
     
     // add message
@@ -87,6 +89,39 @@ export default ({children}) => {
         }
     }
 
+    const deleteFriend = (data) => {
+        const selectedFriendId = selectedFriend ? selectedFriend.id : null;
+        const { user } = userContext.state;
+        // delete all the messages if the selected friend
+        // is this friend whos has been deleted 
+        if (data.friend === selectedFriendId || data.deleter === selectedFriendId){
+            accountsContext.dispatch({
+                type: "GET_MESSAGES",
+                payload: []  
+            })
+        }
+        // delete this friend
+        // after 1s till the model unmount
+        setTimeout(() => {
+            accountsContext.dispatch({
+                type: "DELETE_FRIEND",
+                payload: data.deleter === user.profile.user ? data.friend : data.deleter
+            });
+            // alert that this friend has been deleted
+            if (data.deleter === user.profile.user) {
+                alertContext.dispatch({
+                    type: "INFO_SUCCESS",
+                    payload: "this friend has been delete succefully"
+                });
+            } else {
+                alertContext.dispatch({
+                    type: "INFO_ERRO",
+                    payload: `${data.deleter_username} has deleted you, you are no longer friends`
+                });
+            }
+        },100)
+    };
+
     // function to coonect to the web socket
     const connect = (receiver_id) => {
 
@@ -130,6 +165,8 @@ export default ({children}) => {
                  disconnectFriend(recieved_data);
             } else if (command === "connecting") {
                 connectFriend(recieved_data);
+            }else if (command === "delete_friend") {
+                deleteFriend(recieved_data);
             };
         };
 
@@ -162,6 +199,8 @@ export default ({children}) => {
                         disconnectFriend(recieved_data);
                     } else if (command === "connecting") {
                         connectFriend(recieved_data);
+                    }else if (command === "delete_friend") {
+                        deleteFriend(recieved_data);
                     };
                 };
             }

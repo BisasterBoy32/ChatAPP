@@ -21,3 +21,14 @@ def check_friendship(user1, user2):
     )
 
     return friendship.exists()
+
+def get_friendship(user1, user2):
+    friendship = FriendShip.objects.filter(
+        Q(inviter=user1.profile, friend=user2.profile) | Q(
+            inviter=user2.profile, friend=user1.profile) & Q(accepted=True)
+    )
+
+    if friendship :
+        return friendship
+    else :
+        return None

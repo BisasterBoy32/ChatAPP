@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from .models import Message, ReadMessage
-from accounts.models import Group, Notification
+from accounts.models import Group, Notification ,FriendShip
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
-from .helpers import check_friendship
+from .helpers import check_friendship ,get_friendship
 from django.shortcuts import get_object_or_404
 
 def create_message(data,sender):
@@ -60,3 +60,10 @@ def delete_group_action(group_id, user):
         group.delete()
 
     
+# delete the friend ship between this two user
+# if it exists
+def delete_friend_action(user ,f_id):
+    friend = User.objects.get(id=f_id)
+    friendship = get_friendship(user ,friend)
+    if friendship:
+        friendship.delete()

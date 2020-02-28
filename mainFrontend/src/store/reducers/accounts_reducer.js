@@ -161,6 +161,14 @@ export const accountsReducer = (state, action) => {
                 ...state,
                 friends: newFriends
             };
+
+        case "DELETE_FRIEND":
+            newFriends = friends.filter(friend => action.payload !== friend.id);
+            return {
+                ...state,
+                friends: newFriends
+            };
+
         default:
             return state;
     }

@@ -2,8 +2,7 @@ import React, { useContext ,useState ,useEffect} from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { FaCog } from "react-icons/fa";
-import { FaInfoCircle } from "react-icons/fa";
-
+import { FaInfoCircle ,FaTimes } from "react-icons/fa";
 import { setConfig } from "../../../helpers";
 import { 
     AccountsContext,
@@ -11,6 +10,7 @@ import {
     GroupsContext
 } from "../../../store/context";
 import Model from "../groups/group_model";
+import DeleteFriendModal from "./delete_friend";
 import GroupInfo from "./group_info";
 
 
@@ -67,6 +67,24 @@ const UnreadMessages = styled.div`
     transform: translateY(-90%);
 `
 
+const Closer = styled.div`
+    position : absolute;
+    top : 50%;
+    transform : translateY(-75%);
+    right : 10px;
+    font-size : .8rem;
+    color : #fff;
+    cursor : pointer;
+    &:hover {
+        color : red;
+    }
+`
+const iconStyle = {
+    width : "1.3rem",
+    heigth : "1.3rem",
+    color : "red"
+}
+
 const EditGroup = styled.div`
     font-size: 1.2rem;
     position: absolute;
@@ -83,6 +101,7 @@ export default ({ friend, selected }) => {
     const groupsContext = useContext(GroupsContext);
     const user_id = userContext.state.user.profile.user;
     const [open, setOpen] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
     const [openGroupInfo, setOpenGroupInfo] = useState(false);
 
     // whene the component unmount close the settings modal
@@ -93,7 +112,13 @@ export default ({ friend, selected }) => {
         } 
     },[]);
 
-    const editGroup = () => {
+    const handleOpenDelete = (e) => {
+        e.stopPropagation();
+        setOpenDelete(true);
+    };
+
+    const editGroup = (e) => {
+        e.stopPropagation();
         setOpen(true);
     };
 
@@ -113,6 +138,7 @@ export default ({ friend, selected }) => {
         // if this is a friend not a group then get all the 
         // messages between this friend and the current user
         if ( friend.username ){
+            console.log("friend clicked")
             axios.get(`/message/get_messages?r_id=${friend.id}`, config)
                 .then(
                     res => {
@@ -156,6 +182,7 @@ export default ({ friend, selected }) => {
     };
 
     return (
+        <>
         <Container
             selected={selected}
             onClick={getSelectedFriend}>
@@ -170,12 +197,23 @@ export default ({ friend, selected }) => {
                 : 
                 undefined 
             }
+            {/* delete a friend */}
+            {friend.username && <Closer onClick={handleOpenDelete}> <FaTimes style={iconStyle} /> </Closer>}       
             {friend.name && friend.creator_info.id !== user_id &&
-                <EditGroup onClick={() => setOpenGroupInfo(true)}><FaInfoCircle className="edit-group" /></EditGroup>
+                <EditGroup onClick={(e) => { 
+                    setOpenGroupInfo(true); 
+                    e.stopPropagation();
+                }}>
+                    <FaInfoCircle className="edit-group" /></EditGroup>
             }
             {/* if this a is group that it has a name so we can edit this group settings */}
             {friend.name && friend.creator_info.id === user_id &&
                 <EditGroup onClick={editGroup}><FaCog className="edit-group" /></EditGroup>
+            }
+        </Container>
+        {/*modal to delete a friend */}
+        {friend.username && 
+            <DeleteFriendModal open={openDelete} setOpen={setOpenDelete} friend={friend}/> 
             }
             {/*modal to change the group settings */}
             {friend.name &&
@@ -200,6 +238,6 @@ export default ({ friend, selected }) => {
                     members={groupMembers}
                 />
             }
-        </Container>
+        </>
     )  
 };

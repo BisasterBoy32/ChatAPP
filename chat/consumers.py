@@ -7,7 +7,8 @@ from accounts.models import Group
 from .views import (
     delete_group_action,
     create_message,
-    create_message_for_group
+    create_message_for_group,
+    delete_friend_action
 )
 from .helpers import (
     create_group_name,
@@ -95,6 +96,24 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
+    def delete_friend(self, data ,user):
+        delete_friend_action(user ,data['friend'])
+        text_data = {
+            "deleter" : user.id,
+            "deleter_username" : user.username,
+            "friend" : data['friend'],
+            "command": "delete_friend"
+        }
+        # strigngify data
+        data = json.dumps(text_data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                "type": "broadcast_message",
+                "data": data
+            }
+        )
+
     def new_message(self ,data ,sender):
         msg = create_message(data ,sender)
         msg = self.serializer_message(msg)
@@ -125,7 +144,8 @@ class ChatConsumer(WebsocketConsumer):
        
     commands = {
         "create_message" : new_message,
-        "friend_typing": friend_typing
+        "friend_typing": friend_typing,
+        "delete_friend": delete_friend
     }
 
 
