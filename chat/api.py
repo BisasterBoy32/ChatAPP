@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
-from rest_framework import permissions, status
+from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework import permissions, status ,pagination 
 from .serializes import MessageSerializer, GroupMessagesSer
 from .models import Message ,ReadMessage
 from accounts.models import Group
+from accounts.custom_permissions import IsMember
 from .queries import get_messages
 
 class MessageView(GenericAPIView):
@@ -67,31 +68,48 @@ class SetMessageAsReadView(GenericAPIView):
 
         return Response({"success":True})
 
-class GroupMessageView(GenericAPIView):
-    queryset = Message.objects.all()
+class GroupMessageView(ListAPIView):
     serializer_class = GroupMessagesSer
+    pagination_class = pagination.PageNumberPagination 
     permission_classes =[
-        permissions.IsAuthenticated
+        permissions.IsAuthenticated,
+        IsMember
     ] 
     
-    def get(self, request):
-        user = request.user
-        group_id = request.query_params.get("g_id")
+    def get_queryset(self):
+        group_id = self.request.query_params.get("g_id")
         group = get_object_or_404(Group ,pk=group_id)
+        user = self.request.user
         # check if this user is a member or not inside this group
-        if user in group.members.all() or group.creator == user :
-            # get all the messages sent inside this group
-            messages = group.messages.all()
-            # turn all the unread messages to read
-            # for this current user
-            for message in messages:
-                ReadMessage.objects.filter(
-                    message=message, user=user
-                ).update(read=True)
+        self.check_object_permissions(self.request , group)
+        # get all the messages sent inside this group
+        messages = group.messages.all().order_by('date').reverse()
+        # turn all the unread messages to read
+        # for this current user
+        for message in messages:
+            ReadMessage.objects.filter(
+                message=message, user=user
+            ).update(read=True)
+
+        return messages
+
+    # def list(self, request):
+    #     user = request.user
+    #     group_id = self.request.query_params.get("g_id")
+    #     group = get_object_or_404(Group ,pk=group_id)
+    #     messages = self.get_queryset()
+    #     # check if this user is a member or not inside this group
+    #     if user in group.members.all() or group.creator == user :
+    #         # turn all the unread messages to read
+    #         # for this current user
+    #         for message in messages:
+    #             ReadMessage.objects.filter(
+    #                 message=message, user=user
+    #             ).update(read=True)
                 
-            # serialize the data
-            message_ser = self.get_serializer(messages ,many=True)
-            return  Response(message_ser.data)
-        else :
-            response = "you are not a member you can see the messages for this group"
-            return Response(status=status.HTTP_403_FORBIDDEN , data=response)
+    #         # serialize the data
+    #         message_ser = self.get_serializer(messages ,many=True)
+    #         return  Response(message_ser.data)
+    #     else :
+    #         response = "you are not a member you can see the messages for this group"
+    #         return Response(status=status.HTTP_403_FORBIDDEN , data=response)

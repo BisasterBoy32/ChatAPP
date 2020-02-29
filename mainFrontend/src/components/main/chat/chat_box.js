@@ -1,5 +1,7 @@
-import React, { useContext, useRef, useEffect } from "react";
+import React, { useContext, useRef, useEffect, useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
+import { setConfig } from "../../../helpers";
 
 import { 
     AccountsContext,
@@ -57,18 +59,61 @@ export default () => {
     const messages = accountsContext.state.messages;
     const selectedFriend = accountsContext.state.selectedFriend;
     const {friendTyping} = accountsContext.state;
-    const {memberTyping} = groupsContext.state
-    const group = selectedFriend && selectedFriend.username ? false : true
-    const typing = useRef(null)
+    const {memberTyping} = groupsContext.state;
+    const group = selectedFriend && selectedFriend.username ? false : true;
+    const typing = useRef(null);
+    const ContainerRef = useRef(null);
+    const [load, setLoad] = useState(false)
     
+    const loadMoreMessages = () => {     
+        if (ContainerRef.current.scrollTop === 0){ 
+            if (accountsContext.state.loadMessages){
+                const config = setConfig(userContext.state.token);
+                setLoad(true);
+                // load more messages if there still more
+                axios.get(accountsContext.state.loadMessages ,config)
+                .then(
+                    res => {
+                        setLoad(false);
+                        const messages = res.data.results.reverse()
+                        accountsContext.dispatch({
+                            type: "MORE_MESSAGES",
+                            payload: {
+                                messages,
+                                loadMessages : res.data.next
+                            }
+                        });
+                        // reset the scroller
+                        const newPosition = 206 + messages.length * 20
+                        ContainerRef.current.scrollTop = newPosition
+                    },
+                    err => {
+                        setLoad(false);
+                        console.log(err.response.message)
+                    }
+                )
+            }
+            
+        }
+    };
+
     useEffect(() => {
         // scroll to the bottom of the page whene the component mount
             typing.current.scrollIntoView()
     }, [selectedFriend])
     
+    // watch for the scrolling even to load more messages
+    // if the user hit the top of the box
+    useEffect(() => {
+        ContainerRef.current.addEventListener("scroll",loadMoreMessages)
+        return () => {
+            ContainerRef.current.removeEventListener("scroll",loadMoreMessages)
+        }
+    }, [accountsContext.state])
 
     return (
-        <Container>
+        <Container ref={ContainerRef}>
+            {load && <h3 style={{ textAlign : "center"}}> Loading ... </h3>}
             {messages.length && !group
                 ?
                 messages.map(message => {

@@ -159,11 +159,15 @@ export default ({ friend, selected }) => {
             // get all the group messages
             axios.get(`/message/group_messages?g_id=${friend.id}`, config)
                 .then(
-                    res => {
+                    res => { 
+                        const messages = res.data.results.reverse()
                         // store the selected friend messages
                         accountsContext.dispatch({
                             type: "GET_MESSAGES",
-                            payload: res.data
+                            payload: {
+                                messages,
+                                loadMessages : res.data.next
+                            }
                         })
                         // change the selected friend
                         accountsContext.dispatch({

@@ -3,7 +3,8 @@ export const initAccountsValue = {
     friends : [],
     selectedFriend : null,
     messages : [],
-    friendTyping : false
+    friendTyping : false,
+    loadMessages : null
 };
 
 export const accountsReducer = (state, action) => {
@@ -41,8 +42,17 @@ export const accountsReducer = (state, action) => {
         case "GET_MESSAGES":
             return {
                 ...state,
-                messages: action.payload
+                messages: action.payload.messages,
+                loadMessages : action.payload.loadMessages
             }  
+
+        case "MORE_MESSAGES":
+            return {
+                ...state,
+                messages: [...action.payload.messages, ...state.messages],
+                loadMessages : action.payload.loadMessages
+            }  
+
         case  "ADD_MESSAGE":
             return {
                 ...state,
