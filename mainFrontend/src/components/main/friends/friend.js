@@ -138,7 +138,6 @@ export default ({ friend, selected }) => {
         // if this is a friend not a group then get all the 
         // messages between this friend and the current user
         if ( friend.username ){
-            console.log("friend clicked")
             axios.get(`/message/get_messages?r_id=${friend.id}`, config)
                 .then(
                     res => {
@@ -148,9 +147,13 @@ export default ({ friend, selected }) => {
                             payload: friend
                         });
                         // get the selected friend messages
+                        const messages = res.data.results.reverse()
                         accountsContext.dispatch({
                             type: "GET_MESSAGES",
-                            payload: res.data
+                            payload: {
+                                messages,
+                                loadMessages : res.data.next
+                            }
                         })
                     },
                     err => console.log(err.response.message)

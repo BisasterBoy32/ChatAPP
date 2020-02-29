@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework import permissions, status ,pagination 
@@ -9,40 +10,33 @@ from accounts.models import Group
 from accounts.custom_permissions import IsMember
 from .queries import get_messages
 
-class MessageView(GenericAPIView):
-    queryset = Message.objects.all()
+class MessageView(ListAPIView):
     serializer_class = MessageSerializer
     permission_classes =[
         permissions.IsAuthenticated
     ] 
- 
-    def post(self ,request):
-        message_ser = self.get_serializer(data=request.data)
-        message_ser.is_valid(raise_exception=True)
-        message_ser.save()
+    pagination_class = pagination.PageNumberPagination 
 
-        return Response(message_ser.data)
-    
-    def get(self, request):
-        friend_id = request.query_params.get("r_id")
+    def get_queryset(self):
+        friend_id = self.request.query_params.get("r_id")
+        friend = User.objects.get(id=friend_id)
+        user = self.request.user
         # get all the messages sent or received by the current user 
         # to or from this user : "reciever_id"
-        messages = get_messages(request.user.id ,friend_id)
+        messages =  Message.objects.filter(
+            Q(sender=friend,receiver=user)
+            | 
+            Q(sender=user ,receiver=friend)
+        ).order_by('date').reverse()
         # make all the message received by this user
         # and sent by this frind as has been read 
-        friend = User.objects.get(id=friend_id)
         friend_messages = Message.objects.filter(
             sender=friend,
-            receiver=request.user,
+            receiver=user,
             hasBeenRead=False
-        )
-        for message in friend_messages:
-            message.hasBeenRead = True
-            message.save()
-        
-        # serialize the data
-        message_ser = self.get_serializer(messages ,many=True)
-        return  Response(message_ser.data)
+        ).update(hasBeenRead=True)
+
+        return messages
 
 class SetMessageAsReadView(GenericAPIView):
     queryset = Message.objects.all()
@@ -92,24 +86,3 @@ class GroupMessageView(ListAPIView):
             ).update(read=True)
 
         return messages
-
-    # def list(self, request):
-    #     user = request.user
-    #     group_id = self.request.query_params.get("g_id")
-    #     group = get_object_or_404(Group ,pk=group_id)
-    #     messages = self.get_queryset()
-    #     # check if this user is a member or not inside this group
-    #     if user in group.members.all() or group.creator == user :
-    #         # turn all the unread messages to read
-    #         # for this current user
-    #         for message in messages:
-    #             ReadMessage.objects.filter(
-    #                 message=message, user=user
-    #             ).update(read=True)
-                
-    #         # serialize the data
-    #         message_ser = self.get_serializer(messages ,many=True)
-    #         return  Response(message_ser.data)
-    #     else :
-    #         response = "you are not a member you can see the messages for this group"
-    #         return Response(status=status.HTTP_403_FORBIDDEN , data=response)
