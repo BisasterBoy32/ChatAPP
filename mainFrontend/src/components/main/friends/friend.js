@@ -134,6 +134,14 @@ export default ({ friend, selected }) => {
     };
     const groupMembers = getGroupMembers();
     const getSelectedFriend = () => {
+        // delete all the previous messages
+        accountsContext.dispatch({
+            type: "GET_MESSAGES",
+            payload: {
+                messages : [],
+                loadMessages : null
+            }
+        });
         const config = setConfig(userContext.state.token);
         // if this is a friend not a group then get all the 
         // messages between this friend and the current user

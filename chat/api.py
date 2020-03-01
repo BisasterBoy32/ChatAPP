@@ -19,7 +19,7 @@ class MessageView(ListAPIView):
 
     def get_queryset(self):
         friend_id = self.request.query_params.get("r_id")
-        friend = User.objects.get(id=friend_id)
+        friend = get_object_or_404(User ,pk=friend_id)
         user = self.request.user
         # get all the messages sent or received by the current user 
         # to or from this user : "reciever_id"

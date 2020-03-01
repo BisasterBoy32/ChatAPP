@@ -65,16 +65,25 @@ export default () => {
     const ContainerRef = useRef(null);
     const [load, setLoad] = useState(false)
     
-    const loadMoreMessages = () => {     
-        if (ContainerRef.current.scrollTop === 0){ 
-            if (accountsContext.state.loadMessages){
+    const loadMoreMessages = () => {  
+        // if there is more messages and the scroll on top load more messages
+        if (ContainerRef.current.scrollTop === 0 &&
+            ContainerRef.current.scrollHeight > ContainerRef.current.clientHeight){ 
+            if (accountsContext.state.loadMessages && !load){
                 const config = setConfig(userContext.state.token);
                 setLoad(true);
                 // load more messages if there still more
                 axios.get(accountsContext.state.loadMessages ,config)
                 .then(
                     res => {
-                        setLoad(false);
+                    setLoad(false);
+                    // check if the loaded messages is for the current selected friend
+                    const group = selectedFriend.name
+                    const isSameSelected = group ?
+                    selectedFriend.id === messages[0].group 
+                    :
+                    messages[0].sender === selectedFriend.id || messages[0].receiver === selectedFriend.id
+                    if ( isSameSelected ){
                         const messages = res.data.results.reverse()
                         accountsContext.dispatch({
                             type: "MORE_MESSAGES",
@@ -83,9 +92,10 @@ export default () => {
                                 loadMessages : res.data.next
                             }
                         });
-                        // reset the scroller
-                        const newPosition = 206 + messages.length * 20
-                        ContainerRef.current.scrollTop = newPosition
+                    }
+                    // reset the scroller
+                    const newPosition = 206 + messages.length * 20
+                    ContainerRef.current.scrollTop = newPosition
                     },
                     err => {
                         setLoad(false);
@@ -99,7 +109,8 @@ export default () => {
 
     useEffect(() => {
         // scroll to the bottom of the page whene the component mount
-            typing.current.scrollIntoView()
+        ContainerRef.current.scrollTop = 10000
+        setLoad(false);
     }, [selectedFriend])
     
     // watch for the scrolling even to load more messages

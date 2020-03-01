@@ -53,7 +53,7 @@ export const accountsReducer = (state, action) => {
                 loadMessages : action.payload.loadMessages
             }  
 
-        case  "ADD_MESSAGE":
+        case "ADD_MESSAGE":
             return {
                 ...state,
                 messages : [
