@@ -63,13 +63,13 @@ export default () => {
     const group = selectedFriend && selectedFriend.username ? false : true;
     const typing = useRef(null);
     const ContainerRef = useRef(null);
-    const [load, setLoad] = useState(false)
+    const [load, setLoad] = useState(false);
+    const [fromLoad, setFromLoad] = useState(false);
     
     const loadMoreMessages = () => {  
         // if there is more messages and the scroll on top load more messages
-        if (ContainerRef.current.scrollTop === 0 &&
-            ContainerRef.current.scrollHeight > ContainerRef.current.clientHeight){ 
-            if (accountsContext.state.loadMessages && !load){
+        if (ContainerRef.current.scrollTop === 0 && accountsContext.state.loadMessages && 
+            !load && ContainerRef.current.scrollHeight > ContainerRef.current.clientHeight ){ 
                 const config = setConfig(userContext.state.token);
                 setLoad(true);
                 // load more messages if there still more
@@ -77,24 +77,20 @@ export default () => {
                 .then(
                     res => {
                     setLoad(false);
-                    // check if the loaded messages is for the current selected friend
-                    const group = selectedFriend.name
-                    const isSameSelected = group ?
-                    selectedFriend.id === messages[0].group 
-                    :
-                    messages[0].sender === selectedFriend.id || messages[0].receiver === selectedFriend.id
-                    if ( isSameSelected ){
-                        const messages = res.data.results.reverse()
-                        accountsContext.dispatch({
-                            type: "MORE_MESSAGES",
-                            payload: {
-                                messages,
-                                loadMessages : res.data.next
-                            }
-                        });
-                    }
+                    const messages = res.data.results.reverse()
+                    accountsContext.dispatch({
+                        type: "MORE_MESSAGES",
+                        payload: {
+                            messages,
+                            loadMessages : res.data.next
+                        }
+                    });
+                    // indicate that this messages came from loading 
+                    // more messages to prevent the scroller to point
+                    // the buttom of the page
+                    setFromLoad(true);
                     // reset the scroller
-                    const newPosition = 206 + messages.length * 20
+                    const newPosition = 206 + messages.length * 18
                     ContainerRef.current.scrollTop = newPosition
                     },
                     err => {
@@ -102,16 +98,26 @@ export default () => {
                         console.log(err.response.message)
                     }
                 )
-            }
-            
         }
     };
 
     useEffect(() => {
         // scroll to the bottom of the page whene the component mount
+        // to see the latest messages
         ContainerRef.current.scrollTop = 10000
+        // if the user loades more messages and change the selected friend
+        // before the response came change the state of the load
         setLoad(false);
     }, [selectedFriend])
+   
+    useEffect(() => {
+        // scroll to the bottom of the page whene the component mount
+        // to see the latest messages
+        if (!fromLoad){
+            ContainerRef.current.scrollTop = 10000;
+        }
+        setFromLoad(false)
+    }, [messages])
     
     // watch for the scrolling even to load more messages
     // if the user hit the top of the box

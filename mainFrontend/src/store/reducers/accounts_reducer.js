@@ -47,11 +47,22 @@ export const accountsReducer = (state, action) => {
             }  
 
         case "MORE_MESSAGES":
-            return {
-                ...state,
-                messages: [...action.payload.messages, ...state.messages],
-                loadMessages : action.payload.loadMessages
+            // check if the loaded messages is for the current selected friend
+            if ( 
+                state.selectedFriend.name ?
+                state.selectedFriend.id === action.payload.messages[0].group 
+                :
+                !action.payload.messages[0].group &&
+                action.payload.messages[0].sender === state.selectedFriend.id ||
+                action.payload.messages[0].receiver === state.selectedFriend.id
+            ){
+                return {
+                    ...state,
+                    messages: [...action.payload.messages, ...state.messages],
+                    loadMessages : action.payload.loadMessages
+                }
             }  
+            return { ...state }
 
         case "ADD_MESSAGE":
             return {
