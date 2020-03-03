@@ -239,6 +239,7 @@ export default ({ friend, selected }) => {
                     update={true}
                     name={friend.name} 
                     type={friend.type}
+                    icon1={friend.icon}
                     groupId = {friend.id}
                     members={groupMembers}
                 />

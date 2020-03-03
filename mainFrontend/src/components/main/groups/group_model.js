@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default ({ setOpen, open, handleClose, update, name, type, members, groupId}) => {
+export default ({ setOpen, open, handleClose, update, name, type, members, groupId ,icon1}) => {
     const classes = useStyles();
 
     return (
@@ -48,6 +48,7 @@ export default ({ setOpen, open, handleClose, update, name, type, members, group
                                 members={members}
                                 update = { update}
                                 groupId={groupId}
+                                icon1={icon1}
                             />
                         }
                         {!update && <GroupForm setOpen={setOpen} />}

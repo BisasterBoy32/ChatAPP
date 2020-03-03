@@ -264,7 +264,7 @@ class GroupSer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ("id" ,"name" ,"creator_info" ,"type" ,"icon","members" ,"membership" ,"unReadMessages")
-        read_only_fields = ("id" ,"icon","creator")
+        read_only_fields = ("id" ,"creator")
 
     def create(self ,validated_data):
         user = self.context['request'].user
@@ -272,7 +272,7 @@ class GroupSer(serializers.ModelSerializer):
             creator = user,
             name = validated_data['name'],
             type = validated_data['type'],
-            icon = "/static/icons/icon-2.jpg"
+            icon = validated_data['icon'],
         )
         group.save()
         for member in validated_data['members']:

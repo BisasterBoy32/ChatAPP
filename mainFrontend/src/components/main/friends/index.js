@@ -163,7 +163,7 @@ export default () => {
                             friend={friend}
                             selected={
                                 selectedFriend && selectedFriend.name &&
-                                friend.name === selectedFriend.name
+                                friend.id === selectedFriend.id
                             }
                         />
                     )

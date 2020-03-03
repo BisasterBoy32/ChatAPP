@@ -22,17 +22,34 @@ import { setConfig } from "../../../helpers";
 const Container = styled.div`
     display : flex;
     width : 600px;
-    height : 500px;
+    height : 600px;
 `
 
 const FriendList = styled.div`
     flex : .5;
     overflow-y : scroll;
-    padding : 1rem 0 1rem 1.5rem;
+    padding : 1rem 0;
+`
+
+const Image = styled.img`
+    width : 50px;
+    height : 50px;
+    cursor : pointer;
+    $:checked {
+    outline: 2px solid #4F98CA;
+    }
+    margin : .2rem;
+`
+const ImagesWrapper = styled.div`
+    display : flex;
+    padding : .2rem 0;
+    width : inherit;
+    overflow-x : scroll;
 `
 
 const Form = styled.form`
     flex : 1.5;
+    overflow-y: scroll;
     padding : 1rem 0 1rem 1rem;
 `
 
@@ -47,7 +64,14 @@ const MembersTitle = styled.legend`
     margin-top : 1rem;
     margin-bottom : .5rem;
 `
-
+const RadioButton = styled.input`
+  opacity: 0;
+  width: 0;
+  height: 0;
+  &:checked + img {
+    outline: 2px solid #4F98CA;
+  }
+`
 
 const useStyles = makeStyles(theme => ({
     name : {
@@ -59,10 +83,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default ({ name, type, members, update, setOpen, groupId}) => {
+export default ({ name, type, members, update, setOpen, groupId ,icon1}) => {
     const classes = useStyles();
     const [value, setValue] = useState(type || 'public');
     const [groupName, setGroupName] = useState(name || '');
+    const [icon,setIcon] = useState(icon1 || '');
     const [groupMembers, setGroupMembers] = useState(members || []);
     // to disable the button whene with send a request
     // to the server to create this new group
@@ -77,7 +102,15 @@ export default ({ name, type, members, update, setOpen, groupId}) => {
         if (!groupMembers.find(member => member.id === friend.id)){
             return friend;
         }
-    })
+    });
+
+    const handleChange = (e) => {
+        console.log(e.target.value)
+        console.log(icon1)
+        console.log(icon)
+        setIcon(e.target.value)
+    };
+
     const radioValueChanged = event => {
         setValue(event.target.value);
     };
@@ -158,13 +191,19 @@ export default ({ name, type, members, update, setOpen, groupId}) => {
                 type: "INFO_ERRO",
                 payload: "You have to provide a name for your group"
             });
-        }else {
+        }else if (!icon) {
+            alertContext.dispatch({
+                type: "INFO_ERRO",
+                payload: "You have to choose an icon for your group"
+            }); 
+        } else {
             // disable the button
             setRequest(true);
             const members = groupMembers.map(member => member.id);
             const values = {
                 name: groupName,
                 type: value,
+                icon,
                 members
             }
             const config = setConfig(userContext.state.token);
@@ -203,6 +242,24 @@ export default ({ name, type, members, update, setOpen, groupId}) => {
                 </RadioGroup>
                 <MembersTitle>Members</MembersTitle>
                 <MembersBox groupMembers={groupMembers} setGroupMembers={setGroupMembers} />
+                {/* icon for your group */}
+                <MembersTitle> choose an Icon for your group </MembersTitle>
+                <ImagesWrapper>
+                    {
+                        [1,2,3,4,5,6,7,8,9,10].map( value => 
+                            <label key={value}>
+                                <RadioButton
+                                    type="radio"
+                                    name="icon"
+                                    onChange={handleChange}
+                                    value={`/static/groups/group-${value}.png`}
+                                    checked={icon===`/static/groups/group-${value}.png`}
+                                />
+                                <Image src={`/static/groups/group-${value}.png`} />
+                            </label>
+                        )
+                    } 
+                </ImagesWrapper>
                 {!update && !request &&
                     <Button variant="contained" color="primary" onClick={() => onButtonClicked("create")}>
                         Create

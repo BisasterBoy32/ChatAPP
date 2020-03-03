@@ -196,19 +196,3 @@ export default ({ data, setData, setPage }) => {
         </Wrapper>
     )
 };
-
-
-// const RadioButtonField = (value, handleBlur, handleChange)=> {
-//     return (
-//         <label>
-//             <RadioButton
-//                 type="radio"
-//                 name="icon"
-//                 onBlur={handleBlur}
-//                 onChange={handleChange}
-//                 value={value}
-//             />
-//             <Image src={value} />
-//         </label>
-//     )
-// }

@@ -12,6 +12,8 @@ export const accountsReducer = (state, action) => {
     let newFriends;
     let {accounts} = state;
     let newAccounts;
+    let newMessages;
+    let messages = [];
 
     switch (action.type) {
         case "LOAD_ACCOUNTS":
@@ -56,9 +58,16 @@ export const accountsReducer = (state, action) => {
                 action.payload.messages[0].sender === state.selectedFriend.id ||
                 action.payload.messages[0].receiver === state.selectedFriend.id
             ){
+                // delete duplicated messages
+                newMessages = [...action.payload.messages, ...state.messages]
+                newMessages.filter(message => {
+                    if (!messages.find(msg => msg.id === message.id)){
+                        messages.push(message);
+                    } 
+                })
                 return {
                     ...state,
-                    messages: [...action.payload.messages, ...state.messages],
+                    messages,
                     loadMessages : action.payload.loadMessages
                 }
             }  
