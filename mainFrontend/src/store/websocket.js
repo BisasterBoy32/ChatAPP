@@ -206,7 +206,7 @@ export default ({children}) => {
             }
          };
 
-    },[selectedFriend]);
+    },[selectedFriend ,userContext]);
     
     return (
         // set the websocket and the connect function as values to the WebsocketContext

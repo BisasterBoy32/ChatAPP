@@ -15,7 +15,7 @@ from rest_framework.generics import (
 from knox.models import AuthToken
 from knox.views import LogoutView
 
-from .models import Notification, Group
+from .models import Notification, Group ,FriendShip
 from .serializers import (
     RegisterSerializer,
     LoginSer,
@@ -165,7 +165,7 @@ class InviteUserView(GenericAPIView):
 
         return Response({"success" : "success"})
 
-# friend Invitation
+# get all the friends
 class GetFriendsView(GenericAPIView):
     queryset = User.objects.all()
     serializer_class = GetFriendsSer
@@ -179,6 +179,31 @@ class GetFriendsView(GenericAPIView):
         users_ser = self.get_serializer(friends ,many=True)
 
         return Response(users_ser.data)
+
+# get one friend
+class GetFriendView(GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = GetFriendsSer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request ,*args ,**kwargs):
+        breakpoint()
+        user_profile_id = request.user.profile
+        friend = get_object_or_404(User ,pk=kwargs.get("friend"))
+        friend_profile = friend.profile
+        friendship = FriendShip.objects.filter(
+            Q(inviter=user_profile_id ,sender=friend_profile ,accepted=True)
+            |
+            Q(inviter=friend_profile ,sender=user_profile_id ,accepted=True)
+        )
+        if friendship.exists():
+            users_ser = self.get_serializer(friend)
+            return Response(users_ser.data)
+        else :
+            response = {'error : ' : "you can't get this user information you have to be friends"}
+            return Response(status=status.HTTP_403_FORBIDDEN, data=response)
 
 class SearchView(GenericAPIView):
     queryset = User.objects.all()

@@ -40,7 +40,8 @@ export const accountsReducer = (state, action) => {
                 friends : newFriends,
                 selectedFriend: action.payload,
                 friendTyping : false
-            }  
+            } 
+             
         case "GET_MESSAGES":
             return {
                 ...state,

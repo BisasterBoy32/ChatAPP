@@ -62,6 +62,7 @@ export default () => {
     const groupContext = useContext(GroupsContext);
     const [value ,setValue] = useState('');
     const [showFriends, setShowFriends] = useState(true);
+    const [load, setLoad] = useState(false);
 
     // each time the value of the search change 
     // send a request to serach
@@ -145,6 +146,8 @@ export default () => {
                 accountsContext.state.friends.map(
                     friend => (
                         <Friend
+                            load={load}
+                            setLoad={setLoad}
                             key={friend.username}
                             friend={friend}
                             selected={
@@ -159,6 +162,8 @@ export default () => {
                 groupContext.state.userGroups.map(
                     friend => (
                         <Friend
+                            load={load}
+                            setLoad={setLoad}
                             key={friend.id}
                             friend={friend}
                             selected={

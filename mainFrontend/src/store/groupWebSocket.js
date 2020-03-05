@@ -75,7 +75,7 @@ export default ({ children }) => {
         if (data.group === selectedFriendId ){
             accountsContext.dispatch({
                 type: "GET_MESSAGES",
-                payload: []  
+                payload: { messages : [] }  
             })
         }
         // delete this group
@@ -89,12 +89,12 @@ export default ({ children }) => {
             if (data.user === user.profile.user) {
                 alertContext.dispatch({
                     type: "INFO_SUCCESS",
-                    payload: "this group has been delete succefully"
+                    payload: `the group "${data.name}" has been deleted succefully`
                 });
             } else {
                 alertContext.dispatch({
                     type: "INFO_ERRO",
-                    payload: "a group has been deleted"
+                    payload: `the group "${data.name}" has been deleted`
                 });
             }
         },1000)
@@ -175,7 +175,7 @@ export default ({ children }) => {
             }
         };
 
-    }, [selectedFriend]);
+    }, [selectedFriend ,userContext]);
 
     return (
         // set the websocket and the connect function as values to the WebsocketContext

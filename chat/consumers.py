@@ -222,6 +222,7 @@ class ChatGroupConsumer(WebsocketConsumer):
         text_data = {
             "command": "delete_group",
             "group": data['group'],
+            "name": data['name'],
             "user" : user.id
 
         }

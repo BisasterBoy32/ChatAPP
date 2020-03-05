@@ -105,9 +105,6 @@ export default ({ name, type, members, update, setOpen, groupId ,icon1}) => {
     });
 
     const handleChange = (e) => {
-        console.log(e.target.value)
-        console.log(icon1)
-        console.log(icon)
         setIcon(e.target.value)
     };
 
@@ -218,7 +215,8 @@ export default ({ name, type, members, update, setOpen, groupId ,icon1}) => {
     const deleteGroup = () => {
         const data = { 
             "command" : "delete_group",
-            "group": groupId
+            "group": groupId,
+            "name": groupName
         }
         setRequest(true);
         groupWebSocketContext.websockets[groupId].send(JSON.stringify(data));

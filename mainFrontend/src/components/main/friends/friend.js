@@ -17,7 +17,7 @@ import GroupInfo from "./group_info";
 const Container = styled.div`
     padding : .5rem;
     display : flex;
-    cursor : pointer;
+    cursor : ${props => props.loaded ? "wait" : "pointer"};
     background-color : ${props => props.selected ? "rgb(174, 216, 219)" : "transparent"};
     &:hover {
         background-color : rgb(174, 216, 219);
@@ -95,7 +95,7 @@ const EditGroup = styled.div`
     color: rgb(85, 133, 238);
 `
 
-export default ({ friend, selected }) => {
+export default ({ friend, selected ,load ,setLoad}) => {
     const accountsContext = useContext(AccountsContext);
     const userContext = useContext(UserContext);
     const groupsContext = useContext(GroupsContext);
@@ -134,71 +134,79 @@ export default ({ friend, selected }) => {
     };
     const groupMembers = getGroupMembers();
     const getSelectedFriend = () => {
-        // delete all the previous messages
-        accountsContext.dispatch({
-            type: "GET_MESSAGES",
-            payload: {
-                messages : [],
-                loadMessages : null
+        // if we are not in the proccess of selecting
+        // a friend than select this friend
+        if (!load) {
+            setLoad(true);
+            // delete all the previous messages
+            accountsContext.dispatch({
+                type: "GET_MESSAGES",
+                payload: {
+                    messages : [],
+                    loadMessages : null
+                }
+            });
+            const config = setConfig(userContext.state.token);
+            // if this is a friend not a group then get all the 
+            // messages between this friend and the current user
+            if ( friend.username ){
+                axios.get(`/message/get_messages?r_id=${friend.id}`, config)
+                    .then(
+                        res => {
+                            // change the selected friend
+                            accountsContext.dispatch({
+                                type: "SELECT_FRIEND",
+                                payload: friend
+                            });
+                            // get the selected friend messages
+                            const messages = res.data.results.reverse()
+                            accountsContext.dispatch({
+                                type: "GET_MESSAGES",
+                                payload: {
+                                    messages,
+                                    loadMessages : res.data.next
+                                }
+                            });
+                            setLoad(false);
+                        },
+                        err => console.log(err.response.message)
+                    ) 
+            } else if (friend.name){
+                // get all the group messages
+                axios.get(`/message/group_messages?g_id=${friend.id}`, config)
+                    .then(
+                        res => { 
+                            const messages = res.data.results.reverse()
+                            // store the selected friend messages
+                            accountsContext.dispatch({
+                                type: "GET_MESSAGES",
+                                payload: {
+                                    messages,
+                                    loadMessages : res.data.next
+                                }
+                            })
+                            // change the selected friend
+                            accountsContext.dispatch({
+                                type: "SELECT_FRIEND",
+                                payload: friend
+                            });
+                            // mark all the selected group message as has been read
+                            groupsContext.dispatch({
+                                type: "SELECT_FRIEND",
+                                payload: friend
+                            });
+                            setLoad(false);
+                        },
+                        err => console.log(err.response.message)
+                    )    
             }
-        });
-        const config = setConfig(userContext.state.token);
-        // if this is a friend not a group then get all the 
-        // messages between this friend and the current user
-        if ( friend.username ){
-            axios.get(`/message/get_messages?r_id=${friend.id}`, config)
-                .then(
-                    res => {
-                        // change the selected friend
-                        accountsContext.dispatch({
-                            type: "SELECT_FRIEND",
-                            payload: friend
-                        });
-                        // get the selected friend messages
-                        const messages = res.data.results.reverse()
-                        accountsContext.dispatch({
-                            type: "GET_MESSAGES",
-                            payload: {
-                                messages,
-                                loadMessages : res.data.next
-                            }
-                        })
-                    },
-                    err => console.log(err.response.message)
-                ) 
-        } else if (friend.name){
-            // get all the group messages
-            axios.get(`/message/group_messages?g_id=${friend.id}`, config)
-                .then(
-                    res => { 
-                        const messages = res.data.results.reverse()
-                        // store the selected friend messages
-                        accountsContext.dispatch({
-                            type: "GET_MESSAGES",
-                            payload: {
-                                messages,
-                                loadMessages : res.data.next
-                            }
-                        })
-                        // change the selected friend
-                        accountsContext.dispatch({
-                            type: "SELECT_FRIEND",
-                            payload: friend
-                        });
-                        // mark all the selected group message as has been read
-                        groupsContext.dispatch({
-                            type: "SELECT_FRIEND",
-                            payload: friend
-                        });
-                    },
-                    err => console.log(err.response.message)
-                )    
         }
     };
 
     return (
         <>
         <Container
+            loaded={load}
             selected={selected}
             onClick={getSelectedFriend}>
             <ProfileImage image={friend.icon}>
