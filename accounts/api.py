@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
-from  django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
-from .custom_permissions import IsTheSameUser
+from django.db.models import Q
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,6 +15,7 @@ from rest_framework.generics import (
 from knox.models import AuthToken
 from knox.views import LogoutView
 
+from .custom_permissions import IsTheSameUser
 from .models import Notification, Group ,FriendShip
 from .serializers import (
     RegisterSerializer,
@@ -184,19 +185,19 @@ class GetFriendsView(GenericAPIView):
 class GetFriendView(GenericAPIView):
     queryset = User.objects.all()
     serializer_class = GetFriendsSer
+
     permission_classes = [
         permissions.IsAuthenticated,
     ]
 
     def get(self, request ,*args ,**kwargs):
-        breakpoint()
         user_profile_id = request.user.profile
         friend = get_object_or_404(User ,pk=kwargs.get("friend"))
         friend_profile = friend.profile
         friendship = FriendShip.objects.filter(
-            Q(inviter=user_profile_id ,sender=friend_profile ,accepted=True)
+            Q(inviter=user_profile_id ,friend=friend_profile ,accepted=True)
             |
-            Q(inviter=friend_profile ,sender=user_profile_id ,accepted=True)
+            Q(inviter=friend_profile ,friend=user_profile_id ,accepted=True)
         )
         if friendship.exists():
             users_ser = self.get_serializer(friend)

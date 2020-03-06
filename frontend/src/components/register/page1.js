@@ -11,6 +11,7 @@ const Wrapper = styled.div`
     width : 100%;
     height : 100vh;
     flex-direction : column;
+    background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
 `
 
 const Container = styled.div`

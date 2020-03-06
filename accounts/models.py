@@ -25,17 +25,23 @@ class Profile(models.Model):
         return friendship
 
     def add_friend(self, friend):
-        friend_ship = FriendShip(inviter=self, friend=friend)
-        friend_ship.save()
-        # create a notification to this friend
-        # so he can accept or reject this invite
-        notification = Notification(
-            profile = friend,
-            type = "request",
-            friendship = friend_ship
+        #check if there is already a friendship between this two users
+        friendship = FriendShip.objects.filter(
+            Q(inviter=self, friend=friend) | Q(
+                inviter=friend, friend=self)
         )
-        notification.save()
-        return friend_ship
+        if not friendship.exists():
+            friend_ship = FriendShip(inviter=self, friend=friend)
+            friend_ship.save()
+            # create a notification to this friend
+            # so he can accept or reject this invite
+            notification = Notification(
+                profile=friend,
+                type="request",
+                friendship=friend_ship
+            )
+            notification.save()
+            return friend_ship
 
     def __str__(self):
         return self.user.username

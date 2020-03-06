@@ -10,10 +10,31 @@
     border: none;
 }
 
+body {
+    margin: 0px;
+}
+
+.container {
+    width : 100vw;
+    height : 100vh;
+    background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+    display : flex;
+    justify-content : center;
+    align-items : center;
+}
+
 .fa-facebook {
     margin: 0px 6px;
 }
 
 .google-css {
     width: 100%;
+}
+
+.line {
+    width: 0px;
+    height: 2px;
+    background-color: #7C7982;
+    margin-top : 5px;
+    transition : width 300ms ease-in-out;
 }

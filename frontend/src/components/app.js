@@ -1,7 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
-import Login from "./login";
-import Register from "./register/index";
+import Core from "./core";
 import PrivateRoute from "./private_route";
 import Error from "./404";
 import { UserContext } from "../store/context";
@@ -29,10 +28,9 @@ const App = () => {
         <HashRouter>
             <div className="container">
                 <Switch>
-                    <PrivateRoute exact path="/register" Component={Register} />
                     <PrivateRoute exact path="/reset_confirm" Component={ResetPasswordConfirm} />
                     <PrivateRoute exact path="/reset" Component={ResetPassword} />
-                    <PrivateRoute exact path="/" Component={Login} />
+                    <PrivateRoute exact path="/" Component={Core} />
                     <Route path="" component={Error} />
                 </Switch>
             </div>

@@ -31,23 +31,22 @@ export default ({notification}) => {
         const config = setConfig(userContext.state.token);
         if (!notification.group && notification.type==="accept") {
             // find this user and added to the friends list
-            let friend = accountsContext.state.accounts.find(
-                account => account.id === notification.user
-            );
-            friend = {
-                active: false,
-                icon: friend.icon,
-                id: friend.id,
-                unReadMessages: 0,
-                username: friend.username,
-            }
-            accountsContext.dispatch({
-                type: "REQUEST_ACCEPTED",
-                payload: friend
-            });
-            // open a channel between this friend and 
-            // this user
-            webSocketContext.connect(friend.id);
+            axios.get(`/accounts/get_friend/${notification.user}/`, config)
+                .then(
+                    res => {
+                        let friend = res.data
+                        accountsContext.dispatch({
+                            type: "REQUEST_ACCEPTED",
+                            payload: friend
+                        });
+                        // open a channel between this friend and 
+                        // this user
+                        webSocketContext.connect(friend.id);
+                    },
+                    err => {
+                        console.log(err.response.data)
+                    }
+                )
         } else if (notification.group && notification.type === "group accept" ){
             // get the groups
             axios.get("/accounts/groups/", config)

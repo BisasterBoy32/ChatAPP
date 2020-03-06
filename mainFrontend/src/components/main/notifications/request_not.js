@@ -50,7 +50,7 @@ export default ({ notification }) => {
                         });
                     } else {
                         // find this user and added it to the friends list
-                        axios.get(`/accounts/get_friend/${notification.user}/`, values, config)
+                        axios.get(`/accounts/get_friend/${notification.user}/`, config)
                         .then(
                             res => {
                                 let friend = res.data
