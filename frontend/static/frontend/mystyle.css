@@ -1,13 +1,33 @@
 .facebook-css {
-    display: block;
-    width: 100%;
     margin: 15px 0px;
     padding: 0.5rem;
     text-align: left;
-    font-size: 15px;
-    background-color: #4267b2;
-    color: #fff;
+    font-size: 22px;
+    background-color: transparent;
+    color: #1A181A;
     border: none;
+    cursor: pointer;
+    transition : transform 250ms ease-in-out;
+}
+
+.facebook-css:hover {
+    transform : scale(1.2);
+}
+
+.google-css {
+    margin: 15px 0px;
+    padding: 0.5rem;
+    text-align: left;
+    font-size: 22px;
+    background-color: transparent;
+    color: #1A181A;
+    border: none;
+    cursor: pointer;
+    transition : transform 250ms ease-in-out;
+}
+
+.google-css:hover{
+    transform : scale(1.2);
 }
 
 body {
@@ -27,14 +47,16 @@ body {
     margin: 0px 6px;
 }
 
-.google-css {
-    width: 100%;
-}
-
 .line {
     width: 0px;
     height: 2px;
     background-color: #7C7982;
     margin-top : 5px;
     transition : width 300ms ease-in-out;
+}
+
+.forget{
+    text-decoration: none;
+    color : #BEB9C5;
+    letter-spacing: 1px;
 }

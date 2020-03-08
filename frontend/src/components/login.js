@@ -8,6 +8,7 @@ import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import { FaGoogle } from "react-icons/fa";
 
 const useStyles = makeStyles(theme => ({
     input : {
@@ -39,27 +40,18 @@ const Little = styled.div`
     margin : 14px 0;
 `
 
-const Button = styled.button`
-    background-color : #4F98CA;
-    border : 1px solid #4F98CA;
-    margin-top : 1rem;
-    padding : .5rem 2rem;
-    display : block;
-    font-size : 1.2rem;
-    color : #000;
-`
-
 const Error = styled.div`
     color : rgb(211, 80, 80);
     font-size : .8rem;
     margin : .3rem 0 0 .3rem;
 `
 
-export default () => {
+export default ({formRef}) => {
 
     const user = useContext(UserContext);
     const [loginError, setLoginError] = useState(false);
     const classes = useStyles();
+
     const sendAccessToken = (backend, response) => {
         // send the access token to the server
         // the server will connect to the facebook with this access token and 
@@ -136,7 +128,7 @@ export default () => {
                     handleSubmit,
                     isSubmitting,
                 }) => (
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} ref={formRef} style={{width:"100%"}}>
                             <TextField 
                                 label="Username or Email"
                                 type="text"
@@ -166,20 +158,25 @@ export default () => {
                             {loginError &&
                                 <Error> Username or password Incorrect </Error>
                             }
-                            <Button type="submit" disabled={isSubmitting}>
-                                Login
-                                </Button>
                         </form>
                     )}
             </Formik>
+            <div style={{width: "100%"}} >
             <GoogleLogin
                 clientId="740700554850-7g28qlulefo44hfc49s7aqra3b0ljice.apps.googleusercontent.com"
-                buttonText="Login with google"
+                buttonText=""
                 onSuccess={responseGoogle}
                 onFailure={responseGoogle}
                 cookiePolicy={'single_host_origin'}
                 autoLoad={false}
-                className="google-css"
+                render={renderProps => (
+                    <button 
+                    className="google-css" 
+                    onClick={renderProps.onClick} 
+                    disabled={renderProps.disabled}>
+                        <FaGoogle />
+                    </button>
+                  )}
             />
             <FacebookLogin
                 appId="612218419594833"
@@ -188,11 +185,13 @@ export default () => {
                 callback={responseFacebook}
                 icon="fa-facebook"
                 cssClass="facebook-css"
+                textButton=""
             />
+            </div>
             <br />
-            You don't have an account? Register from <Link to="/register">Here</Link>
-            <br />
-            Did you forget your password? reset your password from <Link to="/reset"> Here </Link>
+            <div style={{width: "100%"}} >
+            <Link to="/reset" className="forget"> forget password?  </Link>
+            </div>
         </Wrapper>
     )
 };
