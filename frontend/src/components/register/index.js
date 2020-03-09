@@ -5,8 +5,7 @@ import Page1 from "./page1";
 import Page2 from "./page2";
 import { useStateWithCallBack } from "../../helpers";
 
-export default () => {
-
+export default ({formRef ,preBtn ,setPrevious}) => {
     const onFormSubmit = (data) => {
         // submit the data on after filling the second page
         if (data.submit){
@@ -47,8 +46,8 @@ export default () => {
     const [page, setPage] = useState(1);
 
     if (page===1){
-        return <Page1 data={data} setData={setData} setPage={setPage}/>
+        return <Page1 data={data} setData={setData} setPage={setPage} formRef={formRef} setPrevious={setPrevious}/>
     } else if (page===2){
-        return <Page2 data={data} setData={setData} setPage={setPage}/>
+        return <Page2 data={data} setData={setData} setPage={setPage} formRef={formRef} preBtn={preBtn} setPrevious={setPrevious}/>
     }
 }

@@ -3,41 +3,39 @@ import { Link } from "react-router-dom";
 import { Formik } from 'formik';
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
+
+
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+
+const useStyles = makeStyles(theme => ({
+    input : {
+        width : "100%"
+    },
+}));
+
 
 const Wrapper = styled.div`
     display : flex;
     justify-content : center;
     align-items : center;
-    width : 100%;
-    height : 100vh;
     flex-direction : column;
-    background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
 `
-
-const Container = styled.div`
-    width : 60%;
-    border : 1px solid #4F98CA;
-    padding : 2rem;
-`
-
 const Title = styled.div`
-    background-color : #4F98CA;
-    font-size : 1.5rem;
-    color : #000;
-    text-align : center;
-    width: 60%;
-    padding: .5rem;
+    font-size : 40px;
+       letter-spacing: 4px;
 `
-const Input = styled.input`
-    border : 1px solid 
-    ${props => props.error ? "rgb(211, 80, 80)" : "#4F98CA"};
-    width : 100%;
-    padding : .2rem;
-    padding-left : 1rem;
-    font-size : 1.2rem;
-    margin-top : 1rem;
+
+const TitleWrap = styled.div`
+    width : 331px;
+    margin : 3rem;
+`
+
+
+const Little = styled.div`
+    font-size : 18px;
+    margin : 14px 0;
 `
 
 const Button = styled.button`
@@ -62,8 +60,8 @@ const ButtonWrapper = styled.div`
 `
 
 const Image = styled.img`
-    width : 100px;
-    height : 100px;
+    width : 50px;
+    height : 50px;
     cursor : pointer;
     $:checked {
     outline: 2px solid #4F98CA;
@@ -80,9 +78,10 @@ const RadioButton = styled.input`
   }
 `
 
-export default ({ data, setData, setPage }) => {
-
+export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
+    const classes = useStyles();
     const getPreviousPage = () => {
+        setPrevious(false);
         setData({
             ...data,
             submit : false
@@ -91,10 +90,6 @@ export default ({ data, setData, setPage }) => {
     }
     return (
         <Wrapper>
-            <Title>
-                Chat APP
-        </Title>
-            <Container>
                 <Formik
                     initialValues={{
                         born_date: data.born_date,
@@ -134,16 +129,17 @@ export default ({ data, setData, setPage }) => {
                         isSubmitting,
                         setFieldValue
                     }) => (
-                            <form onSubmit={handleSubmit}>
+                            <form onSubmit={handleSubmit} ref={formRef}  style={{width:"100%"}}>
 
-                                <Input
+                                <TextField
                                     type="text"
                                     name="first_name"
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     value={values.first_name}
-                                    placeholder="Your full name"
+                                    label="Your full name"
                                     error={errors.first_name && touched.first_name}
+                                    className={classes.input}
                                 />
                                 <Error>
                                     {errors.first_name && touched.first_name && errors.first_name}
@@ -181,19 +177,12 @@ export default ({ data, setData, setPage }) => {
                                     {errors.icon && touched.icon && errors.icon}
                                 </Error>
                                 <ButtonWrapper>
-                                    <Button style={{ marginRight : "5px" }} onClick={getPreviousPage}>
-                                        Previous
-                                    </Button>
-                                    <Button type="submit" disabled={isSubmitting}>
-                                        Register
+                                    <Button ref={preBtn} type="button" style={{ display : "none" }} onClick={getPreviousPage}>
                                     </Button>
                                 </ButtonWrapper>
                             </form>
                         )}
                 </Formik>
-                <br />
-                You have already an account? Login from <Link to="/">Here</Link>
-            </Container>
         </Wrapper>
     )
 };

@@ -3,7 +3,7 @@ import { UserContext } from "../store/context";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Formik } from 'formik';
-import styled from "styled-components";
+import styled ,{ keyframes } from "styled-components";
 import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 import { makeStyles } from '@material-ui/core/styles';
@@ -40,10 +40,31 @@ const Little = styled.div`
     margin : 14px 0;
 `
 
+const PopUp = keyframes`
+  from {
+    transform: scale(0.8);
+  }
+
+  to {
+    transform: scale(1.2);
+  }
+`;
+
 const Error = styled.div`
-    color : rgb(211, 80, 80);
-    font-size : .8rem;
-    margin : .3rem 0 0 .3rem;
+    color: #fff;
+    font-size: .8rem;
+    padding: 2px 0 2px 7px;
+    position: absolute;
+    bottom: -20px;
+    background-color: rgb(238, 150, 150);
+    width: 100%;
+    box-sizing: border-box;
+    animation: ${PopUp} 500ms linear 1s;
+`
+const InputContainer = styled.div`
+    width : 100%;
+    position : relative;
+    margin-bottom : 10px;
 `
 
 export default ({formRef}) => {
@@ -83,7 +104,7 @@ export default ({formRef}) => {
     return (
         <Wrapper>
             <TitleWrap>
-                <Title> Hello <strong> Beautiful,</strong> </Title>
+                <Title> Welcome <strong> Back,</strong> </Title>
                 <Little > Enter you information below or login with a social account </Little>
             </TitleWrap>
             <Formik
@@ -129,32 +150,38 @@ export default ({formRef}) => {
                     isSubmitting,
                 }) => (
                         <form onSubmit={handleSubmit} ref={formRef} style={{width:"100%"}}>
-                            <TextField 
-                                label="Username or Email"
-                                type="text"
-                                name="username_or_email"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.email}
-                                error={errors.username_or_email && touched.username_or_email}
-                                className={classes.input}
-                            />
-                            <Error>
-                                {errors.username_or_email && touched.username_or_email && errors.username_or_email}
-                            </Error>
-                            <TextField 
-                                type="password"
-                                name="password"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.password}
-                                label="Password"
-                                error={errors.password && touched.password}
-                                className={classes.input}
-                            />
-                            <Error>
-                                {errors.password && touched.password && errors.password}
-                            </Error>
+                            <InputContainer>
+                                <TextField 
+                                    label="Username or Email"
+                                    type="text"
+                                    name="username_or_email"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.email}
+                                    error={errors.username_or_email && touched.username_or_email}
+                                    className={classes.input}
+                                />
+                                {errors.username_or_email && touched.username_or_email && errors.username_or_email &&
+                                    <Error>
+                                        {errors.username_or_email && touched.username_or_email && errors.username_or_email}
+                                    </Error>   
+                                }
+                            </InputContainer>
+                            <InputContainer>
+                                <TextField 
+                                    type="password"
+                                    name="password"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.password}
+                                    label="Password"
+                                    error={errors.password && touched.password}
+                                    className={classes.input}
+                                />
+                                <Error>
+                                    {errors.password && touched.password && errors.password}
+                                </Error>
+                            </InputContainer>
                             {loginError &&
                                 <Error> Username or password Incorrect </Error>
                             }

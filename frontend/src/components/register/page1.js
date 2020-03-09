@@ -1,41 +1,37 @@
 import React ,{ useState } from "react";
-import { Link } from "react-router-dom";
 import { Formik } from 'formik';
 import styled from "styled-components";
 import axios from "axios";
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+
+const useStyles = makeStyles(theme => ({
+    input : {
+        width : "100%"
+    },
+}));
+
 
 const Wrapper = styled.div`
     display : flex;
     justify-content : center;
     align-items : center;
-    width : 100%;
-    height : 100vh;
     flex-direction : column;
-    background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
 `
-
-const Container = styled.div`
-    width : 50%;
-    border : 1px solid #4F98CA;
-    padding : 2rem;
-`
-
 const Title = styled.div`
-    background-color : #4F98CA;
-    font-size : 1.5rem;
-    color : #000;
-    text-align : center;
-    width: 50%;
-    padding: .5rem;
+    font-size : 40px;
+       letter-spacing: 4px;
 `
-const Input = styled.input`
-    border : 1px solid 
-    ${props => props.error ? "rgb(211, 80, 80)" : "#4F98CA"};
-    width : 100%;
-    padding : .2rem;
-    padding-left : 1rem;
-    font-size : 1.2rem;
-    margin-top : 1rem;
+
+const TitleWrap = styled.div`
+    width : 331px;
+    margin : 3rem;
+`
+
+
+const Little = styled.div`
+    font-size : 18px;
+    margin : 14px 0;
 `
 
 const Button = styled.button`
@@ -54,8 +50,8 @@ const Error = styled.div`
     margin : .3rem 0 0 .3rem;
 `
 
-export default ({data ,setData , setPage}) => {
-
+export default ({data ,setData , setPage ,formRef ,setPrevious}) => {
+    const classes = useStyles();
     const [emailError, setEmailError] = useState(false);
     const [usernameError , setUsernameError] = useState(false);
 
@@ -89,10 +85,10 @@ export default ({data ,setData , setPage}) => {
 
     return (
         <Wrapper>
-            <Title>
-                Chat APP
-        </Title>
-            <Container>
+            <TitleWrap>
+                <Title> Hello <strong> Beautiful,</strong> </Title>
+                <Little > Enter you information below or login with a social account </Little>
+            </TitleWrap>
                 <Formik
                     initialValues={{ 
                         username: data.username,
@@ -139,6 +135,7 @@ export default ({data ,setData , setPage}) => {
                             ...data,
                             ...values
                         });
+                        setPrevious(true);
                         setSubmitting(false);
                         setPage(2);
                     }}
@@ -152,8 +149,9 @@ export default ({data ,setData , setPage}) => {
                         handleSubmit,
                         isSubmitting,
                     }) => (
-                            <form onSubmit={handleSubmit}>
-                                <Input
+                            <form onSubmit={handleSubmit} ref={formRef}  style={{width:"100%"}}>
+                                <TextField
+                                    label="Username"
                                     type="text"
                                     name="username"
                                     onChange={(e) => {
@@ -162,14 +160,14 @@ export default ({data ,setData , setPage}) => {
                                     }}
                                     onBlur={handleBlur}
                                     value={values.username}
-                                    placeholder="Username"
                                     error={errors.username && touched.username}
+                                    className={classes.input}
                                 />
                                 <Error>
                                     {errors.username && touched.username && errors.username}
                                 </Error>
 
-                                <Input
+                                <TextField
                                     type="email"
                                     name="email"
                                     onChange={(e) => {
@@ -178,45 +176,42 @@ export default ({data ,setData , setPage}) => {
                                     }}
                                     onBlur={handleBlur}
                                     value={values.email}
-                                    placeholder="Email"
+                                    label="Email"
                                     error={errors.email && touched.email}
+                                    className={classes.input}
                                 />
                                 <Error>
                                     {errors.email && touched.email && errors.email}
                                 </Error>
-                                <Input
+                                <TextField
                                     type="password"
                                     name="password1"
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     value={values.password1}
-                                    placeholder="Password"
+                                    label="Password"
+                                    className={classes.input}
                                     error={errors.password1 && touched.password1}
                                 />
                                 <Error>
                                     {errors.password1 && touched.password1 && errors.password1}
                                 </Error>
-                                <Input
+                                <TextField
                                     type="password"
                                     name="password2"
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     value={values.password2}
-                                    placeholder="Renter Password"
+                                    label="Renter Password"
                                     error={errors.password2 && touched.password2}
+                                    className={classes.input}
                                 />
                                 <Error>
                                     {errors.password2 && touched.password2 && errors.password2}
                                 </Error>
-                                <Button type="submit" disabled={isSubmitting}>
-                                    Next
-                                </Button>
                             </form>
                         )}
                 </Formik>
-                <br />
-                You have already an account? Login from <Link to="/">Here</Link>
-            </Container>
         </Wrapper>
     )
 };
