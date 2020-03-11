@@ -34,20 +34,20 @@ const Little = styled.div`
     margin : 14px 0;
 `
 
-const Button = styled.button`
-    background-color : #4F98CA;
-    border : 1px solid #4F98CA;
-    margin-top : 1rem;
-    padding : .5rem 2rem;
-    display : block;
-    font-size : 1.2rem;
-    color : #000;
-`
-
 const Error = styled.div`
-    color : rgb(211, 80, 80);
-    font-size : .8rem;
-    margin : .3rem 0 0 .3rem;
+    color: #fff;
+    font-size: .8rem;
+    padding: 2px 0 2px 7px;
+    position: absolute;
+    bottom: -20px;
+    background-color: rgb(238, 150, 150);
+    width: 100%;
+    box-sizing: border-box;
+`
+const InputContainer = styled.div`
+    width : 100%;
+    position : relative;
+    margin-bottom : 10px;
 `
 
 export default ({data ,setData , setPage ,formRef ,setPrevious}) => {
@@ -84,10 +84,10 @@ export default ({data ,setData , setPage ,formRef ,setPrevious}) => {
     }
 
     return (
-        <Wrapper>
+        <Wrapper className="animated fadeIn">
             <TitleWrap>
                 <Title> Hello <strong> Beautiful,</strong> </Title>
-                <Little > Enter you information below or login with a social account </Little>
+                <Little > Enter you information below </Little>
             </TitleWrap>
                 <Formik
                     initialValues={{ 
@@ -149,7 +149,8 @@ export default ({data ,setData , setPage ,formRef ,setPrevious}) => {
                         handleSubmit,
                         isSubmitting,
                     }) => (
-                            <form onSubmit={handleSubmit} ref={formRef}  style={{width:"100%"}}>
+                            <form onSubmit={handleSubmit} ref={formRef}  style={{width:"100%" ,marginBottom : "1rem"}}>
+                                <InputContainer>
                                 <TextField
                                     label="Username"
                                     type="text"
@@ -163,11 +164,15 @@ export default ({data ,setData , setPage ,formRef ,setPrevious}) => {
                                     error={errors.username && touched.username}
                                     className={classes.input}
                                 />
-                                <Error>
-                                    {errors.username && touched.username && errors.username}
-                                </Error>
+                                {errors.username && touched.username && errors.username &&
+                                    <Error className="animated flash">
+                                        {errors.username && touched.username && errors.username}
+                                    </Error>   
+                                }
+                            </InputContainer>
 
-                                <TextField
+                                                            <InputContainer>
+                                                            <TextField
                                     type="email"
                                     name="email"
                                     onChange={(e) => {
@@ -180,10 +185,17 @@ export default ({data ,setData , setPage ,formRef ,setPrevious}) => {
                                     error={errors.email && touched.email}
                                     className={classes.input}
                                 />
-                                <Error>
-                                    {errors.email && touched.email && errors.email}
-                                </Error>
-                                <TextField
+                                {errors.email && touched.email && errors.email &&
+                                    <Error className="animated flash">
+                                        {errors.email && touched.email && errors.email}
+                                    </Error>   
+                                }
+                            </InputContainer>
+
+
+
+                            <InputContainer>
+                            <TextField
                                     type="password"
                                     name="password1"
                                     onChange={handleChange}
@@ -193,10 +205,15 @@ export default ({data ,setData , setPage ,formRef ,setPrevious}) => {
                                     className={classes.input}
                                     error={errors.password1 && touched.password1}
                                 />
-                                <Error>
-                                    {errors.password1 && touched.password1 && errors.password1}
-                                </Error>
-                                <TextField
+                                {errors.password1 && touched.password1 && errors.password1 &&
+                                    <Error className="animated flash">
+                                        {errors.password1 && touched.password1 && errors.password1}
+                                    </Error>   
+                                }
+                            </InputContainer>
+                               
+                            <InputContainer>
+                            <TextField
                                     type="password"
                                     name="password2"
                                     onChange={handleChange}
@@ -206,9 +223,14 @@ export default ({data ,setData , setPage ,formRef ,setPrevious}) => {
                                     error={errors.password2 && touched.password2}
                                     className={classes.input}
                                 />
-                                <Error>
-                                    {errors.password2 && touched.password2 && errors.password2}
-                                </Error>
+                                {errors.password2 && touched.password2 && errors.password2 &&
+                                    <Error className="animated flash">
+                                        {errors.password2 && touched.password2 && errors.password2}
+                                    </Error>   
+                                }
+                            </InputContainer>
+
+
                             </form>
                         )}
                 </Formik>

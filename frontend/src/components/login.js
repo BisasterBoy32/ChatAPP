@@ -174,7 +174,7 @@ export default ({formRef}) => {
                                 }
                                 {loginError && 
                                     <Error className="animated flash">
-                                        {errors.password && touched.password && errors.password}
+                                        username or password incorrect
                                     </Error>
                                 }
                             </InputContainer>

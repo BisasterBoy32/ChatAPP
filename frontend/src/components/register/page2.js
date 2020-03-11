@@ -21,21 +21,8 @@ const Wrapper = styled.div`
     justify-content : center;
     align-items : center;
     flex-direction : column;
-`
-const Title = styled.div`
-    font-size : 40px;
-       letter-spacing: 4px;
-`
-
-const TitleWrap = styled.div`
-    width : 331px;
-    margin : 3rem;
-`
-
-
-const Little = styled.div`
-    font-size : 18px;
-    margin : 14px 0;
+    height : 500px;
+    align-items : center;
 `
 
 const Button = styled.button`
@@ -49,9 +36,19 @@ const Button = styled.button`
 `
 
 const Error = styled.div`
-    color : rgb(211, 80, 80);
-    font-size : .8rem;
-    margin : .3rem 0 0 .3rem;
+    color: #fff;
+    font-size: .8rem;
+    padding: 2px 0 2px 7px;
+    position: absolute;
+    bottom: -20px;
+    background-color: rgb(238, 150, 150);
+    width: 100%;
+    box-sizing: border-box;
+`
+const InputContainer = styled.div`
+    width : 100%;
+    position : relative;
+    margin-bottom : 25px;
 `
 
 const ButtonWrapper = styled.div`
@@ -60,13 +57,16 @@ const ButtonWrapper = styled.div`
 `
 
 const Image = styled.img`
-    width : 50px;
-    height : 50px;
-    cursor : pointer;
+width: 50px;
+    height: 50px;
+    cursor: pointer;
+    margin: .2rem;
+    border-radius: 5px;
+    box-shadow: 4px 4px 3px rgba(0, 0, 0 ,.4);
+    box-sizing: border-box;
     $:checked {
-    outline: 2px solid #4F98CA;
+    border: 2px solid #4F98CA;
     }
-    margin : .2rem;
 `
 
 const RadioButton = styled.input`
@@ -74,7 +74,7 @@ const RadioButton = styled.input`
   width: 0;
   height: 0;
   &:checked + img {
-    outline: 2px solid #4F98CA;
+    border: 3px solid #4F98CA;
   }
 `
 
@@ -89,7 +89,7 @@ export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
         setPage(1);
     }
     return (
-        <Wrapper>
+        <Wrapper className="animated fadeIn">
                 <Formik
                     initialValues={{
                         born_date: data.born_date,
@@ -131,7 +131,8 @@ export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
                     }) => (
                             <form onSubmit={handleSubmit} ref={formRef}  style={{width:"100%"}}>
 
-                                <TextField
+<InputContainer>
+<TextField
                                     type="text"
                                     name="first_name"
                                     onChange={handleChange}
@@ -141,11 +142,16 @@ export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
                                     error={errors.first_name && touched.first_name}
                                     className={classes.input}
                                 />
-                                <Error>
-                                    {errors.first_name && touched.first_name && errors.first_name}
-                                </Error>
+                                {errors.first_name && touched.first_name && errors.first_name &&
+                                    <Error className="animated flash">
+                                        {errors.first_name && touched.first_name && errors.first_name}
+                                    </Error>   
+                                }
+                            </InputContainer>
 
-                                <DatePicker
+
+                            <InputContainer>
+                            <DatePicker
                                     name="born_date"
                                     onChange={e => setFieldValue('born_date', e)}
                                     onBlur={handleBlur}
@@ -154,11 +160,15 @@ export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
                                     iconPosition="left"
                                     error={errors.born_date && touched.born_date}
                                 />
-                                <Error>
-                                    {errors.born_date && touched.born_date && errors.born_date}
-                                </Error>
+                                {errors.born_date && touched.born_date && errors.born_date &&
+                                    <Error className="animated flash">
+                                        {errors.born_date && touched.born_date && errors.born_date}
+                                    </Error>   
+                                }
+                            </InputContainer>
 
-                                <div> Choose an icon for your profile : </div>
+                            <InputContainer>
+                            <div> Choose an icon for your profile : </div>
                                 {
                                     [1,2,3,4,5,6,7,8,9,10].map( value => 
                                         <label key={value}>
@@ -173,9 +183,13 @@ export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
                                         </label>
                                     )
                                 }
-                                <Error>
-                                    {errors.icon && touched.icon && errors.icon}
-                                </Error>
+                                {errors.icon && touched.icon && errors.icon &&
+                                    <Error className="animated flash">
+                                        {errors.icon && touched.icon && errors.icon}
+                                    </Error>   
+                                }
+                            </InputContainer>
+
                                 <ButtonWrapper>
                                     <Button ref={preBtn} type="button" style={{ display : "none" }} onClick={getPreviousPage}>
                                     </Button>
