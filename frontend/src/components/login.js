@@ -40,16 +40,6 @@ const Little = styled.div`
     margin : 14px 0;
 `
 
-const PopUp = keyframes`
-  from {
-    transform: scale(0.8);
-  }
-
-  to {
-    transform: scale(1.2);
-  }
-`;
-
 const Error = styled.div`
     color: #fff;
     font-size: .8rem;
@@ -59,7 +49,6 @@ const Error = styled.div`
     background-color: rgb(238, 150, 150);
     width: 100%;
     box-sizing: border-box;
-    animation: ${PopUp} 500ms linear 1s;
 `
 const InputContainer = styled.div`
     width : 100%;
@@ -102,7 +91,7 @@ export default ({formRef}) => {
     }
 
     return (
-        <Wrapper>
+        <Wrapper className="animated fadeIn">
             <TitleWrap>
                 <Title> Welcome <strong> Back,</strong> </Title>
                 <Little > Enter you information below or login with a social account </Little>
@@ -162,7 +151,7 @@ export default ({formRef}) => {
                                     className={classes.input}
                                 />
                                 {errors.username_or_email && touched.username_or_email && errors.username_or_email &&
-                                    <Error>
+                                    <Error className="animated flash">
                                         {errors.username_or_email && touched.username_or_email && errors.username_or_email}
                                     </Error>   
                                 }
@@ -178,13 +167,17 @@ export default ({formRef}) => {
                                     error={errors.password && touched.password}
                                     className={classes.input}
                                 />
-                                <Error>
-                                    {errors.password && touched.password && errors.password}
-                                </Error>
+                                {errors.password && touched.password && errors.password && 
+                                    <Error className="animated flash">
+                                        {errors.password && touched.password && errors.password}
+                                    </Error>
+                                }
+                                {loginError && 
+                                    <Error className="animated flash">
+                                        {errors.password && touched.password && errors.password}
+                                    </Error>
+                                }
                             </InputContainer>
-                            {loginError &&
-                                <Error> Username or password Incorrect </Error>
-                            }
                         </form>
                     )}
             </Formik>

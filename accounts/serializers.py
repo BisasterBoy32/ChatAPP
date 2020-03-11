@@ -85,8 +85,11 @@ class LoginSer(serializers.Serializer):
         user = authenticate(username=data["username_or_email"],password=data["password"])
         if not user :
             # see if there is a user with this email 
-            user = User.objects.get(email=data["username_or_email"])
-            if not user.check_password(data["password"]) :
+            user = User.objects.filter(email=data["username_or_email"])
+            #if there is no user with this email
+            if not user.exists() :
+                raise serializers.ValidationError("Wrong Credentials")
+            elif not user[0].check_password(data["password"]) :
                 raise serializers.ValidationError("Wrong Credentials")
         
         return data
