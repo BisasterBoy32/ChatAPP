@@ -64,3 +64,20 @@ body {
     color : #BEB9C5;
     letter-spacing: 1px;
 }
+
+.react-datepicker-wrapper{
+    width : 100%;
+}
+
+
+.react-datepicker-wrapper input{
+    box-sizing: border-box;
+    width: 100%;
+    padding: 4px 9px;
+    font-size: 1rem;
+}
+
+.progresser {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}

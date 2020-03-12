@@ -5,7 +5,7 @@ import Page1 from "./page1";
 import Page2 from "./page2";
 import { useStateWithCallBack } from "../../helpers";
 
-export default ({formRef ,preBtn ,setPrevious}) => {
+export default ({formRef ,preBtn ,setPrevious ,setProgress}) => {
     const onFormSubmit = (data) => {
         // submit the data on after filling the second page
         if (data.submit){
@@ -22,8 +22,14 @@ export default ({formRef ,preBtn ,setPrevious}) => {
 
             axios.post("/accounts/", values)
                 .then(
-                    res => user.dispatch({ type: "LOGIN_SUCCESS", payload: res.data }),
-                    err => user.dispatch({ type: "LOGIN_FAILED", payload: err.response.data }),
+                    res => {
+                        user.dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+                        setProgress(false);
+                    },
+                    err => {
+                        user.dispatch({ type: "LOGIN_FAILED", payload: err.response.data });
+                        setProgress(false);
+                    },
                 )
         }
     }

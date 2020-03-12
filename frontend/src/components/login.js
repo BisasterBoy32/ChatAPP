@@ -56,7 +56,7 @@ const InputContainer = styled.div`
     margin-bottom : 10px;
 `
 
-export default ({formRef}) => {
+export default ({formRef ,setProgress}) => {
 
     const user = useContext(UserContext);
     const [loginError, setLoginError] = useState(false);
@@ -75,9 +75,11 @@ export default ({formRef}) => {
             .then(
                 res => {
                     user.dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+                    setProgress(false);
                 },
                 err => {
                     user.dispatch({ type: "LOGIN_FAILED", payload: err.response.message });
+                    setProgress(false);
                 }
             )
     }
@@ -116,11 +118,13 @@ export default ({formRef}) => {
                         .then(
                             res => {
                                 setSubmitting(false);
+                                setProgress(false);
                                 user.dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
                             },
                             err => {
                                 user.dispatch({ type: "LOGIN_FAILED", payload: err.response });
                                 setLoginError(true);
+                                setProgress(false);
                                 setTimeout(() => {
                                     setLoginError(false);
                                 }, 5000);

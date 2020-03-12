@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Login from "./login";
 import Register from "./register/index";
 import { FaArrowRight ,FaArrowLeft } from "react-icons/fa";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const Container = styled.div`
     width : 30%;
@@ -29,8 +30,8 @@ const Nav = styled.div`
 
 
 const Button = styled.button`
-    background-color : ${props=> props.left ? "#DD6589;" : "#AEAFE8"};
-    border : 1px solid ${props=> props.left ? "#DD6589;" : "#AEAFE8"};
+    background-color : #AEAFE8;
+    border : 2px solid #AEAFE8;
     border-radius : 6px;
     padding : .5rem 1rem;
     display : block;
@@ -71,30 +72,57 @@ export default () => {
     const loginForm = useRef(null);
     const RegisterForm = useRef(null);
     const preBtn = useRef(null);
+    const [progress , setProgress] = useState(false);
+    const [completed, setCompleted] = React.useState(0);
+
+    React.useEffect(() => {
+      function progress() {
+        setCompleted(oldCompleted => {
+          if (oldCompleted === 100) {
+            return 0;
+          }
+          const diff = Math.random() * 10;
+          return Math.min(oldCompleted + diff, 100);
+        });
+      }
+  
+      const timer = setInterval(progress, 500);
+      return () => {
+        clearInterval(timer);
+      };
+    }, []);
 
     const getPreviouspage = () => {
-        preBtn.current.click()
+        preBtn.current.click();
     } 
     
     const onButtonClicked = () => {
         if (login){
             loginForm.current.dispatchEvent(new Event("submit"));
+            setProgress(true);
         }else  {
             RegisterForm.current.dispatchEvent(new Event("submit"));
+            setProgress(true);
         }
     };
 
     return (
         <Container>
+        {progress &&
+            <LinearProgress variant="determinate" value={completed} className="progresser"/>
+        }      
         <Wrapper>
             <Header>
                 <Nav>
-                    <Choose selected={login} onClick={() => setLogin(true)}> Sign In <div className="line"></div> </Choose>
+                    <Choose 
+                    selected={login} 
+                    onClick={() => { setLogin(true); setPrevious(false)} }> Sign In <div className="line"></div>
+                     </Choose>
                     <Choose selected={!login} onClick={() => setLogin(false)}> Sign Up <div className="line"></div>   </Choose>
                 </Nav>
             </Header>
-            {login && <Login formRef={loginForm}/>}
-            {!login && <Register formRef={RegisterForm} preBtn={preBtn} setPrevious={setPrevious} />}
+            {login && <Login formRef={loginForm} setProgress={setProgress}/>}
+            {!login && <Register setProgress={setProgress} formRef={RegisterForm} preBtn={preBtn} setPrevious={setPrevious} />}
         </Wrapper>
         <Footer >
             {previous && 

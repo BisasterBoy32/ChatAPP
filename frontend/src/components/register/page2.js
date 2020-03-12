@@ -21,7 +21,7 @@ const Wrapper = styled.div`
     justify-content : center;
     align-items : center;
     flex-direction : column;
-    height : 500px;
+    height : 445px;
     align-items : center;
 `
 
@@ -57,7 +57,7 @@ const ButtonWrapper = styled.div`
 `
 
 const Image = styled.img`
-width: 50px;
+    width: 50px;
     height: 50px;
     cursor: pointer;
     margin: .2rem;
@@ -65,18 +65,24 @@ width: 50px;
     box-shadow: 4px 4px 3px rgba(0, 0, 0 ,.4);
     box-sizing: border-box;
     $:checked {
-    border: 2px solid #4F98CA;
+        border: 3px solid #6D6A72;
     }
 `
 
 const RadioButton = styled.input`
-  opacity: 0;
-  width: 0;
-  height: 0;
-  &:checked + img {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    &:checked + img {
     border: 3px solid #4F98CA;
-  }
+    }
 `
+
+const SubTitle = styled.div`
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+`;
 
 export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
     const classes = useStyles();
@@ -168,7 +174,7 @@ export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
                             </InputContainer>
 
                             <InputContainer>
-                            <div> Choose an icon for your profile : </div>
+                            <SubTitle> Choose an icon for your profile </SubTitle>
                                 {
                                     [1,2,3,4,5,6,7,8,9,10].map( value => 
                                         <label key={value}>
