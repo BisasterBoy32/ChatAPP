@@ -70,11 +70,12 @@ const Image = styled.img`
 `
 
 const RadioButton = styled.input`
+    margin: 0px;
     opacity: 0;
     width: 0;
     height: 0;
     &:checked + img {
-    border: 3px solid #4F98CA;
+        border: 3px solid #6D6A72;
     }
 `
 
@@ -179,6 +180,7 @@ export default ({ data, setData, setPage ,formRef ,preBtn ,setPrevious}) => {
                                     [1,2,3,4,5,6,7,8,9,10].map( value => 
                                         <label key={value}>
                                             <RadioButton
+
                                                 type="radio"
                                                 name="icon"
                                                 onBlur={handleBlur}

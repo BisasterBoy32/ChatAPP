@@ -7,6 +7,27 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 
 const Container = styled.div`
     width : 30%;
+    @media (max-width: 1200px) {
+        width : 35%;
+    }
+    @media (max-width: 1020px) {
+        width : 40%;
+    }
+    @media (max-width: 900px) {
+        width: 45%;
+    }
+    @media (max-width: 800px) {
+        width : 50%;
+    }
+    @media (max-width: 700px) {
+        width : 55%;
+    }
+    @media (max-width: 600px) {
+        width : 60%;
+    }
+    @media (max-width: 500px) {
+        width : 65%;
+    }
 `;
 
 const Wrapper = styled.div`
@@ -102,7 +123,6 @@ export default () => {
             setProgress(true);
         }else  {
             RegisterForm.current.dispatchEvent(new Event("submit"));
-            setProgress(true);
         }
     };
 

@@ -19,7 +19,7 @@ export default ({formRef ,preBtn ,setPrevious ,setProgress}) => {
                     icon : data.icon
                 }
             }
-
+            setProgress(true);
             axios.post("/accounts/", values)
                 .then(
                     res => {
