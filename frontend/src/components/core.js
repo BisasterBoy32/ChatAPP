@@ -107,7 +107,7 @@ export default () => {
     };
 
     return (
-        <Container>
+        <Container className="animated slideInDown">
         {progress &&
             <LinearProgress variant="determinate" value={completed} className="progresser"/>
         }      
