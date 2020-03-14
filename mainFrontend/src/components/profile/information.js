@@ -1,27 +1,8 @@
 import React , { useContext ,useState } from "react";
-import styled from "styled-components";
 import { UserContext ,AlerContext } from "../../store/context";
 import axios from "axios";
 import { setConfig } from "../../helpers";
 import Field from "./field"
-
-const ProfileImage = styled.div`
-    width : 170px;
-    height : 170px;
-    background-image : url(${props => props.image});
-    background-position : center;
-    border-radius: 50%;
-    margin: auto;
-    background-size: contain;
-    margin-top : 2rem;
-    border : 1px solid #fff;
-`
-const Username = styled.div`
-    text-align : center;
-    margin-top : 1rem;
-    margin-bottom : 2rem;
-    font-size : 1.5rem;
-`
 
 export default () => {
     const userContext = useContext(UserContext);
@@ -73,8 +54,6 @@ export default () => {
 
     return (
         <div>
-            <ProfileImage image={user.profile.icon}/>
-            <Username>{user.username}</Username>
             <Field value={email} onInputChange={setEmail} initValue={user.email} update={onUpdate} label="Email" />
             <Field value={firstName} onInputChange={setFirstName} initValue={user.first_name} update={onUpdate} label="Name" />
             <Field value={getAge()} label="Age" unChangeble/>

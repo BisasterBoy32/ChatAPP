@@ -10,7 +10,8 @@ import {
 } from "../../../store/context";
 
 const Container = styled.div`
-    height: calc(100% - 5.4rem);
+    position : relative;
+    height: 89%;
     padding : 0 .5rem;
     overflow-y : scroll;
     margin : .3rem 0;
@@ -26,9 +27,9 @@ const Content = styled.div`
 `
 
 const Message = styled.div`
-    background-color : #4F98CA;
-    border-radius : 10px;
-    padding : .3rem .6rem;
+    background-color : ${props => props.receiver ? "#4F98CA" : " #dedef9"};
+    border-radius: 14px;
+    padding: .6rem 1rem;
     color : rgb(38, 39, 39);
 `
 
@@ -43,6 +44,8 @@ const ProfileImage = styled.div`
     margin-left : 5px;
 `
 const Typing = styled.div`
+    position : sticky;
+    bottom : 0px;
     height: 50px;
     width: 100%;
     font-size: 19px;
@@ -61,7 +64,6 @@ export default () => {
     const {friendTyping} = accountsContext.state;
     const {memberTyping} = groupsContext.state;
     const group = selectedFriend && selectedFriend.username ? false : true;
-    const typing = useRef(null);
     const ContainerRef = useRef(null);
     const [load, setLoad] = useState(false);
     const [fromLoad, setFromLoad] = useState(false);
@@ -136,8 +138,8 @@ export default () => {
                 messages.map(message => {
                     const isSender = selectedFriend.id !== message.receiver;
                     return(
-                        <Content receiver={isSender} key={message.id} >
-                            <Message >  {message.content}  </Message>
+                        <Content receiver={isSender}  key={message.id} >
+                            <Message receiver={isSender} >  {message.content}  </Message>
                             {isSender && <ProfileImage image={selectedFriend.icon} />}
                         </Content>
                     )
@@ -152,7 +154,7 @@ export default () => {
 
                     return(
                         <Content receiver={isSender} key={message.id} >
-                            <Message >  {message.content}  </Message>
+                            <Message receiver={isSender}>  {message.content}  </Message>
                             {isSender && <ProfileImage image={message.sender_info.icon} />}
                         </Content>
                     )
@@ -161,7 +163,7 @@ export default () => {
                 null
             }
             {/* check if there is a friend or member typing */}
-            <Typing ref={typing}>
+            <Typing>
                 {friendTyping ? 
                     `${selectedFriend.username} is typing... ` : memberTyping.state ?
                         `${memberTyping.member} is typing... ` : <p>😀</p>

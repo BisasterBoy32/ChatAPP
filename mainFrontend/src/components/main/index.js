@@ -1,18 +1,22 @@
 import React,{ useState } from "react";
 import styled from "styled-components";
 import Chat from "./chat/index";
-import Profile from "../profile"
+import Profile from "../profile";
+import ProfileInfo from "../profile/information";
 import Friends from "./friends/index";
 import Notifications from "./notifications/index.js";
 import CreateGroup from './groups';
 
 const Container = styled.div`
-    max-width : 1300px;
-    width : 98%;
-    margin : auto;
-    margin-top : 2rem;
     display : flex;
-    height : calc(100vh - 5rem);
+    height  : 100vh;
+`
+
+const Main = styled.div`
+    display : flex;
+    height  : 100vh;
+    padding : 3rem;
+    width : 100%;
 `
 
 const Header = styled.div`
@@ -27,18 +31,29 @@ const Header = styled.div`
 `
 
 export default () => {
-    const [show, setShow] = useState(false);
+    
+    const [selected , setSelected] = useState("profile");
 
     return (
         <div>
-        <Profile show={show} setShow={setShow}/>
-            <Header> 
-                <Notifications></Notifications> 
+        {
+            /* 
+            <Header>
+                <Notifications></Notifications>
                 <CreateGroup></CreateGroup>
             </Header>
+            */
+        }
+
         <Container>
-            <Chat showProfile={show}></Chat>
-            <Friends></Friends>
+                <Profile selected={selected} setSelected={setSelected} />
+                <Main>
+                    {selected === "profile" && <ProfileInfo />}
+                    {selected === "friends" && <Friends />}
+                    {selected === "users" && <Friends />}
+                    {selected === "group" && <div> create group </div>}
+                    <Chat></Chat>
+                </Main>
         </Container>
         </div>
     )

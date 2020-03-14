@@ -6,34 +6,49 @@ import {
     GroupWebSocketContext
 } from "../../../store/context";
 import ChatBox from "./chat_box";
+import { FaPaperPlane } from "react-icons/fa";
 
 const Container = styled.div`
+    position : relative;
     flex : 1.5;
-    border : 2px solid #4F98CA;
-    border-radius : 4px;
-    margin-left : ${props => props.shrink ? "280px" : "1px"};
-    transition : margin 300ms ease-in-out;
+    border-radius: 12px;
+    margin: 0 20px;
+    border: 2px solid #dedef9;
+    padding: 2rem;
 `
 
 const Input = styled.input`
-    width : 100%;
-    border-top : 2px solid  #4F98CA;
-    font-size : 1.2rem;
-    padding : .4rem;
+    width: 100%;
+    border-top: 2px solid #dedef9;
+    border-radius: 28px;
+    font-size: 1.2rem;
+    padding: .5rem 1rem;
     box-sizing: border-box;
+    &:focus {
+        outline : none;
+    }
+`
+
+const Name = styled.div`
+    font-size : 1.2rem;
+    font-weight: 700;
+    margin-left: 20px;
 `
 
 const Button = styled.button`
-    width : 100%;
-    background-color :  #4F98CA;
-    font-size : 1.4rem;
+    position : absolute;
+    bottom: 32px;
+    right: 40px;
+    background-color :  #298bf0;
+    border-radius : 50%;
     text-align : center;
     cursor : pointer;
-    border : 2px solid  rgb(31, 119, 179);
-    padding : .2rem;
+    border : 1px solid  #298bf0;
+    padding : .5rem;
+    box-shadow : 2px 1px 1px #298bf0;
 `
 
-export default ({showProfile}) => {
+export default () => {
     const accountsContext = useContext(AccountsContext);
     const selectedFriend = accountsContext.state.selectedFriend;
     const websocketContext = useContext(WebSocketContext);
@@ -102,17 +117,20 @@ export default ({showProfile}) => {
     }, [selectedFriend]);
 
     return (
-        <Container shrink={showProfile}>
+        <Container>
+            {selectedFriend ?
+                <Name> {selectedFriend.username || selectedFriend.name } </Name> : <Name> Select a Friend to start chatting </Name>
+            }
             <ChatBox></ChatBox>
-            <form>
-                <Input 
-                    name="text" 
-                    value={message} 
-                    type="text" 
+            <form style={{ height : "8%"}}>
+                <Input
+                    name="text"
+                    value={message}
+                    type="text"
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type ypur message..."
-                    />
-                <Button type="submit" onClick={sendMessage}>Send</Button>
+                />
+                <Button type="submit" onClick={sendMessage}> <FaPaperPlane style={{color : "#fff"}} /></Button>     
             </form>
         </Container>
     )
