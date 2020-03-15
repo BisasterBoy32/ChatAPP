@@ -1,6 +1,6 @@
-import React, { useContext ,useState ,useEffect} from "react";
+import React, { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
-import Friend from "./friend";
+import Account from "./account";
 import axios from "axios";
 import { setConfig } from "../../../helpers"
 import {
@@ -53,13 +53,13 @@ export default () => {
     const { selectedFriend } = accountsContext.state;
     const userContext = useContext(UserContext);
     const groupContext = useContext(GroupsContext);
-    const [value ,setValue] = useState('');
+    const [value, setValue] = useState('');
     const [load, setLoad] = useState(false);
 
     // each time the value of the search change 
     // send a request to serach
-    useEffect(() =>{
-        let canceled = {state : false};
+    useEffect(() => {
+        let canceled = { state: false };
         search(value, canceled);
         return () => {
             canceled.state = true;
@@ -75,7 +75,7 @@ export default () => {
         // search for this friend or account
         let values;
         values = {
-            s_type: "friends",
+            s_type: "accounts",
             word: word
         }
         const config = setConfig(userContext.state.token);
@@ -85,10 +85,10 @@ export default () => {
         const g_res = await axios.post('/accounts/search_groups/', { word }, config)
         if (!canceled.state) {
             try {
-                    accountsContext.dispatch({
-                        type: "SEARCH_FRIENDS",
-                        payload: res.data
-                    });
+                accountsContext.dispatch({
+                    type: "SEARCH_ACCOUNTS",
+                    payload: res.data
+                });
             } catch (err) {
                 console.log(err.response.message)
             }
@@ -103,47 +103,33 @@ export default () => {
                 console.log(err.response.message)
             }
         }
-    }      
+    }
 
     return (
         <Container>
-            <Title> Friends And Groups </Title>
+            <Title> All Users </Title>
             <SearchBar>
                 <SearchIcon><FaSearch /></SearchIcon>
                 <Input name="text" type="search" value={value} onChange={onInputChange} placeholder="Search..." />
             </SearchBar>
-            {
-                accountsContext.state.friends.map(
-                    friend => (
-                        <Friend
-                            load={load}
-                            setLoad={setLoad}
-                            key={friend.username}
-                            friend={friend}
-                            selected={
-                                selectedFriend && selectedFriend.username &&
-                                friend.username === selectedFriend.username
-                            }
+            {accountsContext.state.accounts.map(
+                    account => (
+                        <Account
+                            key={account.username}
+                            account={account}
                         />
                     )
                 )
             }
-            {
-                groupContext.state.userGroups.map(
-                    friend => (
-                        <Friend
-                            load={load}
-                            setLoad={setLoad}
-                            key={friend.id}
-                            friend={friend}
-                            selected={
-                                selectedFriend && selectedFriend.name &&
-                                friend.id === selectedFriend.id
-                            }
+            {groupContext.state.groups.map(
+                    account => (
+                        <Account
+                            key={account.id}
+                            account={account}
                         />
                     )
                 )
             }
-    </Container>
+        </Container>
     )
 }

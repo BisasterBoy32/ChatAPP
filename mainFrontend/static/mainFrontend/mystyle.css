@@ -20,11 +20,11 @@ body {
     width: 15px;
     height: 15px;
     position: absolute;
-    top: 26%;
+    top: 34%;
     transform: translateY(-50%);
-    right: 34px;
-    font-size: .8rem;
-    color: #fff;
+    right: 36px;
+    font-size: 1rem;
+    color: #4F98CA;
 }
 
 .lds-hourglass:after {
@@ -35,8 +35,8 @@ body {
     height: 0;
     margin: 8px;
     box-sizing: border-box;
-    border: 10px solid #fff;
-    border-color: #fff transparent #fff transparent;
+    border: 10px solid #4F98CA;
+    border-color: #4F98CA transparent #4F98CA transparent;
     animation: lds-hourglass 1.2s infinite;
 }
 
@@ -61,6 +61,7 @@ body {
     border-color: rgb(33, 115, 221) transparent rgb(33, 115, 221) transparent;
     animation: lds-hourglass 1.2s infinite;
 }
+
 
 @keyframes lds-hourglass {
     0% {
@@ -105,7 +106,7 @@ body {
 
 .bell {
     margin-left: 6px;
-    color: rgb(240, 52, 46);
+    color: #dedef9;
 }
 
 .accept-notify:hover {
@@ -176,6 +177,11 @@ body {
     bottom: 0%;
     animation: rotate-three 1s linear infinite;
     border-top: 3px solid #000;
+}
+
+.popover-friend {
+    padding: 1rem;
+    border-radius: 10px;
 }
 
 @keyframes rotate-one {

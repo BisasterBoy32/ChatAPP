@@ -10,12 +10,14 @@ import {
     GroupsContext
 } from "../../../store/context";
 import Model from "../groups/group_model";
-import DeleteFriendModal from "./delete_friend";
 import GroupInfo from "./group_info";
 
 
 const Container = styled.div`
-    padding : .5rem;
+    border: 1px solid #dedef9;
+    border-radius: 4px;
+    padding: .7rem 1rem;
+    width: 97%;
     display : flex;
     cursor : ${props => props.loaded ? "wait" : "pointer"};
     background-color : ${props => props.selected ? "rgb(174, 216, 219)" : "transparent"};
@@ -23,16 +25,19 @@ const Container = styled.div`
         background-color : rgb(174, 216, 219);
     }
     position : relative;
+    margin : 10px 0;
+    box-shadow: 3px 4px 9px #dedef9;
 `
 
 const Username = styled.div`
     margin-left: 0.5rem;
     margin-top: .5rem;
-    font-size: 1.3rem;
+    font-size: .9rem;
+    font-weight: 700;
 `
 const ProfileImage = styled.div`
-    width : 70px;
-    height : 70px;
+    width : 50px;
+    height : 50px;
     background-image : url(${props => props.image});
     background-position : center;
     border-radius: 50%;
@@ -42,8 +47,8 @@ const ProfileImage = styled.div`
 `
 
 const IsActive = styled.div`
-    width: 15px;
-    height: 15px;
+    width: 10px;
+    height: 10px;
     background-color: rgb(97, 252, 118);;
     border-radius: 50%;
     position: absolute;
@@ -57,33 +62,14 @@ const UnreadMessages = styled.div`
     background-color: rgb(243,83,83);
     color: #fff;
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     padding: 2px;
     text-align: center;
-    right: 35px;
-    font-size: 14px;
-    top: 50%;
-    transform: translateY(-90%);
+    right: 13px;
+    font-size: 11px;
+    bottom: 17px;
 `
-
-const Closer = styled.div`
-    position : absolute;
-    top : 50%;
-    transform : translateY(-75%);
-    right : 10px;
-    font-size : .8rem;
-    color : #fff;
-    cursor : pointer;
-    &:hover {
-        color : red;
-    }
-`
-const iconStyle = {
-    width : "1.3rem",
-    heigth : "1.3rem",
-    color : "red"
-}
 
 const EditGroup = styled.div`
     font-size: 1.2rem;
@@ -101,7 +87,6 @@ export default ({ friend, selected ,load ,setLoad}) => {
     const groupsContext = useContext(GroupsContext);
     const user_id = userContext.state.user.profile.user;
     const [open, setOpen] = useState(false);
-    const [openDelete, setOpenDelete] = useState(false);
     const [openGroupInfo, setOpenGroupInfo] = useState(false);
 
     // whene the component unmount close the settings modal
@@ -111,11 +96,6 @@ export default ({ friend, selected ,load ,setLoad}) => {
             setOpenGroupInfo(false);
         } 
     },[]);
-
-    const handleOpenDelete = (e) => {
-        e.stopPropagation();
-        setOpenDelete(true);
-    };
 
     const editGroup = (e) => {
         e.stopPropagation();
@@ -219,9 +199,7 @@ export default ({ friend, selected ,load ,setLoad}) => {
                 <UnreadMessages>{friend.unReadMessages}</UnreadMessages>
                 : 
                 undefined 
-            }
-            {/* delete a friend */}
-            {friend.username && <Closer onClick={handleOpenDelete}> <FaTimes style={iconStyle} /> </Closer>}       
+            }   
             {friend.name && friend.creator_info.id !== user_id &&
                 <EditGroup onClick={(e) => { 
                     setOpenGroupInfo(true); 
@@ -234,10 +212,6 @@ export default ({ friend, selected ,load ,setLoad}) => {
                 <EditGroup onClick={editGroup}><FaCog className="edit-group" /></EditGroup>
             }
         </Container>
-        {/*modal to delete a friend */}
-        {friend.username && 
-            <DeleteFriendModal open={openDelete} setOpen={setOpenDelete} friend={friend}/> 
-            }
             {/*modal to change the group settings */}
             {friend.name &&
                 <Model 

@@ -2,7 +2,16 @@ import React , { useContext ,useState } from "react";
 import { UserContext ,AlerContext } from "../../store/context";
 import axios from "axios";
 import { setConfig } from "../../helpers";
-import Field from "./field"
+import Field from "./field";
+import styled from "styled-components";
+
+const Container = styled.div`
+    min-width: 270px;
+    width: 100%;
+    padding: 3rem;
+    border-radius: 11px;
+    border: 2px solid #dedef9;
+`
 
 export default () => {
     const userContext = useContext(UserContext);
@@ -53,11 +62,11 @@ export default () => {
     }
 
     return (
-        <div>
+        <Container>
             <Field value={email} onInputChange={setEmail} initValue={user.email} update={onUpdate} label="Email" />
             <Field value={firstName} onInputChange={setFirstName} initValue={user.first_name} update={onUpdate} label="Name" />
             <Field value={getAge()} label="Age" unChangeble/>
             <Field value={username} onInputChange={setUsername} initValue={user.username} update={onUpdate} label="Username" />
-        </div>
+        </Container>
     )
 }

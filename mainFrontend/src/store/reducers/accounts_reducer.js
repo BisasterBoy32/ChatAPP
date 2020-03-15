@@ -49,6 +49,12 @@ export const accountsReducer = (state, action) => {
                 loadMessages : action.payload.loadMessages
             }  
 
+        case "NO_SELECTED_FRIEND":
+            return {
+                ...state,
+                selectedFriend: null,
+            } 
+
         case "MORE_MESSAGES":
             // check if the loaded messages is for the current selected friend
             if ( 

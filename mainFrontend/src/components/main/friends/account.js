@@ -22,20 +22,26 @@ import {
 
 
 const Container = styled.div`
-    padding : .5rem;
+    border: 1px solid #dedef9;
+    border-radius: 4px;
+    padding: .7rem 1rem;
+    width: 97%;
     display : flex;
     background-color : ${props => props.selected ? "rgb(174, 216, 219)" : "transparent"};
     position : relative;
+    margin : 10px 0;
+    box-shadow: 3px 4px 9px #dedef9;
 `
 
 const Username = styled.div`
     margin-left: 0.5rem;
     margin-top: .5rem;
-    font-size: 1.3rem;
+    font-size: .9rem;
+    font-weight: 700;
 `
 const ProfileImage = styled.div`
-    width : 70px;
-    height : 70px;
+    width : 50px;
+    height : 50px;
     background-image : url(${props => props.image});
     background-position : center;
     border-radius: 50%;
@@ -46,9 +52,8 @@ const ProfileImage = styled.div`
 const Invite = styled.div`
     font-size : .8rem;
     position : absolute;
-    top : 50%;
-    transform : translateY(-70%);
-    right : 10px;
+    bottom: 2px;
+    right: 3px;
     cursor : pointer;
 `
 

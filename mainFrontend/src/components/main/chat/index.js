@@ -6,7 +6,14 @@ import {
     GroupWebSocketContext
 } from "../../../store/context";
 import ChatBox from "./chat_box";
-import { FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane ,FaEllipsisV } from "react-icons/fa";
+import Popover from '@material-ui/core/Popover';
+import DeleteFriendModal from "../friends/delete_friend";
+
+const Typography = styled.div`
+        padding: 1rem;
+        border-radius: 10px;
+`
 
 const Container = styled.div`
     position : relative;
@@ -47,6 +54,18 @@ const Button = styled.button`
     padding : .5rem;
     box-shadow : 2px 1px 1px #298bf0;
 `
+const Config = styled.div`
+    position : absolute;
+    top : 15px;
+    right : 1.9rem;
+    color: #dedef9;
+    cursor : pointer;
+    font-size : 1.2rem;
+`
+
+const Delete = styled.div`
+    cursor : pointer
+`
 
 export default () => {
     const accountsContext = useContext(AccountsContext);
@@ -54,7 +73,22 @@ export default () => {
     const websocketContext = useContext(WebSocketContext);
     const groupWebSocketContext = useContext(GroupWebSocketContext)
     const [message, setMessage] = useState("");
-    
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [openDelete, setOpenDelete] = useState(false);
+
+    const handleOpenDelete = (e) => {
+        e.stopPropagation();
+        setOpenDelete(true);
+    };
+
+    const handleClick = event => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     const sendMessage = (e) => {
         e.preventDefault();
         const values = {
@@ -116,6 +150,9 @@ export default () => {
         }
     }, [selectedFriend]);
 
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
     return (
         <Container>
             {selectedFriend ?
@@ -132,6 +169,33 @@ export default () => {
                 />
                 <Button type="submit" onClick={sendMessage}> <FaPaperPlane style={{color : "#fff"}} /></Button>     
             </form>
+            {selectedFriend && <Config onClick={handleClick}> <FaEllipsisV /> </Config>}
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <Typography>
+                    {selectedFriend && selectedFriend.username ?
+                        <Delete onClick={handleOpenDelete}> delete <strong>{selectedFriend.username}</strong></Delete>
+                        : ""
+                    }   
+                </Typography>
+            </Popover>
+            {selectedFriend && selectedFriend.username ?
+                <DeleteFriendModal open={openDelete} setOpen={setOpenDelete} friend={selectedFriend} /> 
+                :
+                ""
+            }
         </Container>
     )
 }

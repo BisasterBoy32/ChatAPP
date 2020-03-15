@@ -93,12 +93,16 @@ export default ({children}) => {
         const selectedFriendId = selectedFriend ? selectedFriend.id : null;
         const { user } = userContext.state;
         // delete all the messages if the selected friend
-        // is this friend whos has been deleted 
+        // is this friend whos has been deleted and set selected friend to null
         if (data.friend === selectedFriendId || data.deleter === selectedFriendId){
             accountsContext.dispatch({
                 type: "GET_MESSAGES",
-                payload: []  
+                payload: {
+                    messages: [],
+                    loadMessages: null
+                }
             })
+            accountsContext.dispatch({ type: "NO_SELECTED_FRIEND"})
         }
         // delete this friend
         // after 1s till the model unmount

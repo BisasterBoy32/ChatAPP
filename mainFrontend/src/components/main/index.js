@@ -4,6 +4,7 @@ import Chat from "./chat/index";
 import Profile from "../profile";
 import ProfileInfo from "../profile/information";
 import Friends from "./friends/index";
+import Users from "./friends/accounts";
 import Notifications from "./notifications/index.js";
 import CreateGroup from './groups';
 
@@ -46,13 +47,14 @@ export default () => {
         }
 
         <Container>
+                <Notifications />
                 <Profile selected={selected} setSelected={setSelected} />
                 <Main>
                     {selected === "profile" && <ProfileInfo />}
                     {selected === "friends" && <Friends />}
-                    {selected === "users" && <Friends />}
+                    {selected === "users" && <Users />}
                     {selected === "group" && <div> create group </div>}
-                    <Chat></Chat>
+                    {selected === "friends" || selected === "users" ? <Chat></Chat> : undefined}
                 </Main>
         </Container>
         </div>
