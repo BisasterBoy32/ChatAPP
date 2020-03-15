@@ -5,12 +5,15 @@ import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 
 const Friendsbox = styled.div`
-    padding : .5rem;
+    padding: 1rem;
+    height: 180px;
+    margin-bottom: 10px;
+    border-radius: 10px;
     overflow-y : scroll;
     height : 180px;
     margin-bottom : 10px;
-    background-color : ${props => props.highlighted ? "gray" : ""};
-    border : ${props => props.highlighted ? " 1px dashed black;" : " 1px solid black"};
+    background-color : ${props => props.highlighted ? "#dedef9" : ""};
+    border : ${props => props.highlighted ? " 2px dashed #4F98CA;" : "2px solid #dedef9"};
 `
 
 // this should be on the target

@@ -21,8 +21,7 @@ import { setConfig } from "../../../helpers";
 
 const Container = styled.div`
     display : flex;
-    width : 600px;
-    height : 600px;
+    width : 100%;
 `
 
 const FriendList = styled.div`
@@ -41,16 +40,15 @@ const Image = styled.img`
     margin : .2rem;
 `
 const ImagesWrapper = styled.div`
-    display : flex;
     padding : .2rem 0;
     width : inherit;
-    overflow-x : scroll;
+    margin-bottom : 1rem;
 `
 
 const Form = styled.form`
     flex : 1.5;
     overflow-y: scroll;
-    padding : 1rem 0 1rem 1rem;
+    padding : 1rem 2rem;
 `
 
 const Title = styled.legend`
@@ -64,6 +62,16 @@ const MembersTitle = styled.legend`
     margin-top : 1rem;
     margin-bottom : .5rem;
 `
+
+const FriendListWrapper = styled.div`
+    padding : 0 .3rem 0 0;
+    min-width : 280px;
+`
+const FriendsTitle = styled.div`
+    font-size : 1.3rem;
+    font-weight : 700;
+`
+
 const RadioButton = styled.input`
   opacity: 0;
   width: 0;
@@ -83,7 +91,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default ({ name, type, members, update, setOpen, groupId ,icon1}) => {
+export default ({ name, type, members, update, setSelected, groupId ,icon1}) => {
     const classes = useStyles();
     const [value, setValue] = useState(type || 'public');
     const [groupName, setGroupName] = useState(name || '');
@@ -128,8 +136,8 @@ export default ({ name, type, members, update, setOpen, groupId ,icon1}) => {
                         type: "INFO_SUCCESS",
                         payload: `your group ${res.data.name} has been created succefully`
                     });
-                    // close the modal
-                    setOpen(false);
+                    // redirect the user to the chat room
+                    setSelected("friends");
                     // open a socket for this group
                     groupWebSocketContext.connect(res.data.id)
                 },
@@ -161,8 +169,8 @@ export default ({ name, type, members, update, setOpen, groupId ,icon1}) => {
                         type: "INFO_SUCCESS",
                         payload: `your group ${res.data.name} has been updated succefully`
                     });
-                    // close the modal
-                    setOpen(false);
+                    // redirect the user to the chat room
+                    setSelected("friends");
                 },
                 err => {
                     // enable the button
@@ -225,6 +233,18 @@ export default ({ name, type, members, update, setOpen, groupId ,icon1}) => {
 
     return (
         <Container>
+            <FriendListWrapper>
+                <FriendsTitle> Friends List </FriendsTitle>
+                <FriendList> {notMembers.map(friend => (
+                    <Friend
+                        friend={friend}
+                        key={friend.id}
+                        onDrop={() => setGroupMembers([...groupMembers, friend])}
+                    >
+                    </Friend>
+                    ))}
+                </FriendList>
+            </FriendListWrapper>
             <Form>
                 <Title> Create a new group </Title>
                 <TextField 
@@ -289,14 +309,6 @@ export default ({ name, type, members, update, setOpen, groupId ,icon1}) => {
                     </Button>
                 }
             </Form>
-            <FriendList> {notMembers.map(friend => (
-                <Friend 
-                    friend={friend} 
-                    key={friend.id}
-                    onDrop={() => setGroupMembers([...groupMembers,friend])}
-                >
-                </Friend>
-                ))} </FriendList>
         </Container>
     )
 }

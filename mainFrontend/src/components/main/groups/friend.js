@@ -3,23 +3,29 @@ import styled from "styled-components";
 import { DragSource } from 'react-dnd'
 
 const Container = styled.div`
-    padding : .3rem;
+    border: 1px solid #dedef9;
+    border-radius: 4px;
+    padding: .7rem 1rem;
+    width: 97%;
     display : flex;
     cursor : pointer;
     &:hover {
         background-color : rgb(174, 216, 219);
     }
     position : relative;
+    margin : 10px 0;
+    box-shadow: 3px 4px 9px #dedef9;
 `
 
 const Username = styled.div`
     margin-left: 0.5rem;
     margin-top: .5rem;
-    font-size: .8rem;
+    font-size: .9rem;
+    font-weight: 700;
 `
 const ProfileImage = styled.div`
-    width : 30px;
-    height : 30px;
+    width : 50px;
+    height : 50px;
     background-image : url(${props => props.image});
     background-position : center;
     border-radius: 50%;

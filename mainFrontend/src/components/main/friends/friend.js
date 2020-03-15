@@ -72,13 +72,12 @@ const UnreadMessages = styled.div`
 `
 
 const EditGroup = styled.div`
-    font-size: 1.2rem;
+    font-size: 1rem;
     position: absolute;
-    top: 50%;
-    transform: translateY(-70%);
-    right: 10px;
+    top: 8px;
+    right: 12px;
     cursor: pointer;
-    color: rgb(85, 133, 238);
+    color: rgb(85,133,238);
 `
 
 export default ({ friend, selected ,load ,setLoad}) => {
@@ -105,6 +104,7 @@ export default ({ friend, selected ,load ,setLoad}) => {
     const handleClose = () => {
         setOpen(false);
     };
+    
     const getGroupMembers = () => {
         // if this is a group
         if (friend.members){

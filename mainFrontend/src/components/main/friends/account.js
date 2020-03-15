@@ -6,7 +6,7 @@ import {
     FaUserFriends,
     FaHourglassStart,
     FaUsers,
-    FaShareSquare,
+    FaSignInAlt,
     FaUserShield
 } from "react-icons/fa";
 import axios from "axios";
@@ -149,19 +149,19 @@ export default ({ account }) => {
                         account.friendship === "false" && loader ?
                             <div className="request-loader"></div> :
                             account.friendship === "false" ?
-                                <FaUserPlus className="add-user" onClick={sendRequest}></FaUserPlus> : ""
+                            <FaUserPlus title="send a friend request" className="add-user" onClick={sendRequest}></FaUserPlus> : ""
                     }
                     {
                         account.friendship === "holded" ?
-                            <FaPaperPlane className="request"></FaPaperPlane> : ""
+                        <FaPaperPlane title="this user sent you a friend request" className="request"></FaPaperPlane> : ""
                     }
                     {
                         account.friendship === "sent" ?
-                            <FaHourglassStart className="request"></FaHourglassStart> : ""
+                        <FaHourglassStart title="you've already sent a friend request" className="request"></FaHourglassStart> : ""
                     }
                     {
                         account.friendship === "true" ?
-                            <FaUserFriends className="friend"></FaUserFriends> : ""
+                        <FaUserFriends title="this user is you friend" className="friend"></FaUserFriends> : ""
                     }
                 </Invite>
             }
@@ -172,19 +172,19 @@ export default ({ account }) => {
                         account.membership === "stranger" && loader ?
                             <div className="request-loader"></div> :
                             account.membership === "stranger" ?
-                                <FaShareSquare className="add-user" onClick={joinGroup}></FaShareSquare> : ""
+                            <FaSignInAlt title="Join this group" className="add-user" onClick={joinGroup}></FaSignInAlt> : ""
                     }
                     {
                         account.membership === "sent" ?
-                            <FaPaperPlane className="request"></FaPaperPlane> : ""
+                        <FaPaperPlane title="you already send a join request to this group" className="request"></FaPaperPlane> : ""
                     }
                     {
                         account.membership === "member" ?
-                            <FaUsers className="friend"></FaUsers> : ""
+                        <FaUsers title="you are a member in this group" className="friend"></FaUsers> : ""
                     }
                     {
                         account.membership === "admin" ?
-                            <FaUserShield className="friend"></FaUserShield> : ""
+                        <FaUserShield title="you are the admin of this group" className="friend"></FaUserShield> : ""
                     }
                 </Invite>
             }

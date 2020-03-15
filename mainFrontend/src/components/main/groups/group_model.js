@@ -4,8 +4,8 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import GroupForm from "./group_form";
-import { DndProvider } from 'react-dnd'
-import Backend from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd';
+import Backend from 'react-dnd-html5-backend';
 
 const useStyles = makeStyles(theme => ({
     modal: {
@@ -15,9 +15,13 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         backgroundColor: theme.palette.background.paper,
-        border: '2px solid #000',
+        border: '2px solid #dedef9',
         boxShadow: theme.shadows[5],
-        padding: "1rem 0 1rem 1rem"
+        padding: "2rem",
+        borderRadius : "10px",
+        "&:focus" : {
+            outline : "none"
+        }
     },
 }));
 

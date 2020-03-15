@@ -1,6 +1,7 @@
 import React,{ useContext,useState ,useEffect} from "react";
 import styled from "styled-components";
 import {
+    UserContext,
     AccountsContext ,
     WebSocketContext,
     GroupWebSocketContext
@@ -9,6 +10,8 @@ import ChatBox from "./chat_box";
 import { FaPaperPlane ,FaEllipsisV } from "react-icons/fa";
 import Popover from '@material-ui/core/Popover';
 import DeleteFriendModal from "../friends/delete_friend";
+import Model from "../groups/group_model";
+import GroupInfo from "../friends/group_info";
 
 const Typography = styled.div`
         padding: 1rem;
@@ -63,18 +66,35 @@ const Config = styled.div`
     font-size : 1.2rem;
 `
 
-const Delete = styled.div`
+const Pointer = styled.div`
     cursor : pointer
 `
 
 export default () => {
     const accountsContext = useContext(AccountsContext);
+    const userContext = useContext(UserContext);
+    const user_id = userContext.state.user.profile.user;
     const selectedFriend = accountsContext.state.selectedFriend;
     const websocketContext = useContext(WebSocketContext);
-    const groupWebSocketContext = useContext(GroupWebSocketContext)
+    const groupWebSocketContext = useContext(GroupWebSocketContext);
     const [message, setMessage] = useState("");
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [openDelete, setOpenDelete] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
+    const [openGroupInfo, setOpenGroupInfo] = useState(false);
+
+    const getGroupMembers = () => {
+        // if this is a group
+        if (selectedFriend && selectedFriend.members) {
+            const { accounts } = accountsContext.state;
+            return accounts.filter(elem => selectedFriend.members.includes(elem.id))
+        }
+    };
+    const groupMembers = getGroupMembers();
+
+    const handleGroupClose = () => {
+        setEditOpen(false);
+    };
 
     const handleOpenDelete = (e) => {
         e.stopPropagation();
@@ -156,7 +176,8 @@ export default () => {
     return (
         <Container>
             {selectedFriend ?
-                <Name> {selectedFriend.username || selectedFriend.name } </Name> : <Name> Select a Friend to start chatting </Name>
+                <Name> {selectedFriend.username || <div> {selectedFriend.name} ( {selectedFriend.type} Group)</div>  } </Name> 
+                : <Name> Select a Friend to start chatting </Name>
             }
             <ChatBox></ChatBox>
             <form style={{ height : "8%"}}>
@@ -186,13 +207,54 @@ export default () => {
             >
                 <Typography>
                     {selectedFriend && selectedFriend.username ?
-                        <Delete onClick={handleOpenDelete}> delete <strong>{selectedFriend.username}</strong></Delete>
-                        : ""
+                        <Pointer onClick={handleOpenDelete}> delete <strong>{selectedFriend.username}</strong></Pointer>
+                        : 
+                        selectedFriend ?
+                        <>
+                            {selectedFriend.creator_info.id !== user_id &&
+                                <Pointer onClick={(e) => {
+                                    setOpenGroupInfo(true);
+                                    e.stopPropagation();
+                                }}> show this group information </Pointer>
+                            }
+                            {selectedFriend.creator_info.id === user_id &&
+                                <Pointer onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditOpen(true);
+                                }}> edit this group </Pointer>
+                            }
+                        </>
+                        :
+                        ""
                     }   
                 </Typography>
             </Popover>
             {selectedFriend && selectedFriend.username ?
                 <DeleteFriendModal open={openDelete} setOpen={setOpenDelete} friend={selectedFriend} /> 
+                :
+                selectedFriend ?
+                <>
+                {/*modal to change the group settings */ }
+                <Model
+                    setOpen={setEditOpen}
+                    open={editOpen}
+                    handleClose={handleGroupClose}
+                    update={true}
+                    name={selectedFriend.name}
+                    type={selectedFriend.type}
+                    icon1={selectedFriend.icon}
+                    groupId={selectedFriend.id}
+                    members={groupMembers}
+                />
+                <GroupInfo
+                    open={openGroupInfo}
+                    handleClose={() => setOpenGroupInfo(false)}
+                    name={selectedFriend.name}
+                    creator={selectedFriend.creator_info}
+                    type={selectedFriend.type}
+                    members={groupMembers}
+                />
+                </>
                 :
                 ""
             }

@@ -6,7 +6,10 @@ import ProfileInfo from "../profile/information";
 import Friends from "./friends/index";
 import Users from "./friends/accounts";
 import Notifications from "./notifications/index.js";
+import GroupForm from "./groups/group_form";
 import CreateGroup from './groups';
+import { DndProvider } from 'react-dnd';
+import Backend from 'react-dnd-html5-backend';
 
 const Container = styled.div`
     display : flex;
@@ -36,27 +39,27 @@ export default () => {
     const [selected , setSelected] = useState("profile");
 
     return (
-        <div>
-        {
-            /* 
-            <Header>
-                <Notifications></Notifications>
-                <CreateGroup></CreateGroup>
-            </Header>
-            */
-        }
+        <DndProvider backend={Backend}>
+            {
+                /* 
+                <Header>
+                    <Notifications></Notifications>
+                    <CreateGroup></CreateGroup>
+                </Header>
+                */
+            }
 
-        <Container>
-                <Notifications />
-                <Profile selected={selected} setSelected={setSelected} />
-                <Main>
-                    {selected === "profile" && <ProfileInfo />}
-                    {selected === "friends" && <Friends />}
-                    {selected === "users" && <Users />}
-                    {selected === "group" && <div> create group </div>}
-                    {selected === "friends" || selected === "users" ? <Chat></Chat> : undefined}
-                </Main>
-        </Container>
-        </div>
+            <Container>
+                    <Notifications />
+                    <Profile selected={selected} setSelected={setSelected} />
+                    <Main>
+                        {selected === "profile" && <ProfileInfo />}
+                        {selected === "friends" && <Friends />}
+                        {selected === "users" && <Users />}
+                        {selected === "group" && <GroupForm setSelected={setSelected}/>}
+                        {selected === "friends" || selected === "users" ? <Chat></Chat> : undefined}
+                    </Main>
+            </Container>
+        </DndProvider>
     )
 }
