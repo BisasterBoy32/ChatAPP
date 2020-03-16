@@ -62,7 +62,7 @@ export default () => {
     }
 
     return (
-        <Container>
+        <Container className="animated zoomInUp">
             <Field value={email} onInputChange={setEmail} initValue={user.email} update={onUpdate} label="Email" />
             <Field value={firstName} onInputChange={setFirstName} initValue={user.first_name} update={onUpdate} label="Name" />
             <Field value={getAge()} label="Age" unChangeble/>

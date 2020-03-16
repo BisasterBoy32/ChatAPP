@@ -21,6 +21,9 @@ const Main = styled.div`
     height  : 100vh;
     padding : 3rem;
     width : 100%;
+    @media (max-width: 1100px) {
+        padding : 1rem;
+    }
 `
 
 const Header = styled.div`

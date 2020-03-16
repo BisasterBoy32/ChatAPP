@@ -243,3 +243,13 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+
+/**********************
+    Media Queries
+***********************/
+@media (max-width : 1000px){
+    html {
+        font-size : 14px;
+    }
+}

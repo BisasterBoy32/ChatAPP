@@ -28,6 +28,9 @@ const FriendList = styled.div`
     flex : .5;
     overflow-y : scroll;
     padding : 1rem 0;
+    @media (max-width: 900px) {
+        margin-left : 1.5rem;
+    }
 `
 
 const Image = styled.img`
@@ -232,7 +235,7 @@ export default ({ name, type, members, update, setSelected, groupId ,icon1}) => 
     };
 
     return (
-        <Container>
+        <Container className="animated bounceInRight">
             <FriendListWrapper>
                 <FriendsTitle> Friends List </FriendsTitle>
                 <FriendList> {notMembers.map(friend => (

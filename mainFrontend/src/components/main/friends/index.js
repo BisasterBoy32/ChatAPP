@@ -16,6 +16,12 @@ const Container = styled.div`
     overflow-y : scroll;
     max-height : 90vh;
     min-width: 290px;
+    @media (max-width: 1000px) {
+        min-width: 230px;
+    }
+    @media (max-width: 900px) {
+        margin-left : 1.5rem;
+    }
 `
 const Title = styled.div`
     font-size : 1.3rem;
@@ -106,7 +112,7 @@ export default () => {
     }      
 
     return (
-        <Container>
+        <Container className="animated bounceInRight">
             <Title> Friends And Groups </Title>
             <SearchBar>
                 <SearchIcon><FaSearch /></SearchIcon>

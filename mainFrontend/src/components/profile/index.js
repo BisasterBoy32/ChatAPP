@@ -1,5 +1,8 @@
 import React , { 
     useContext,
+    useState,
+    useRef,
+    useEffect
 } from "react";
 import { UserContext } from "../../store/context"
 import styled from "styled-components";
@@ -32,7 +35,15 @@ const Container = styled.div`
     left : 0px;
     bottom : 0px;
     width: 270px;
+    left : ${props => props.show ? "0px" : "-240px"};
+    transition : left 300ms ease-in-out;
     background-color : #dedef9;
+    @media (max-width: 900px) {
+        position : absolute;
+        top : 0px;
+        bottom : 0px;
+        z-index : 10;
+    }
 `
 
 const Logout = styled.button`
@@ -59,10 +70,48 @@ const Icon = styled.div`
     margin-left : 5px;
 `
 
+const Humberger = styled.div`
+    position : absolute;
+    top : 3px;
+    right : 3px;
+    cursor : pointer;
+    @media (min-width: 900px) {
+        display : none;
+    }
+`
+
+const HumbergerBTN = styled.button`
+    padding : 0px 1px;
+    &:focus {
+        outline : none;
+    }
+`
+
+
+function closeProfile(ref, setShow) {
+
+    function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+            setShow(false);
+        }
+    }
+
+    useEffect(() => {
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            // Unbind the event listener on clean up
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    });
+}
 
 export default ({selected , setSelected }) => {
     const userContext = useContext(UserContext);
     const {user} = userContext.state
+    const [show ,setShow] = useState(false);
+    const wrapperRef = useRef(null);
+    closeProfile(wrapperRef, setShow)
 
     const logout = () => {
         const config = setConfig(userContext.state.token);
@@ -76,7 +125,17 @@ export default ({selected , setSelected }) => {
     };
 
     return (
-        <Container >
+        <Container ref={wrapperRef} className="animated bounceInLeft" show={show}>
+            <Humberger onClick={(e) => { setShow(!show) }}>
+                <HumbergerBTN
+                    className={show ? "hamburger hamburger--stand is-active" : "hamburger hamburger--stand"}
+                    type="button"
+                >
+                    <span className="hamburger-box">
+                        <span className="hamburger-inner"></span>
+                    </span>
+                </HumbergerBTN>
+            </Humberger>
                 <ProfileImage image={user.profile.icon} />
                 <Username>{user.username}</Username>
             <Navigator selected={selected} setSelected={setSelected} />

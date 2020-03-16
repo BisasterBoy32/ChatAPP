@@ -40,6 +40,7 @@ const Input = styled.input`
 `
 
 const Name = styled.div`
+    height: 5%;
     font-size : 1.2rem;
     font-weight: 700;
     margin-left: 20px;
@@ -47,8 +48,8 @@ const Name = styled.div`
 
 const Button = styled.button`
     position : absolute;
-    bottom: 32px;
-    right: 40px;
+    bottom: 13px;
+    right: 6px;
     background-color :  #298bf0;
     border-radius : 50%;
     text-align : center;
@@ -56,6 +57,9 @@ const Button = styled.button`
     border : 1px solid  #298bf0;
     padding : .5rem;
     box-shadow : 2px 1px 1px #298bf0;
+    &:focus {
+        outline : none;
+    }
 `
 const Config = styled.div`
     position : absolute;
@@ -68,6 +72,12 @@ const Config = styled.div`
 
 const Pointer = styled.div`
     cursor : pointer
+`
+
+const Form = styled.form`
+    margin-top : 10px;
+    height : 50px;
+    position : relative;
 `
 
 export default () => {
@@ -110,6 +120,7 @@ export default () => {
     };
 
     const sendMessage = (e) => {
+        console.log("submitted");
         e.preventDefault();
         const values = {
             command : "create_message",
@@ -149,38 +160,37 @@ export default () => {
     // each time selected friend change send a signale to
     // change is typing to false
     useEffect(() => {
+        console.log("slected friend has changed")
         setMessage("")
-        if (selectedFriend && selectedFriend.username) {
-            const data = {
-                command: "friend_typing",
-                typing: false
-            }
-            // send to all friends typing is false
-            for (let key in websocketContext.websockets){
-                websocketContext.websockets[key].send(JSON.stringify(data));
-            }
-            const data2 = {
-                command: "member_typing",
-                typing: false 
-            }
-            // send a signale that this groups that i stoped typing
-            for (let key in groupWebSocketContext.websockets) {
-                groupWebSocketContext.websockets[key].send(JSON.stringify(data2));
-            } 
+        const data = {
+            command: "friend_typing",
+            typing: false
         }
+        // send to all friends typing is false
+        for (let key in websocketContext.websockets){
+            websocketContext.websockets[key].send(JSON.stringify(data));
+        }
+        const data2 = {
+            command: "member_typing",
+            typing: false 
+        }
+        // send a signale that this groups that i stoped typing
+        for (let key in groupWebSocketContext.websockets) {
+            groupWebSocketContext.websockets[key].send(JSON.stringify(data2));
+        } 
     }, [selectedFriend]);
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
     return (
-        <Container>
+        <Container className="animated zoomInUp">
             {selectedFriend ?
                 <Name> {selectedFriend.username || <div> {selectedFriend.name} ( {selectedFriend.type} Group)</div>  } </Name> 
                 : <Name> Select a Friend to start chatting </Name>
             }
             <ChatBox></ChatBox>
-            <form style={{ height : "8%"}}>
+            <Form onSubmit={sendMessage}>
                 <Input
                     name="text"
                     value={message}
@@ -188,8 +198,8 @@ export default () => {
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type ypur message..."
                 />
-                <Button type="submit" onClick={sendMessage}> <FaPaperPlane style={{color : "#fff"}} /></Button>     
-            </form>
+                <Button type="submit"> <FaPaperPlane style={{color : "#fff"}} /></Button>     
+            </Form>
             {selectedFriend && <Config onClick={handleClick}> <FaEllipsisV /> </Config>}
             <Popover
                 id={id}

@@ -19,6 +19,9 @@ const useStyles = makeStyles(theme => ({
         boxShadow: theme.shadows[5],
         padding: "2rem",
         borderRadius : "10px",
+        overflowY : "scroll",
+        maxHeight : "90%",
+        maxWidth : "95%",
         "&:focus" : {
             outline : "none"
         }

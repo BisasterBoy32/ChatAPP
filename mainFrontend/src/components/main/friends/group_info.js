@@ -38,9 +38,13 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         backgroundColor: theme.palette.background.paper,
-        border: '2px solid #000',
+        border: '2px solid #dedef9',
         boxShadow: theme.shadows[5],
-        padding: "1rem 0 1rem 1rem"
+        padding: "1rem",
+        borderRadius : "10px",
+        "&:focus": {
+            outline : "none"
+        }
     },
 }));
 

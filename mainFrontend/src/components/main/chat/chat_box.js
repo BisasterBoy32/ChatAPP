@@ -10,8 +10,7 @@ import {
 } from "../../../store/context";
 
 const Container = styled.div`
-    position : relative;
-    height: 89%;
+    height: 85%;
     padding : 0 .5rem;
     overflow-y : scroll;
     margin : .3rem 0;
@@ -44,14 +43,15 @@ const ProfileImage = styled.div`
     margin-left : 5px;
 `
 const Typing = styled.div`
-    position : sticky;
-    bottom : 0px;
+    position : absolute;
+    bottom : 61px;
     height: 50px;
     width: 100%;
     font-size: 19px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transform : translateX(-10%);
 `
 
 export default () => {
