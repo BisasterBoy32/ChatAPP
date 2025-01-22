@@ -1,9 +1,16 @@
 import os
 from decouple import config
 from datetime import timedelta
+from dotenv import load_dotenv
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
+
+PATH_TO_DOT_ENV_FILE = os.path.join(BASE_DIR, ".env")
+if os.path.exists(PATH_TO_DOT_ENV_FILE):
+    load_dotenv(PATH_TO_DOT_ENV_FILE)
+    print(".env read successfully")
 
 SECRET_KEY = config('SECRET_KEY')
 
@@ -42,6 +49,8 @@ REST_FRAMEWORK = {
      'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20
 }
+
+KNOX_TOKEN_MODEL = 'knox.AuthToken'
 
 REST_KNOX = {
     'TOKEN_TTL': timedelta(minutes=1),

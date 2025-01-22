@@ -2,3 +2,4 @@ env
 ProfilesENV
 node_modules
 db.sqlite3
+.env
